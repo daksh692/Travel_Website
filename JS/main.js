@@ -1,136 +1,111 @@
-/* ========= Hero Background Rotation ========= */
-document.addEventListener("DOMContentLoaded", () => {
-  const hero = document.querySelector(".hero");
-  if (!hero) return;
+/* =========== UI STATE (no database yet) =========== */
+function getSession(){ try{return JSON.parse(localStorage.getItem("sessionClient"))}catch{return null} }
+function setSession(obj){ if(obj) localStorage.setItem("sessionClient", JSON.stringify(obj)); else localStorage.removeItem("sessionClient"); renderAuthState(); }
+function firstInitial(name){ return (name||"").trim().charAt(0).toUpperCase() || "U"; }
 
-  const images = [
-    "../assets/1.jpeg",
-    "../assets/2.jpeg",
-    "../assets/3.jpeg",
-    "../assets/4.jpeg",
-    "../assets/5.jpeg",
-    "../assets/6.jpeg",
-    "../assets/7.jpeg",
-    "../assets/8.jpeg",
-  ];
+/* =========== Header: menus & auth toggles =========== */
+function renderAuthState(){
+  const s = getSession();
+  document.body.dataset.auth = s ? "true" : "false";
+  const avatarInitial = document.getElementById("avatarInitial");
+  if (avatarInitial) avatarInitial.textContent = firstInitial(s?.FirstName);
+  closeMenus();
+}
 
-  let currentIndex = parseInt(localStorage.getItem("currentImageIndex")) || 0;
-  hero.style.backgroundImage = `url(${images[currentIndex]})`;
+function closeMenus(){
+  ["settingsMenu","userMenu"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el){ el.classList.remove("open"); el.setAttribute("aria-hidden","true"); }
+  });
+  const btns = [document.getElementById("settingsBtn"), document.getElementById("avatarBtn")];
+  btns.forEach(b=>b?.setAttribute("aria-expanded","false"));
+}
 
-  // update for next reload
-  currentIndex = (currentIndex + 1) % images.length;
-  localStorage.setItem("currentImageIndex", currentIndex);
+function toggleMenu(btn, menuId){
+  const menu = document.getElementById(menuId);
+  if(!menu) return;
+  const opened = !menu.classList.contains("open");
+  closeMenus();
+  if(opened){
+    menu.classList.add("open");
+    menu.setAttribute("aria-hidden","false");
+    btn.setAttribute("aria-expanded","true");
+  }
+}
 
-  // fade-in effect (CSS has .fade-in)
-  hero.classList.add("fade-in");
+/* Click-outside to close */
+document.addEventListener("click", (e)=>{
+  const menus = [document.getElementById("settingsMenu"), document.getElementById("userMenu")];
+  const buttons = [document.getElementById("settingsBtn"), document.getElementById("avatarBtn")];
+  const clickInMenu = menus.some(m=> m && m.contains(e.target));
+  const clickOnBtn  = buttons.some(b=> b && b.contains(e.target));
+  if(!clickInMenu && !clickOnBtn) closeMenus();
 });
 
-/* ========= Search ========= */
-document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("SearchCountry");
-  const searchButton = document.getElementById("searchButton");
-
-  if (!searchInput || !searchButton) return;
-
-  function handleSearch() {
-    const countryName = searchInput.value.trim().toLowerCase();
-    if (!countryName) return;
-
-    if (countryName === "india") {
-      window.location.href = "places/INDmap.html";
-    } else {
-      alert(`${countryName} not added yet.`);
-      searchInput.value = "";
-    }
-  }
-
-  searchButton.addEventListener("click", handleSearch);
-  searchInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") handleSearch();
-  });
-});
-
-/* ========= Auth / Session (localStorage) ========= */
-// simplified version: same fields as your DB (FirstName, Email, Password hash)
-async function sha256(str) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
-}
-function getUsers() { return JSON.parse(localStorage.getItem("clients")||"[]"); }
-function saveUsers(u) { localStorage.setItem("clients", JSON.stringify(u)); }
-function setSession(user) {
-  if (user) localStorage.setItem("sessionClient", JSON.stringify(user));
-  else localStorage.removeItem("sessionClient");
-  renderAuthState();
-}
-function getSession() {
-  try { return JSON.parse(localStorage.getItem("sessionClient")); } catch { return null; }
-}
-
-const api = {
-  async register(payload) {
-    const users = getUsers();
-    if (users.some(u => u.Email === payload.Email)) throw new Error("Email already registered.");
-    payload.Password = await sha256(payload.Password);
-    payload.ClientID = users.length ? Math.max(...users.map(u=>u.ClientID||0))+1 : 1;
-    users.push(payload);
-    saveUsers(users);
-    return payload;
-  },
-  async login(email, password) {
-    const users = getUsers();
-    const hashed = await sha256(password);
-    const user = users.find(u=>u.Email===email && u.Password===hashed);
-    if (!user) throw new Error("Invalid email or password.");
-    return user;
-  }
-};
-
-/* ========= UI binding ========= */
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm");
-  const registerForm = document.getElementById("registerForm");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const welcomeName = document.getElementById("welcomeName");
-
-  function renderAuthState() {
-    const u = getSession();
-    document.body.dataset.auth = u ? "true" : "false";
-    if (welcomeName) welcomeName.textContent = u ? `Hi, ${u.FirstName}` : "";
-  }
-  window.renderAuthState = renderAuthState;
+/* =========== Settings / User menu buttons =========== */
+document.addEventListener("DOMContentLoaded", ()=>{
   renderAuthState();
 
-  loginForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("loginEmail").value.trim();
-    const pass = document.getElementById("loginPassword").value;
-    try {
-      const u = await api.login(email, pass);
-      setSession(u);
-      loginForm.closest("dialog")?.close();
-    } catch(err) { alert(err.message); }
-  });
+  const settingsBtn = document.getElementById("settingsBtn");
+  const avatarBtn   = document.getElementById("avatarBtn");
+  settingsBtn?.addEventListener("click", ()=> toggleMenu(settingsBtn, "settingsMenu"));
+  avatarBtn?.addEventListener("click",   ()=> toggleMenu(avatarBtn,   "userMenu"));
 
-  registerForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const u = {
-      FirstName: document.getElementById("regFirstName").value.trim(),
-      LastName: document.getElementById("regLastName").value.trim(),
-      Email: document.getElementById("regEmail").value.trim(),
-      PhoneNumber: document.getElementById("regPhone").value.trim(),
-      Address: document.getElementById("regAddress").value.trim(),
-      Password: document.getElementById("regPassword").value
-    };
-    try {
-      await api.register(u);
-      setSession(u);
-      registerForm.closest("dialog")?.close();
-    } catch(err) { alert(err.message); }
-  });
+  // (No popups now; <a> links in HTML go to auth.html)
 
-  logoutBtn?.addEventListener("click", (e) => {
-    e.preventDefault();
+  // logout
+  document.getElementById("logoutBtn")?.addEventListener("click", ()=>{
     setSession(null);
   });
+
+  // When auth happens in another tab/window, refresh UI here
+  window.addEventListener("storage", (e)=>{
+    if(e.key === "sessionClient") renderAuthState();
+  });
+});
+
+/* =========== Search (same behavior) =========== */
+document.addEventListener("DOMContentLoaded", ()=>{
+  const input = document.getElementById("SearchCountry");
+  const btn   = document.getElementById("searchButton");
+  function go(){
+    const q = (input?.value||"").trim().toLowerCase();
+    if(!q) return;
+    if(q==="india"){ window.location.href = "places/INDmap.html"; }
+    else { alert(`${q} not added yet.`); input.value=""; }
+  }
+  btn?.addEventListener("click", go);
+  input?.addEventListener("keypress", e=>{ if(e.key==="Enter") go(); });
+});
+
+/* =========== Slideshow + gentle zoom =========== */
+document.addEventListener("DOMContentLoaded", ()=>{
+  const wrap = document.querySelector(".hero-slides");
+  const slides = wrap ? wrap.querySelectorAll(".hero-slide") : null;
+  if(!slides || slides.length<2) return;
+
+  const IMAGES = [
+    "../assets/1.jpeg","../assets/2.jpeg","../assets/3.jpeg","../assets/4.jpeg",
+    "../assets/5.jpeg","../assets/6.jpeg","../assets/7.jpeg","../assets/8.jpeg",
+  ];
+
+  let current = 0, active = 0;
+  const DURATION = 5000;
+  const setSlide = (el, url)=> el.style.backgroundImage = `url("${url}")`;
+
+  setSlide(slides[0], IMAGES[0]); slides[0].classList.add("is-active");
+  setSlide(slides[1], IMAGES[(current+1)%IMAGES.length]);
+
+  function next(){
+    const incoming = slides[(active+1)%2];
+    const outgoing = slides[active];
+
+    current = (current+1)%IMAGES.length;
+    setSlide(incoming, IMAGES[(current+1)%IMAGES.length]);
+
+    incoming.classList.add("is-active");
+    requestAnimationFrame(()=> outgoing.classList.remove("is-active"));
+    active = (active+1)%2;
+  }
+  setInterval(next, DURATION);
 });
