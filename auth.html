@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sign in · Travel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Inter:wght@400;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="./CSS/auth.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <main class="auth-hero">
+      <div class="auth-slides">
+        <div class="auth-slide"></div>
+        <div class="auth-slide"></div>
+      </div>
+
+      <a class="back" href="main.html"
+        ><i class="fa-solid fa-arrow-left"></i> Back to Home</a
+      >
+
+      <section class="panel">
+        <div class="tabs">
+          <button class="tab-btn" data-tab="login">Login</button>
+          <button class="tab-btn" data-tab="register">Register</button>
+          <span class="tab-underline"></span>
+        </div>
+
+        <!-- LOGIN -->
+        <form
+          id="loginForm"
+          class="tab-panel"
+          data-tab="login"
+          autocomplete="on"
+        >
+          <h2>Welcome back</h2>
+          <label
+            >Email
+            <input type="email" id="loginEmail" required autocomplete="email"
+          /></label>
+          <label
+            >Password
+            <input
+              type="password"
+              id="loginPassword"
+              required
+              minlength="6"
+              autocomplete="current-password"
+          /></label>
+          <button class="primary" type="submit">Login</button>
+        </form>
+
+        <!-- REGISTER -->
+        <form
+          id="registerForm"
+          class="tab-panel"
+          data-tab="register"
+          autocomplete="on"
+        >
+          <h2>Create your account</h2>
+          <div class="grid">
+            <label
+              >First name <input type="text" id="regFirstName" required
+            /></label>
+            <label
+              >Last name <input type="text" id="regLastName" required
+            /></label>
+          </div>
+          <label
+            >Email
+            <input type="email" id="regEmail" required autocomplete="email"
+          /></label>
+          <div class="grid">
+            <label
+              >Phone number
+              <input
+                type="tel"
+                id="regPhone"
+                pattern="^[0-9 +()\\-]{7,}$"
+                required
+            /></label>
+            <label
+              >Password
+              <input
+                type="password"
+                id="regPassword"
+                minlength="6"
+                required
+                autocomplete="new-password"
+            /></label>
+          </div>
+          <label>Address <input type="text" id="regAddress" required /></label>
+          <button class="primary" type="submit">Register</button>
+        </form>
+      </section>
+    </main>
+
+    <script src="./JS/auth.js"></script>
+  </body>
+</html>

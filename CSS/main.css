@@ -241,6 +241,17 @@ body[data-auth="true"] .auth-only {
   border-block: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 1;
 }
+.logo-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
+
+  mix-blend-mode: multiply;
+  filter: contrast(1.05) saturate(1.05);
+  background: transparent;
+}
 .hero-band:hover {
   background: var(--band-strong);
 }
@@ -350,4 +361,47 @@ input {
   color: #fff;
   font-weight: 800;
   cursor: pointer;
+}
+/* --- Enhanced menu open/close --- */
+.menu {
+  transform-origin: top right;
+  transform: scale(0.96) translateY(-6px);
+  opacity: 0;
+  filter: blur(2px);
+  transition: transform 0.18s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.18s ease,
+    filter 0.18s ease;
+}
+.menu.open {
+  display: flex;
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* Stagger each item on open */
+@keyframes itemIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.menu.open .menu-item {
+  animation: itemIn 0.24s calc(var(--d, 0ms)) cubic-bezier(0.2, 0.7, 0.2, 1)
+    both;
+}
+
+/* Gear spin cue while open */
+.icon-btn[aria-expanded="true"] > i {
+  transform: rotate(180deg);
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* “Magnet” hover nudge */
+.icon-btn.magnet,
+.avatar-btn.magnet {
+  transition: transform 0.12s ease-out, filter 0.2s;
 }
