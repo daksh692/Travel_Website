@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Travel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Inter:wght@400;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="./CSS/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body data-auth="false">
+    <!-- Fixed header -->
+    <header class="site-header">
+      <div class="header-left">
+        <a class="logo-button" href="main.html" aria-label="Home">
+          <img src="./assets/logo.png" alt="" />
+        </a>
+      </div>
+
+      <!-- Direct page links (no login required) -->
+      <nav class="header-center">
+        <ul class="nav">
+          <li><a href="places/INDmap.html">Explore</a></li>
+          <li><a href="transportation.html">Transportation</a></li>
+          <li><a href="deals.html">Deals</a></li>
+          <li><a href="about.html">About Us</a></li>
+        </ul>
+      </nav>
+
+      <!-- Settings / User menu -->
+      <div class="header-right">
+        <!-- Logged OUT: gear button -->
+        <button
+          id="settingsBtn"
+          class="icon-btn settings-btn guest-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+          title="Settings"
+        >
+          <i class="fa-solid fa-gear"></i>
+        </button>
+
+        <!-- Logged IN: circular avatar with first initial -->
+        <button
+          id="avatarBtn"
+          class="avatar-btn auth-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="userMenu"
+          title="Account"
+        >
+          <span id="avatarInitial">U</span>
+        </button>
+
+        <!-- Menus -->
+        <div
+          id="settingsMenu"
+          class="menu guest-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a
+            class="menu-item"
+            id="openLogin"
+            role="menuitem"
+            href="auth.html?tab=login"
+            ><i class="fa-regular fa-right-to-bracket fa-flip-horizontal"></i>
+            <span>Login</span></a
+          >
+          <a
+            class="menu-item"
+            id="openRegister"
+            role="menuitem"
+            href="auth.html?tab=register"
+            ><i class="fa-regular fa-id-card"></i> <span>Register</span></a
+          >
+        </div>
+
+        <div
+          id="userMenu"
+          class="menu auth-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="account.html" role="menuitem"
+            ><i class="fa-regular fa-user"></i> <span>Account</span></a
+          >
+          <a class="menu-item" href="currenttrip.html" role="menuitem"
+            ><i class="fa-regular fa-map"></i> <span>Your Current Trip</span></a
+          >
+          <a class="menu-item" href="costcalculator.html" role="menuitem"
+            ><i class="fa-regular fa-wallet"></i>
+            <span>Your Current Cost</span></a
+          >
+          <a class="menu-item" href="points.html" role="menuitem"
+            ><i class="fa-regular fa-gem"></i> <span>Points Redeem</span></a
+          >
+          <a class="menu-item" href="cart.html" role="menuitem"
+            ><i class="fa-regular fa-cart-shopping"></i> <span>Cart</span></a
+          >
+          <button class="menu-item danger" id="logoutBtn" role="menuitem">
+            <i class="fa-regular fa-arrow-right-from-bracket"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Full-bleed hero -->
+      <section class="hero">
+        <!-- Slides -->
+        <div class="hero-slides">
+          <div class="hero-slide"></div>
+          <div class="hero-slide"></div>
+        </div>
+
+        <!-- Dark band -->
+        <div class="hero-band">
+          <h1>Explore the World</h1>
+          <p class="hero-quote">
+            “Traveling – it leaves you speechless, then turns you into a
+            storyteller.” – Ibn Battuta
+          </p>
+
+          <div class="search-row">
+            <input
+              id="SearchCountry"
+              type="text"
+              placeholder="Search country..."
+              aria-label="Search country"
+            />
+            <button id="searchButton" type="button" aria-label="Search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./JS/main.js"></script>
+  </body>
+</html>

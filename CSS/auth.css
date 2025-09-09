@@ -1,0 +1,164 @@
+:root {
+  --ink: #eaf0ff;
+  --muted: #d2daee;
+  --ring: rgba(255, 255, 255, 0.28);
+  --panel: #0e1730;
+  --panel-br: rgba(255, 255, 255, 0.12);
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    sans-serif;
+  color: #fff;
+  background: #000;
+}
+
+/* full-screen hero bg */
+.auth-hero {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.auth-slides {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.auth-slide {
+  position: absolute;
+  inset: 0;
+  background: center/cover no-repeat;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  transform: scale(1);
+}
+.auth-slide.is-active {
+  opacity: 1;
+  animation: zoom 5s linear forwards;
+}
+@keyframes zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+/* back link */
+.back {
+  position: absolute;
+  left: 20px;
+  top: 18px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+/* panel */
+.panel {
+  width: min(92vw, 560px);
+  background: var(--panel);
+  border: 1px solid var(--panel-br);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.6);
+}
+
+/* tabs */
+.tabs {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.tab-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  opacity: 0.8;
+  font-weight: 800;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.tab-btn.active {
+  opacity: 1;
+}
+.tab-underline {
+  position: absolute;
+  height: 3px;
+  background: #3b82f6;
+  border-radius: 999px;
+  bottom: 0;
+  left: 12px;
+  width: 90px;
+  transition: transform 0.2s, width 0.2s;
+}
+
+/* forms */
+.tab-panel {
+  display: none;
+  animation: fade 0.18s ease both;
+}
+.tab-panel.active {
+  display: grid;
+  gap: 12px;
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+h2 {
+  margin: 2px 0 6px 0;
+}
+label {
+  display: grid;
+  gap: 6px;
+}
+input {
+  padding: 11px 12px;
+  border: 1px solid #2b3548;
+  border-radius: 10px;
+  background: #0b1222;
+  color: #fff;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+.primary {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #9cc1ff;
+  background: #3b82f6;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
