@@ -16,6 +16,22 @@
     />
   </head>
   <body data-auth="false">
+    <div id="appLoader" class="loader" aria-live="polite" aria-busy="true">
+      <div class="loader-card">
+        <div class="loader-logo">
+          <img src="./assets/logo.png" alt="Travel" />
+        </div>
+        <h2>Loading your trip…</h2>
+
+        <div class="loader-progress">
+          <div class="loader-bar" id="loaderBar" style="width: 0%"></div>
+        </div>
+        <div class="loader-meta">
+          <span id="loaderPct">0%</span>
+          <span class="loader-spinner" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
     <!-- Fixed header -->
     <header class="site-header">
       <div class="header-left">
@@ -72,8 +88,7 @@
             id="openLogin"
             role="menuitem"
             href="auth.html?tab=login"
-            ><i class="fa-regular fa-right-to-bracket fa-flip-horizontal"></i>
-            <span>Login</span></a
+            ><i class="fa-regular fa-user"></i> <span>Login</span></a
           >
           <a
             class="menu-item"
