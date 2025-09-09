@@ -1,0 +1,136 @@
+/* CSS for the hover-over label */
+.hover-label {
+    display: none;
+    position: fixed;
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    white-space: nowrap; /* Prevents wrapping of text */
+    cursor: pointer; /* Change cursor to pointer to indicate clickability */
+  }
+  #svg-map {
+    width: 900px; /* Set the desired width */
+    height: 1100px; /* Set the desired height */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: 15%;
+    transform: translate(-50%, -50%);
+}
+
+/* CSS styles for map interactions (optional) */
+.state {
+    fill: #ccc;
+    stroke: #000;
+    stroke-width: 1;
+    cursor: pointer;
+}
+
+.state:hover {
+    fill: lightgreen; /* Change fill color on hover */
+}
+  /* CSS for the table */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  /* General styles */
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    position: relative; /* Add relative positioning to body */
+}
+main {
+    flex-grow: 1; /* Ensure main content area grows to fill remaining space */
+}
+  header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+  }
+  
+  .header-left {
+      display: flex;
+      align-items: center;
+  }
+  
+  .header-left .pin-icon {
+      margin-right: 20px;
+      font-size: 20px;
+      color: #fff;
+      text-decoration: none;
+  }
+  
+  .header-nav ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+  }
+  
+  .header-nav ul li {
+      display: inline;
+      margin-right: 20px;
+  }
+  
+  .header-nav ul li a {
+      text-decoration: none;
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+  }
+  
+  .header-nav ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .header-right .sign-in {
+      text-decoration: none;
+      color: #fff;
+      font-size: 14px;
+  }
+  
+  footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: auto; /* Push the footer to the bottom */
+    position: fixed; /* Fixed positioning to keep the footer at the bottom */
+    width: 100%; /* Make the footer span the full width of the viewport */
+    bottom: 0; /* Align the footer to the bottom of the viewport */
+}
+
+footer ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+footer ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+footer ul li a {
+    text-decoration: none;
+    color: #fff;
+}
