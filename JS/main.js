@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (slides && slides.length >= 2) {
     let current = 0,
       active = 0;
-    const DURATION = 4000;
+    const DURATION = 6000;
     const setSlide = (el, url) => (el.style.backgroundImage = `url("${url}")`);
 
     setSlide(slides[0], HERO_IMAGES[0]);

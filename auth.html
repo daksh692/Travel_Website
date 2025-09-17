@@ -4,101 +4,138 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Sign in · Travel</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Inter:wght@400;600;700&display=swap"
-    />
+
+    <!-- Dev CSP: no external CDNs required by this page -->
+
     <link rel="stylesheet" href="./CSS/auth.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
   </head>
-  <body>
-    <main class="auth-hero">
-      <div class="auth-slides">
-        <div class="auth-slide"></div>
-        <div class="auth-slide"></div>
-      </div>
+  <body class="auth">
+    <!-- Background slideshow -->
+    <div class="hero-slides">
+      <div class="hero-slide"></div>
+      <div class="hero-slide"></div>
+    </div>
+    <main class="auth-shell">
+      <section class="panel" aria-labelledby="panelTitle">
+        <!-- Card header with Back -->
+        <div class="panel-head">
+          <button class="back-btn" id="backBtn" aria-label="Back">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                d="M15 18l-6-6 6-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span>Back</span>
+          </button>
+        </div>
 
-      <a class="back" href="main.html"
-        ><i class="fa-solid fa-arrow-left"></i> Back to Home</a
-      >
-
-      <section class="panel">
-        <div class="tabs">
-          <button class="tab-btn" data-tab="login">Login</button>
-          <button class="tab-btn" data-tab="register">Register</button>
-          <span class="tab-underline"></span>
+        <!-- Tabs -->
+        <div class="tabs" role="tablist" aria-label="Account">
+          <button
+            id="tab-login"
+            class="tab is-active"
+            role="tab"
+            aria-selected="true"
+            aria-controls="panel-login"
+          >
+            Login
+          </button>
+          <button
+            id="tab-register"
+            class="tab"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-register"
+          >
+            Register
+          </button>
         </div>
 
         <!-- LOGIN -->
-        <form
-          id="loginForm"
-          class="tab-panel"
-          data-tab="login"
-          autocomplete="on"
+        <section
+          id="panel-login"
+          class="pane is-active"
+          role="tabpanel"
+          aria-labelledby="tab-login"
         >
-          <h2>Welcome back</h2>
-          <label
-            >Email
-            <input type="email" id="loginEmail" required autocomplete="email"
-          /></label>
-          <label
-            >Password
-            <input
-              type="password"
-              id="loginPassword"
-              required
-              minlength="6"
-              autocomplete="current-password"
-          /></label>
-          <button class="primary" type="submit">Login</button>
-        </form>
-
-        <!-- REGISTER -->
-        <form
-          id="registerForm"
-          class="tab-panel"
-          data-tab="register"
-          autocomplete="on"
-        >
-          <h2>Create your account</h2>
-          <div class="grid">
+          <form id="loginForm" novalidate>
             <label
-              >First name <input type="text" id="regFirstName" required
-            /></label>
-            <label
-              >Last name <input type="text" id="regLastName" required
-            /></label>
-          </div>
-          <label
-            >Email
-            <input type="email" id="regEmail" required autocomplete="email"
-          /></label>
-          <div class="grid">
-            <label
-              >Phone number
+              >Email
               <input
-                type="tel"
-                id="regPhone"
-                pattern="^[0-9 +()\\-]{7,}$"
+                type="email"
+                id="loginEmail"
                 required
-            /></label>
+                autocomplete="email"
+              />
+            </label>
             <label
               >Password
               <input
                 type="password"
-                id="regPassword"
+                id="loginPassword"
                 minlength="6"
                 required
-                autocomplete="new-password"
+                autocomplete="current-password"
+              />
+            </label>
+            <button class="primary" type="submit">Login</button>
+            <p class="hint">
+              No account? <a href="#" data-switch="register">Create one</a>
+            </p>
+          </form>
+        </section>
+
+        <!-- REGISTER (maps to clients table) -->
+        <section
+          id="panel-register"
+          class="pane"
+          role="tabpanel"
+          aria-labelledby="tab-register"
+        >
+          <form id="registerForm" novalidate>
+            <div class="grid">
+              <label
+                >First name <input type="text" id="regFirstName" required
+              /></label>
+              <label
+                >Last name <input type="text" id="regLastName" required
+              /></label>
+            </div>
+            <label
+              >Email
+              <input type="email" id="regEmail" required autocomplete="email"
             /></label>
-          </div>
-          <label>Address <input type="text" id="regAddress" required /></label>
-          <button class="primary" type="submit">Register</button>
-        </form>
+            <div class="grid">
+              <label
+                >Phone number
+                <input type="tel" id="regPhone" pattern="^[0-9 +()\\-]{7,}$"
+              /></label>
+              <label
+                >Password
+                <input
+                  type="password"
+                  id="regPassword"
+                  minlength="6"
+                  required
+                  autocomplete="new-password"
+              /></label>
+            </div>
+            <label>Address <input type="text" id="regAddress" /></label>
+
+            <button class="primary" type="submit">Register</button>
+            <p class="hint">
+              Already have an account?
+              <a href="#" data-switch="login">Log in</a>
+            </p>
+          </form>
+        </section>
+
+        <div id="formMsg" class="msg" aria-live="polite"></div>
       </section>
     </main>
 

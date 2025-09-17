@@ -2,13 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+
     <title>Travel</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Inter:wght@400;600;700&display=swap"
-    />
+
     <link rel="stylesheet" href="./CSS/main.css" />
     <link
       rel="stylesheet"
@@ -61,7 +59,7 @@
           aria-controls="settingsMenu"
           title="Settings"
         >
-          <i class="fa-solid fa-gear"></i>
+          ⚙️
         </button>
 
         <!-- Logged IN: circular avatar with first initial -->
@@ -77,25 +75,19 @@
         </button>
 
         <!-- Menus -->
+        <!-- Settings menu for guests -->
         <div
           id="settingsMenu"
           class="menu guest-only"
           role="menu"
           aria-hidden="true"
         >
-          <a
-            class="menu-item"
-            id="openLogin"
-            role="menuitem"
-            href="auth.html?tab=login"
-            ><i class="fa-regular fa-user"></i> <span>Login</span></a
+          <a class="menu-item" href="auth.html?tab=login"
+            ><i class="fa-regular fa-right-to-bracket fa-flip-horizontal"></i>
+            Login</a
           >
-          <a
-            class="menu-item"
-            id="openRegister"
-            role="menuitem"
-            href="auth.html?tab=register"
-            ><i class="fa-regular fa-id-card"></i> <span>Register</span></a
+          <a class="menu-item" href="auth.html?tab=register"
+            ><i class="fa-regular fa-id-card"></i> Register</a
           >
         </div>
 
