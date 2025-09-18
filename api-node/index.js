@@ -153,3 +153,119 @@ const PORT = Number(process.env.PORT || 3001);
 app.listen(PORT, () => {
   console.log(`API ready on http://localhost:${PORT}`);
 });
+
+// Utility: state → table (match your PHP convention)
+function tableFromState(stateName) {
+  return String(stateName || "")
+    .trim()
+    .toLowerCase()
+    .replaceAll(" ", "_");
+}
+
+// === NEW: GET /api/states/:state/places
+// Returns latest 200 rows (adjust as needed)
+app.get("/api/states/:state/places", async (req, res) => {
+  const raw = req.params.state;
+  if (!raw) return res.status(400).json({ ok: false, error: "Missing state" });
+
+  const table = tableFromState(raw);
+  // escape table name using identifiers (mysql2 doesn't support ? for identifiers)
+  // we minimally validate table; you can strengthen allowlist if desired
+  if (!/^[a-z0-9_]+$/.test(table)) {
+    return res.status(400).json({ ok: false, error: "Bad state name" });
+  }
+
+  const sql = `
+    SELECT
+      Places_to_Visit   AS place,
+      Description       AS description,
+      Things_to_Do      AS things,
+      price1, price2, price3,
+      days_needed       AS daysNeeded,
+      TO_BASE64(img)    AS img_b64
+    FROM \`${table}\`
+    LIMIT 200
+  `;
+
+  let conn;
+  try {
+    conn = await statesPool.getConnection();
+    const [rows] = await conn.query(sql);
+    // shape for frontend
+    const items = rows.map((r) => ({
+      place: r.place,
+      description: r.description,
+      things: r.things,
+      prices: [r.price1, r.price2, r.price3].filter((v) => v != null),
+      daysNeeded: r.daysNeeded,
+      // same data-URL approach your PHP used
+      img: r.img_b64 ? `data:image/jpeg;base64,${r.img_b64}` : null,
+    }));
+    res.json({ ok: true, state: raw, table, items });
+  } catch (e) {
+    console.error("STATE PLACES error:", e);
+    res.status(500).json({ ok: false, error: "Failed to load places" });
+  } finally {
+    conn?.release?.();
+  }
+});
+const statesPool = mysql.createPool({
+  host: process.env.STATES_DB_HOST || process.env.DB_HOST || "127.0.0.1",
+  port: Number(process.env.STATES_DB_PORT || process.env.DB_PORT || 3306),
+  user: process.env.STATES_DB_USER || process.env.DB_USER || "root",
+  password: process.env.STATES_DB_PASS || process.env.DB_PASS || "",
+  database: process.env.STATES_DB_NAME || "states",
+  connectionLimit: 5,
+  charset: "utf8mb4",
+});
+
+// Utility: state → table (match PHP convention)
+function tableFromState(stateName) {
+  return String(stateName || "")
+    .trim()
+    .toLowerCase()
+    .replaceAll(" ", "_");
+}
+
+// --- NEW: GET /api/states/:state/places
+app.get("/api/states/:state/places", async (req, res) => {
+  const raw = req.params.state;
+  if (!raw) return res.status(400).json({ ok: false, error: "Missing state" });
+
+  const table = tableFromState(raw);
+  if (!/^[a-z0-9_]+$/.test(table)) {
+    return res.status(400).json({ ok: false, error: "Bad state name" });
+  }
+
+  const sql = `
+    SELECT
+      Places_to_Visit   AS place,
+      Description       AS description,
+      Things_to_Do      AS things,
+      price1, price2, price3,
+      days_needed       AS daysNeeded,
+      TO_BASE64(img)    AS img_b64
+    FROM \`${table}\`
+    LIMIT 200
+  `;
+
+  let conn;
+  try {
+    conn = await statesPool.getConnection();
+    const [rows] = await conn.query(sql);
+    const items = rows.map((r) => ({
+      place: r.place,
+      description: r.description,
+      things: r.things,
+      prices: [r.price1, r.price2, r.price3].filter((v) => v != null),
+      daysNeeded: r.daysNeeded,
+      img: r.img_b64 ? `data:image/jpeg;base64,${r.img_b64}` : null,
+    }));
+    res.json({ ok: true, state: raw, table, items });
+  } catch (e) {
+    console.error("STATE PLACES error:", e);
+    res.status(500).json({ ok: false, error: "Failed to load places" });
+  } finally {
+    conn?.release?.();
+  }
+});
