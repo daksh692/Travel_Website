@@ -10,6 +10,39 @@ const msg = (t, kind = "") => {
   el.className = `msg ${kind}`;
 };
 
+/* ---------------- Target after auth ---------------- */
+const urlParams = new URLSearchParams(location.search);
+
+// prefer ?next=..., else fall back to same-origin referrer (not auth page)
+function computeNext() {
+  const raw = urlParams.get("next");
+  if (raw) {
+    try {
+      const u = new URL(raw, location.href);
+      if (u.origin === location.origin) return u.href;
+    } catch {
+      /* ignore bad next */
+    }
+  }
+  // use same-origin referrer if it exists and isn't auth.html
+  try {
+    if (document.referrer) {
+      const r = new URL(document.referrer);
+      if (
+        r.origin === location.origin &&
+        !/\/auth\.html($|\?)/.test(r.pathname)
+      ) {
+        return r.href;
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+  // default (home)
+  return "main.html";
+}
+const NEXT_URL = computeNext();
+
 /* ---------------- Tabs ---------------- */
 function switchTo(which) {
   const loginTab = $("#tab-login"),
@@ -41,7 +74,7 @@ $("#tab-register")?.addEventListener("click", () => switchTo("register"));
 $("#backBtn")?.addEventListener("click", (e) => {
   e.preventDefault();
   if (document.referrer) history.back();
-  else window.location.href = "main.html";
+  else window.location.href = NEXT_URL; // default back target
 });
 
 /* ---------------- HTTP helpers ---------------- */
@@ -76,7 +109,6 @@ function clearError(input) {
   const box = input?.parentElement?.querySelector?.(".field-error");
   if (box) box.textContent = "";
   input?.classList.remove("has-error");
-  // Clear any native constraint messages we might have set previously
   input?.setCustomValidity?.("");
 }
 function clearAllErrors(form) {
@@ -143,7 +175,8 @@ $("#loginForm")?.addEventListener("submit", async (e) => {
     });
     localStorage.setItem("sessionClient", JSON.stringify(out.user));
     msg("Welcome back!", "ok");
-    window.location.href = "main.html";
+    // redirect to the intended page instead of home
+    window.location.href = NEXT_URL;
   } catch (err) {
     showError(password, "Email or password is incorrect.");
     msg(err.message || "Login failed", "error");
@@ -173,12 +206,10 @@ $("#registerForm")?.addEventListener("submit", async (e) => {
     showError(LastName, "Last name is required.");
     bad = true;
   }
-
   if (!EMAIL_RE.test(Email.value.trim())) {
     showError(Email, "Enter a valid email address.");
     bad = true;
   }
-
   if (Phone.value.trim() && !PHONE_RE.test(Phone.value.trim())) {
     showError(Phone, "Use digits/spaces only (7+ chars).");
     bad = true;
@@ -189,7 +220,6 @@ $("#registerForm")?.addEventListener("submit", async (e) => {
     showError(Password, `Please fix your password:\n${pwIssues.join("\n")}`);
     bad = true;
   }
-
   if (bad) return;
 
   msg("Creating your account…");
@@ -204,12 +234,10 @@ $("#registerForm")?.addEventListener("submit", async (e) => {
     });
     localStorage.setItem("sessionClient", JSON.stringify(out.user));
     msg("Account created!", "ok");
-    window.location.href = "main.html";
+    // redirect to the intended page instead of home
+    window.location.href = NEXT_URL;
   } catch (err) {
     const text = String(err.message || "");
-
-    // Your API already returns 409 "Email already registered"
-    // on duplicate email—surface it on the email field. :contentReference[oaicite:1]{index=1}
     if (
       text.toLowerCase().includes("email") &&
       text.toLowerCase().includes("registered")
@@ -220,17 +248,14 @@ $("#registerForm")?.addEventListener("submit", async (e) => {
       showError(Phone, "This phone number is already in use.");
       Phone.focus();
     }
-
     msg(text || "Registration failed", "error");
   }
 });
 
 /* ---------------- Default tab ---------------- */
-const params = new URLSearchParams(location.search);
-switchTo(params.get("tab") === "register" ? "register" : "login");
+switchTo(urlParams.get("tab") === "register" ? "register" : "login");
 
-/* ---------------- Background slideshow (kept) ---------------- */
-// (Your existing slideshow loader is fine; this page version keeps it simple)
+/* ---------------- Background slideshow (unchanged) ---------------- */
 document.addEventListener("DOMContentLoaded", () => {
   const slides = document.querySelectorAll(".hero-slide");
   if (!slides || slides.length < 2) return;

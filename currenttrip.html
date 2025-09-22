@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Your Current Trip · Travel</title>
+    <link rel="stylesheet" href="./CSS/main.css" />
+    <link rel="stylesheet" href="./CSS/currenttrip.css" />
+  </head>
+  <body class="lp-page">
+    <div class="lp-aurora" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="header-left">
+        <a class="logo-button" href="main.html" aria-label="Home">
+          <img src="./assets/logo.png" alt="" />
+        </a>
+      </div>
+      <nav class="header-center">
+        <ul class="nav">
+          <li><a href="places/INDmap.html">Explore</a></li>
+          <li><a href="transportation.html">Transportation</a></li>
+          <li><a href="deals.html">Deals</a></li>
+          <li><a href="about.html">About Us</a></li>
+        </ul>
+      </nav>
+      <div class="header-right">
+        <a class="menu-item" href="cart.html">Cart</a>
+        <a class="menu-item" href="currenttrip.html" aria-current="page"
+          >Your Current Trip</a
+        >
+        <a class="menu-item" href="costcalculator.html">Your Current Cost</a>
+      </div>
+    </header>
+
+    <main class="ct-shell">
+      <div class="ct-actions">
+        <button id="backBtn" class="btn-ghost">← Back</button>
+        <button id="exploreBtn" class="btn-outline">Explore more places</button>
+      </div>
+
+      <section class="ct-top">
+        <h1 class="ct-title">Your Current Trip</h1>
+
+        <div class="ct-meta">
+          <label class="field">
+            <span class="label">Start date</span>
+            <input type="date" id="tripStart" />
+          </label>
+
+          <!-- FIXED RATES (readonly chips) -->
+          <div class="field">
+            <span class="label">Service fee (fixed)</span>
+            <div class="chips">
+              <span id="serviceRateVal" class="chip">0.5%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="label">Tax (fixed)</span>
+            <div class="chips">
+              <span id="taxRateVal" class="chip">12%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="label">Trip duration</span>
+            <div class="chips">
+              <span class="chip" id="tripDays">— days</span>
+              <span class="chip" id="tripEnd">Ends —</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ct-grid">
+        <div>
+          <div id="items" class="ct-items"></div>
+        </div>
+
+        <aside class="ct-summary" aria-label="Cost summary">
+          <h2>Summary</h2>
+          <div class="sum-row">
+            <span>Subtotal</span><strong id="sumSubtotal">₹0</strong>
+          </div>
+          <div class="sum-row">
+            <span>Service (<span id="sumServiceRate">0.5%</span>)</span
+            ><strong id="sumService">₹0</strong>
+          </div>
+          <div class="sum-row">
+            <span>Tax (<span id="sumTaxRate">12%</span>)</span
+            ><strong id="sumTax">₹0</strong>
+          </div>
+          <div class="sum-row total">
+            <span>Total</span><strong id="sumTotal">₹0</strong>
+          </div>
+
+          <button id="saveBtn" class="btn-primary">Save changes</button>
+          <button id="clearBtn" class="btn-clear">Clear trip</button>
+        </aside>
+      </section>
+    </main>
+
+    <!-- Edit package dialog -->
+    <dialog id="pkgDialog" class="ct-dialog">
+      <h3>Edit package</h3>
+      <p id="pkgPlace" class="muted"></p>
+      <div id="pkgOptions" class="pkg-options"></div>
+      <form method="dialog" class="ct-dialog-actions">
+        <button value="cancel" class="btn-ghost">Cancel</button>
+      </form>
+    </dialog>
+
+    <!-- Toasts -->
+    <div
+      id="toasts"
+      class="lp-toasts"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+    <script src="./JS/currenttrip.js"></script>
+  </body>
+</html>

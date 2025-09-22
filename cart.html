@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Places · Travel</title>
+    <title>Your Cart · Travel</title>
     <link rel="stylesheet" href="./CSS/main.css" />
-    <link rel="stylesheet" href="./CSS/listofplace.css" />
+    <link rel="stylesheet" href="./CSS/cart.css" />
   </head>
   <body class="lp-page" data-auth="false">
     <div class="lp-aurora" aria-hidden="true"></div>
@@ -68,7 +68,13 @@
           <a class="menu-item" href="points.html" role="menuitem"
             >Points Redeem</a
           >
-          <a class="menu-item" href="cart.html" role="menuitem">Cart</a>
+          <a
+            class="menu-item"
+            href="cart.html"
+            role="menuitem"
+            aria-current="page"
+            >Cart</a
+          >
           <button class="menu-item danger" id="logoutBtn" role="menuitem">
             Logout
           </button>
@@ -76,67 +82,61 @@
       </div>
     </header>
 
-    <main class="lp-shell">
-      <section class="lp-head">
-        <h1 id="lpTitle">Places in …</h1>
-        <div class="lp-controls">
-          <input id="lpSearch" type="search" placeholder="Search places…" />
-          <select id="lpSort">
-            <option value="alpha">Alphabetical</option>
-            <option value="days">Shortest trip first</option>
-            <option value="price">Lowest price first</option>
-          </select>
+    <main class="cart-shell">
+      <!-- actions row -->
+      <div class="cart-actions">
+        <button id="backBtnTop" class="btn-ghost">← Back</button>
+        <button id="exploreBtnTop" class="btn-outline">
+          Explore more places
+        </button>
+      </div>
+
+      <!-- login notice (shown to guests) -->
+      <div id="loginNotice" class="cart-banner hidden">
+        <div class="banner-dot"></div>
+        You’re not logged in. <a id="loginNow" href="#">Log in</a> to save and
+        check out.
+      </div>
+
+      <section class="cart-grid">
+        <div>
+          <h1 class="cart-title">Your Cart</h1>
+          <div id="cartItems" class="cart-items"></div>
         </div>
+
+        <aside class="cart-summary" aria-label="Order summary">
+          <h2>Summary</h2>
+          <div class="sum-row">
+            <span>Subtotal</span><strong id="sumSubtotal">₹0</strong>
+          </div>
+          <div class="sum-row">
+            <span>Service</span><strong id="sumService">₹0</strong>
+          </div>
+          <div class="sum-row total">
+            <span>Total</span><strong id="sumTotal">₹0</strong>
+          </div>
+
+          <button id="checkoutBtn" class="btn-checkout">
+            Proceed to checkout
+          </button>
+          <button id="clearBtn" class="btn-clear">Clear cart</button>
+          <p class="sum-note">
+            Prices shown are estimates. Final totals may vary based on travel
+            dates.
+          </p>
+        </aside>
       </section>
-
-      <section id="lpGrid" class="lp-grid" aria-live="polite"></section>
-
-      <!-- Card template -->
-      <template id="cardTmpl">
-        <article class="lp-card">
-          <div class="lp-media"><img alt="" /></div>
-          <div class="lp-body">
-            <h2 class="lp-place"></h2>
-            <p class="lp-desc"></p>
-            <details class="lp-more">
-              <summary>Things to do</summary>
-              <p class="lp-things"></p>
-            </details>
-          </div>
-
-          <!-- CTA: prices on the left, actions on the right (Duration on top, Add below) -->
-          <div class="lp-cta">
-            <div
-              class="lp-prices"
-              role="group"
-              aria-label="Select a package"
-            ></div>
-            <div class="lp-actions">
-              <span class="lp-daysbadge"></span>
-              <button class="btn-add">Add to cart</button>
-            </div>
-          </div>
-        </article>
-      </template>
     </main>
 
-    <!-- Package chooser dialog (when user clicks Add with nothing selected) -->
-    <dialog id="priceDialog" class="lp-dialog">
-      <h3>Choose a package</h3>
-      <p id="priceDialogPlace"></p>
-      <div id="priceDialogOptions" class="lp-dialog-options"></div>
-      <form method="dialog" class="lp-dialog-actions">
-        <button value="cancel" class="btn-outline">Cancel</button>
-      </form>
-    </dialog>
-
-    <script src="./JS/main.js"></script>
-    <script src="./JS/listofplace.js"></script>
+    <!-- Toasts -->
     <div
       id="toasts"
       class="lp-toasts"
       aria-live="polite"
       aria-atomic="true"
     ></div>
+
+    <script src="./JS/main.js"></script>
+    <script src="./JS/cart.js"></script>
   </body>
 </html>
