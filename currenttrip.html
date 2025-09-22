@@ -25,11 +25,52 @@
         </ul>
       </nav>
       <div class="header-right">
-        <a class="menu-item" href="cart.html">Cart</a>
-        <a class="menu-item" href="currenttrip.html" aria-current="page"
-          >Your Current Trip</a
+        <button
+          id="settingsBtn"
+          class="icon-btn guest-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
         >
-        <a class="menu-item" href="costcalculator.html">Your Current Cost</a>
+          ⚙️
+        </button>
+        <button
+          id="avatarBtn"
+          class="avatar-btn auth-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="userMenu"
+        >
+          <span id="avatarInitial">U</span>
+        </button>
+        <div
+          id="settingsMenu"
+          class="menu guest-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="auth.html?tab=login">Login</a>
+          <a class="menu-item" href="auth.html?tab=register">Register</a>
+        </div>
+        <div
+          id="userMenu"
+          class="menu auth-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="account.html" role="menuitem">Account</a>
+          <a class="menu-item" href="currenttrip.html" role="menuitem"
+            >Your Current Trip</a
+          >
+
+          <a class="menu-item" href="points.html" role="menuitem"
+            >Points Redeem</a
+          >
+          <a class="menu-item" href="cart.html" role="menuitem">Cart</a>
+          <button class="menu-item danger" id="logoutBtn" role="menuitem">
+            Logout
+          </button>
+        </div>
       </div>
     </header>
 
@@ -119,6 +160,7 @@
       aria-atomic="true"
     ></div>
 
+    <script src="./JS/main.js"></script>
     <script src="./JS/currenttrip.js"></script>
   </body>
 </html>

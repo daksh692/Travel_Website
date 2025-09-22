@@ -1,0 +1,167 @@
+/* ===== Transportation page tone ===== */
+:root {
+  --card: #0d1526;
+  --card-2: #0f182b;
+  --line: #1b2440;
+  --accent: #34d399;
+  --glow: 0 8px 30px rgba(52, 211, 153, 0.18);
+}
+
+.shell {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: grid;
+  gap: 16px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: var(--glow);
+}
+.tab {
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #dfe7ff;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.tab:hover {
+  border-color: #29407a;
+}
+.tab.active {
+  background: #132042;
+  border-color: #29407a;
+}
+
+/* Layout */
+.grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 16px;
+}
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+}
+.row,
+.row2 {
+  display: grid;
+  gap: 10px;
+}
+.row {
+  grid-template-columns: repeat(3, 1fr);
+}
+.row2 {
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+  .row2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.list {
+  display: grid;
+  gap: 10px;
+}
+
+/* Trip blocks */
+.trip {
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.trip:hover {
+  border-color: #2a3a66;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.trip-h {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.trip-name {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.pill {
+  border: 1px solid #29407a;
+  background: #102147;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  background: #0b1429;
+  border: 1px solid #162246;
+  border-radius: 12px;
+  padding: 10px;
+}
+.item .ico {
+  font-size: 22px;
+}
+
+.edit {
+  display: grid;
+  gap: 8px;
+  background: #0b1429;
+  border: 1px dashed #2b3c6a;
+  border-radius: 12px;
+  padding: 10px;
+  margin-top: 8px;
+}
+details.edit > summary {
+  cursor: pointer;
+  list-style: none;
+}
+details.edit > summary::-webkit-details-marker {
+  display: none;
+}
+details.edit[open] {
+  border-style: solid;
+}
+
+/* Totals */
+.sum {
+  display: grid;
+  gap: 10px;
+}
+.line {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Buttons */
+.btns {
+  display: flex;
+  gap: 8px;
+}

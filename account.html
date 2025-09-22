@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Account — Travel</title>
+    <link rel="stylesheet" href="./CSS/main.css" />
+    <link rel="stylesheet" href="./CSS/account.css" />
+  </head>
+  <body>
+    <header class="lp-header">
+      <a class="brand" href="./main.html">Travel</a>
+      <div class="lp-grow"></div>
+      <button id="settingsBtn" class="icon-btn" aria-expanded="false">
+        ⚙️
+      </button>
+      <div id="settingsMenu" class="menu" aria-hidden="true">
+        <a href="./currenttrip.html">Current trip</a>
+        <a href="./cart.html">Cart</a>
+        <a href="./transportation.html">Transportation</a>
+        <a href="./redeem.html">Redeem</a>
+        <a href="./deals.html">Deals</a>
+        <a class="active" href="./account.html">Account</a>
+      </div>
+      <button id="avatarBtn" class="avatar-btn" aria-expanded="false">
+        <span id="avatarInitial">U</span>
+      </button>
+      <div id="userMenu" class="menu" aria-hidden="true">
+        <a href="./account.html">Account</a>
+        <button id="logoutBtn" class="link danger">Log out</button>
+      </div>
+    </header>
+
+    <main class="shell">
+      <div class="grid">
+        <section class="card">
+          <h2>Your profile</h2>
+          <div class="row">
+            <div class="avatar" id="accAvatar">U</div>
+            <div>
+              <div id="accName" class="h3">Guest</div>
+              <div id="accEmail" class="muted">—</div>
+            </div>
+          </div>
+          <div class="kv">
+            <div>Phone</div>
+            <div id="accPhone">—</div>
+          </div>
+          <div class="kv">
+            <div>Address</div>
+            <div id="accAddr">—</div>
+          </div>
+          <div class="btns">
+            <a class="btn-outline" href="./auth.html">Edit details</a>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Security</h2>
+          <p class="muted">Manage your sign-in and password.</p>
+          <a class="btn" href="./auth.html#reset">Change password</a>
+        </section>
+      </div>
+
+      <section class="card">
+        <h2>Trip summary</h2>
+        <div id="accSummary" class="list">
+          <div class="muted">Loading…</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Saved cart (device)</h2>
+        <div id="accCartLocal" class="list"></div>
+        <div class="btns">
+          <a class="btn-outline" href="./currenttrip.html">Open Current Trip</a>
+          <button class="btn-ghost danger" id="clearLocal">
+            Clear local cart
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <div id="toasts"></div>
+
+    <script src="./JS/main.js"></script>
+    <script>
+      // header fallback
+      (function () {
+        const s = document.getElementById("settingsBtn"),
+          m = document.getElementById("settingsMenu");
+        const a = document.getElementById("avatarBtn"),
+          u = document.getElementById("userMenu");
+        function close() {
+          [m, u].forEach((x) => x?.classList.remove("open"));
+          [s, a].forEach((b) => b?.setAttribute("aria-expanded", "false"));
+        }
+        function tog(btn, menu) {
+          const o = menu?.classList.contains("open");
+          close();
+          if (!o) {
+            menu?.classList.add("open");
+            btn?.setAttribute("aria-expanded", "true");
+          }
+        }
+        s?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          tog(s, m);
+        });
+        a?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          tog(a, u);
+        });
+        document.addEventListener("click", (e) => {
+          if (
+            !m?.contains(e.target) &&
+            !s?.contains(e.target) &&
+            !u?.contains(e.target) &&
+            !a?.contains(e.target)
+          )
+            close();
+        });
+        document.getElementById("logoutBtn")?.addEventListener("click", () => {
+          localStorage.removeItem("sessionClient");
+          location.reload();
+        });
+      })();
+    </script>
+    <script src="./JS/account.js"></script>
+  </body>
+</html>

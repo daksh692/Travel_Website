@@ -1,0 +1,464 @@
+/* ===== Theme tokens ===== */
+:root {
+  --ink: #e9f1ff;
+  --muted: #aeb9cf;
+  --glass: #0b1122cc;
+  --glass-2: #0b1122f2;
+  --line: #24355f;
+  --accent: #67b0ff;
+  --accent-2: #53e5ff;
+  --ok: #22c55e;
+  --shadow: 0 12px 34px rgba(0, 0, 0, 0.28);
+  --glow: 0 8px 36px rgba(83, 229, 255, 0.16);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Stop any horizontal scroll, ever */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--ink);
+  background: radial-gradient(
+      120% 80% at 0% 0%,
+      rgba(83, 229, 255, 0.12),
+      transparent 42%
+    ),
+    radial-gradient(
+      100% 70% at 100% 0%,
+      rgba(103, 176, 255, 0.12),
+      transparent 45%
+    ),
+    linear-gradient(180deg, #070b16, #0a1326 60%, #081223);
+}
+
+/* sparkles */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(
+      2px 2px at 20% 30%,
+      #6ecbff66 40%,
+      transparent 41%
+    ),
+    radial-gradient(1.6px 1.6px at 70% 10%, #a8bfff55 40%, transparent 41%),
+    radial-gradient(2px 2px at 85% 60%, #6ecbff66 40%, transparent 41%);
+  background-repeat: no-repeat;
+  animation: float 10s linear infinite;
+  opacity: 0.35;
+}
+@keyframes float {
+  to {
+    transform: translateY(-18px);
+  }
+}
+
+/* ===== Layout shells ===== */
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell {
+  box-sizing: border-box;
+  width: min(1180px, 100%);
+  margin: 28px auto;
+  padding-inline: clamp(12px, 2.4vw, 40px);
+  display: grid;
+  gap: 18px;
+  overflow: hidden; /* block inner spills */
+}
+
+/* ===== Hero ===== */
+.hero {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(135deg, #0f1a33, #0b1426 55%, #0b1d38);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: var(--glow);
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: conic-gradient(
+    from 90deg at 40% 10%,
+    #53e5ff33,
+    transparent 35%,
+    #67b0ff33
+  );
+  filter: blur(16px);
+  opacity: 0.6;
+}
+.hero > * {
+  position: relative;
+  z-index: 1;
+}
+.hero h1 {
+  margin: 0;
+  letter-spacing: 0.2px;
+}
+.muted {
+  color: var(--muted);
+}
+
+/* ===== Tabs + Panels (handles your current nesting) ===== */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 6px;
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  width: 100%;
+  box-shadow: inset 0 0 0 1px #1b2a4a;
+}
+
+/* Put buttons first row, panels full-width below */
+.tabs .tab-btn {
+  order: 1;
+}
+.tabs .tab-panel {
+  order: 2;
+  flex-basis: 100%;
+}
+
+.tab-btn {
+  appearance: none;
+  cursor: pointer;
+  border: 0;
+  padding: 10px 16px;
+  border-radius: 999px;
+  color: var(--ink);
+  background: transparent;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  position: relative;
+}
+.tab-btn.active {
+  background: linear-gradient(180deg, #142855, #0f1f41);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), 0 0 0 1px #2a4272 inset;
+}
+
+.tab-panel {
+  display: block;
+  margin-top: 6px;
+}
+.tab-panel[hidden] {
+  display: none;
+}
+
+/* ===== Grid ===== */
+.grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  align-items: stretch;
+}
+
+/* ===== Cards ===== */
+.card {
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, border-color 0.18s ease,
+    box-shadow 0.18s ease, filter 0.18s ease;
+  will-change: transform;
+  transform-style: preserve-3d;
+  max-width: 100%; /* never overflow grid cell */
+  contain: layout paint; /* prevent 3D tilt overflow */
+}
+.card:hover {
+  border-color: #3c61a6;
+  box-shadow: var(--shadow), var(--glow);
+  filter: saturate(1.03);
+}
+
+/* Bundle card layout */
+.card-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.badge {
+  background: #12203e;
+  border: 1px solid #2a4171;
+  color: #cfe2ff;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.badge.pill {
+  background: #14244a;
+}
+.badge.deal {
+  background: #0f2a24;
+  border-color: #244f46;
+  color: #a1f5cf;
+}
+.badge.state {
+  background: #1b2846;
+}
+
+.bundle-body {
+  display: grid;
+  grid-template-columns: 86px 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+.stack {
+  position: relative;
+  width: 86px;
+  height: 86px;
+}
+.stacked-thumb {
+  position: absolute;
+  width: 74px;
+  height: 74px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #22365f;
+  background: #0f1a30;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+.stacked-thumb:nth-child(1) {
+  left: 0;
+  top: 0;
+  z-index: 3;
+}
+.stacked-thumb:nth-child(2) {
+  left: 10px;
+  top: 10px;
+  z-index: 2;
+}
+.stacked-thumb:nth-child(3) {
+  left: 20px;
+  top: 20px;
+  z-index: 1;
+}
+.stacked-thumb img,
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bundle h3,
+.single h4 {
+  margin: 0 0 4px 0;
+}
+.mini-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+.mini-list li {
+  color: var(--muted);
+}
+
+.price-col {
+  text-align: right;
+  min-width: 150px;
+}
+.strike {
+  text-decoration: line-through;
+  color: #9fb2d6;
+  opacity: 0.75;
+}
+.final {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+/* Single item layout */
+.single {
+  display: grid;
+  grid-template-columns: 96px 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+.thumb {
+  width: 96px;
+  height: 96px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0f1a30;
+  border: 1px solid #203055;
+}
+.badge-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Buttons + ripple */
+.btn-row {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.btn {
+  appearance: none;
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+  border: 1px solid #2b4578;
+  background: linear-gradient(180deg, #0f1f3f, #0e1a33);
+  color: #e6f0ff;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.12s ease, filter 0.18s ease, box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+.btn:hover {
+  filter: brightness(1.06);
+  border-color: #3b61a6;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), 0 0 0 1px #2a4272 inset;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn-primary {
+  background: linear-gradient(180deg, #1a3a7a, #132b59);
+  border-color: #2e4d8a;
+}
+.btn-ghost {
+  background: transparent;
+  border-color: #2b4578;
+  color: #cfe2ff;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff66 0%, transparent 60%);
+  transform: scale(0);
+  animation: rip 0.55s ease-out;
+  pointer-events: none;
+}
+@keyframes rip {
+  to {
+    transform: scale(2.7);
+    opacity: 0;
+  }
+}
+
+/* Skeletons */
+.skel {
+  position: relative;
+  overflow: hidden;
+  min-height: 74px;
+}
+.sk-line {
+  height: 14px;
+  background: #112041;
+  border-radius: 8px;
+  margin: 8px 0;
+}
+.sk-line.short {
+  width: 60%;
+}
+.skel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.06),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Confetti */
+.confetti {
+  position: fixed;
+  left: var(--x);
+  top: 0;
+  width: 6px;
+  height: 10px;
+  background: linear-gradient(#67b0ff, #53e5ff);
+  transform: translateX(var(--tx));
+  animation: fall var(--d) ease-in forwards;
+  border-radius: 1px;
+  box-shadow: 0 0 8px #67b0ff66;
+}
+@keyframes fall {
+  to {
+    transform: translateY(110vh) translateX(var(--tx)) rotate(300deg);
+    opacity: 0;
+  }
+}
+
+/* Bottom section reveal (hand-picked) */
+#dealsSection.reveal {
+  animation: dealsFade 0.35s ease-out both;
+}
+@keyframes dealsFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Images safe sizing */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Small screens tweak */
+@media (max-width: 480px) {
+  .bundle-body {
+    grid-template-columns: 72px 1fr;
+  }
+  .price-col {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+  .single {
+    grid-template-columns: 80px 1fr;
+  }
+}
+#autoDeals .hero {
+  border: none;
+}

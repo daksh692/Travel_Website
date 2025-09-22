@@ -2,14 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Places · Travel</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Deals — Travel</title>
     <link rel="stylesheet" href="./CSS/main.css" />
-    <link rel="stylesheet" href="./CSS/listofplace.css" />
+    <link rel="stylesheet" href="./CSS/deals.css" />
   </head>
-  <body class="lp-page" data-auth="false">
-    <div class="lp-aurora" aria-hidden="true"></div>
-
+  <body>
+    <!-- Header -->
     <header class="site-header">
       <div class="header-left">
         <a class="logo-button" href="main.html" aria-label="Home">
@@ -74,67 +73,60 @@
       </div>
     </header>
 
-    <main class="lp-shell">
-      <section class="lp-head">
-        <h1 id="lpTitle">Places in …</h1>
-        <div class="lp-controls">
-          <input id="lpSearch" type="search" placeholder="Search places…" />
-          <select id="lpSort">
-            <option value="alpha">Alphabetical</option>
-            <option value="days">Shortest trip first</option>
-            <option value="price">Lowest price first</option>
-          </select>
+    <main class="page">
+      <!-- REGULAR DEALS (TOP) -->
+      <section id="autoDeals" class="shell">
+        <div class="hero">
+          <h1>Deals</h1>
+          <p class="muted">
+            Fresh bundles & individual picks. We’ll learn your taste in the
+            first 1–2 days, then personalize from day 3.
+          </p>
+
+          <!-- Tabs are now ONLY for regular deals -->
+          <div class="tabs" style="margin-top: 10px">
+            <button
+              id="tabBtnBundles"
+              class="tab-btn active"
+              data-tab="auto-bundles"
+            >
+              Bundles
+            </button>
+            <button
+              id="tabBtnSingles"
+              class="tab-btn"
+              data-tab="auto-individual"
+            >
+              Individual
+            </button>
+             <div id="auto-bundles" class="tab-panel">
+          <div id="bundleList" class="grid"></div>
+        </div>
+        <div id="auto-individual" class="tab-panel" hidden>
+          <div id="individualList" class="grid"></div>
         </div>
       </section>
 
-      <section id="lpGrid" class="lp-grid" aria-live="polite"></section>
-
-      <!-- Card template -->
-      <template id="cardTmpl">
-        <article class="lp-card">
-          <div class="lp-media"><img alt="" /></div>
-          <div class="lp-body">
-            <h2 class="lp-place"></h2>
-            <p class="lp-desc"></p>
-            <details class="lp-more">
-              <summary>Things to do</summary>
-              <p class="lp-things"></p>
-            </details>
           </div>
+        </div>
 
-          <!-- CTA: prices on the left, actions on the right (Duration on top, Add below) -->
-          <div class="lp-cta">
-            <div
-              class="lp-prices"
-              role="group"
-              aria-label="Select a package"
-            ></div>
-            <div class="lp-actions">
-              <span class="lp-daysbadge"></span>
-              <button class="btn-add">Add to cart</button>
-            </div>
-          </div>
-        </article>
-      </template>
+       
+      <!-- HAND-PICKED (BOTTOM) — hidden until we have learned results -->
+      <section id="dealsSection" class="shell deals-bottom" hidden>
+        <div class="hero">
+          <h2>Hand-picked deals</h2>
+          <p class="muted">
+            Curated from what you view and add most. Appears from day 3.
+          </p>
+        </div>
+        <div id="handpickList" class="grid"></div>
+      </section>
     </main>
 
-    <!-- Package chooser dialog (when user clicks Add with nothing selected) -->
-    <dialog id="priceDialog" class="lp-dialog">
-      <h3>Choose a package</h3>
-      <p id="priceDialogPlace"></p>
-      <div id="priceDialogOptions" class="lp-dialog-options"></div>
-      <form method="dialog" class="lp-dialog-actions">
-        <button value="cancel" class="btn-outline">Cancel</button>
-      </form>
-    </dialog>
+    <div id="toasts"></div>
 
     <script src="./JS/main.js"></script>
-    <script src="./JS/listofplace.js"></script>
-    <div
-      id="toasts"
-      class="lp-toasts"
-      aria-live="polite"
-      aria-atomic="true"
-    ></div>
+
+    <script src="./JS/deals.js"></script>
   </body>
 </html>

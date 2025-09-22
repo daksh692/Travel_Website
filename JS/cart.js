@@ -206,6 +206,7 @@ function render() {
         });
       }
     }
+    // Totals (match currenttrip)
 
     const inc = card.querySelector(".q-inc");
     const dec = card.querySelector(".q-dec");
@@ -243,11 +244,18 @@ function render() {
   });
 
   // Totals
-  const subtotalNum = subtotal;
-  const service = Math.round(subtotalNum * 0.02);
-  const total = subtotalNum + service;
-  sumSubtotal.textContent = fmtINR(subtotalNum);
+  const SERVICE_RATE_PCT = 0.5;
+  const TAX_RATE_PCT = 12;
+
+  const service = +(subtotal * (SERVICE_RATE_PCT / 100)).toFixed(0); // whole-₹ like UI
+  const taxBase = subtotal + service;
+  const tax = +(taxBase * (TAX_RATE_PCT / 100)).toFixed(0);
+  const total = subtotal + service + tax;
+
+  sumSubtotal.textContent = fmtINR(subtotal);
   sumService.textContent = fmtINR(service);
+  (document.getElementById("sumTax") || { textContent: null }).textContent =
+    fmtINR(tax);
   sumTotal.textContent = fmtINR(total);
 
   // Clear & checkout
@@ -280,6 +288,7 @@ function render() {
     // TODO: location.href = "checkout.html";
   };
 }
+
 // Cache of state data so we can find images for legacy items without img
 const stateCache = new Map();
 async function getStateData(stateName) {

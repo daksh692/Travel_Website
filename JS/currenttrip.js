@@ -264,13 +264,17 @@ function render() {
     card.className = "ct-item";
     card.draggable = true;
     card.innerHTML = `
-      <div class="ct-thumb">
-        ${
-          hasImg
-            ? `<img alt="${it.place}" loading="lazy" decoding="async" />`
-            : `<span>${initials}</span>`
-        }
-      </div>
+     <div class="ct-thumb">
+  <img alt="${
+    it.place
+  }" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="display:${
+      hasImg ? "block" : "none"
+    };" />
+  <span class="ct-initials" style="display:${
+    hasImg ? "none" : "grid"
+  };">${initials}</span>
+</div>
+
       <div class="ct-body">
         <h3>${it.place || "(Unknown place)"}</h3>
         <div class="ct-meta-row">
