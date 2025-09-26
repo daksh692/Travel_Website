@@ -44,19 +44,29 @@ const statesPool = mysql.createPool({
    Helpers
    ========================= */
 const normalizeBcryptHash = (hash) => hash?.replace(/^\$2y\$/, "$2b$"); // PHP -> Node compat
+
 const pickUser = (row) => ({
   ClientID: row.ClientID,
   FirstName: row.FirstName,
   LastName: row.LastName,
   Email: row.Email,
+  PhoneNumber: row.PhoneNumber ?? null,
+  Address: row.Address ?? null,
 });
 
-// state -> table (match your PHP convention)
 function tableFromState(stateName) {
   return String(stateName || "")
     .trim()
     .toLowerCase()
     .replaceAll(" ", "_");
+}
+
+function addDaysISO(isoLike, days = 0) {
+  const d = new Date(isoLike);
+  if (Number.isNaN(d.getTime())) return null;
+  const nd = new Date(d);
+  nd.setDate(nd.getDate() + Number(days || 0));
+  return nd.toISOString().slice(0, 10);
 }
 
 /* =========================
@@ -80,18 +90,16 @@ app.post("/api/register", async (req, res) => {
     ) {
       return res.status(400).json({ ok: false, error: "Invalid fields" });
     }
-
     const conn = await pool.getConnection();
     try {
       const [rows] = await conn.query(
         "SELECT ClientID FROM clients WHERE Email=?",
         [email]
       );
-      if (rows.length) {
+      if (rows.length)
         return res
           .status(409)
           .json({ ok: false, error: "Email already registered" });
-      }
 
       const hash = await bcrypt.hash(password, 10);
       await conn.query(
@@ -101,10 +109,10 @@ app.post("/api/register", async (req, res) => {
       );
 
       const [userRows] = await conn.query(
-        "SELECT ClientID, FirstName, LastName, Email FROM clients WHERE Email=?",
+        "SELECT ClientID, FirstName, LastName, Email, PhoneNumber, Address FROM clients WHERE Email=?",
         [email]
       );
-      return res.json({ ok: true, user: pickUser(userRows[0]) });
+      res.json({ ok: true, user: pickUser(userRows[0]) });
     } finally {
       conn.release();
     }
@@ -120,32 +128,30 @@ app.post("/api/register", async (req, res) => {
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body || {};
-    if (!email || !password) {
+    if (!email || !password)
       return res.status(400).json({ ok: false, error: "Invalid credentials" });
-    }
 
     const conn = await pool.getConnection();
     try {
       const [rows] = await conn.query(
-        "SELECT ClientID, FirstName, LastName, Email, Password AS pw FROM clients WHERE Email=?",
+        `SELECT ClientID, FirstName, LastName, Email, PhoneNumber, Address, Password AS pw
+         FROM clients WHERE Email=?`,
         [email]
       );
       const user = rows[0];
-      if (!user) {
+      if (!user)
         return res
           .status(401)
           .json({ ok: false, error: "Email or password incorrect" });
-      }
 
       const dbHash = normalizeBcryptHash(user.pw);
       const ok = await bcrypt.compare(password, dbHash);
-      if (!ok) {
+      if (!ok)
         return res
           .status(401)
           .json({ ok: false, error: "Email or password incorrect" });
-      }
 
-      return res.json({ ok: true, user: pickUser(user) });
+      res.json({ ok: true, user: pickUser(user) });
     } finally {
       conn.release();
     }
@@ -167,7 +173,7 @@ app.get("/api/users/:id/summary", async (req, res) => {
     try {
       const [items] = await conn.query(
         `SELECT placeName, stateName, price, daysNeeded, startdate
-           FROM cart_items WHERE ClientID=? ORDER BY startdate DESC LIMIT 10`,
+         FROM cart_items WHERE ClientID=? ORDER BY startdate DESC LIMIT 10`,
         [id]
       );
       const total = items.reduce((s, r) => s + Number(r.price || 0), 0);
@@ -178,6 +184,237 @@ app.get("/api/users/:id/summary", async (req, res) => {
   } catch (e) {
     console.error("SUMMARY error:", e);
     res.status(500).json({ ok: false, error: "Failed to load summary" });
+  }
+});
+
+/* =========================
+   Profile: Update details
+   ========================= */
+app.put("/api/users/:id", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ ok: false, error: "Bad id" });
+
+    const { first_name, last_name, phone, address } = req.body || {};
+    const conn = await pool.getConnection();
+    try {
+      await conn.query(
+        `UPDATE clients SET
+           FirstName   = COALESCE(?, FirstName),
+           LastName    = COALESCE(?, LastName),
+           PhoneNumber = COALESCE(?, PhoneNumber),
+           Address     = COALESCE(?, Address)
+         WHERE ClientID = ?`,
+        [
+          first_name ?? null,
+          last_name ?? null,
+          phone ?? null,
+          address ?? null,
+          id,
+        ]
+      );
+
+      const [rows] = await conn.query(
+        `SELECT ClientID, FirstName, LastName, Email, PhoneNumber, Address
+         FROM clients WHERE ClientID=?`,
+        [id]
+      );
+      if (!rows.length)
+        return res.status(404).json({ ok: false, error: "Not found" });
+      res.json({ ok: true, user: pickUser(rows[0]) });
+    } finally {
+      conn.release();
+    }
+  } catch (e) {
+    console.error("UPDATE USER error:", e);
+    res.status(500).json({ ok: false, error: "Failed to update profile" });
+  }
+});
+
+/* =========================
+   Profile: Change password
+   ========================= */
+app.post("/api/users/:id/password", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { current_password, new_password, confirm_password } = req.body || {};
+
+    if (!id) return res.status(400).json({ ok: false, error: "Bad id" });
+    if (!current_password || !new_password || !confirm_password) {
+      return res
+        .status(400)
+        .json({ ok: false, error: "All fields are required" });
+    }
+    if (new_password.length < 8) {
+      return res
+        .status(400)
+        .json({
+          ok: false,
+          error: "New password must be at least 8 characters",
+        });
+    }
+    if (new_password !== confirm_password) {
+      return res
+        .status(400)
+        .json({
+          ok: false,
+          error: "New password and confirm password must match",
+        });
+    }
+    if (new_password === current_password) {
+      return res
+        .status(400)
+        .json({
+          ok: false,
+          error: "New password must be different from current password",
+        });
+    }
+
+    const conn = await pool.getConnection();
+    try {
+      const [rows] = await conn.query(
+        "SELECT Password FROM clients WHERE ClientID=?",
+        [id]
+      );
+      if (!rows.length)
+        return res.status(404).json({ ok: false, error: "User not found" });
+
+      const stored = normalizeBcryptHash(rows[0].Password);
+      const ok = await bcrypt.compare(current_password, stored);
+      if (!ok) {
+        return res
+          .status(401)
+          .json({ ok: false, error: "Current password is incorrect" });
+      }
+
+      const hash = await bcrypt.hash(new_password, 10);
+      await conn.query("UPDATE clients SET Password=? WHERE ClientID=?", [
+        hash,
+        id,
+      ]);
+      res.json({ ok: true, message: "Password updated" });
+    } finally {
+      conn.release();
+    }
+  } catch (e) {
+    console.error("CHANGE PASSWORD error:", e);
+    res.status(500).json({ ok: false, error: "Failed to change password" });
+  }
+});
+
+/* =========================
+   Trips (done / upcoming)
+   ========================= */
+app.get("/api/users/:id/trips", async (req, res) => {
+  const id = Number(req.params.id);
+  if (!id) return res.status(400).json({ ok: false, error: "Bad id" });
+
+  const conn = await pool.getConnection();
+  try {
+    const [rows] = await conn.query(
+      `SELECT placeName, stateName, price, daysNeeded, startdate
+       FROM cart_items
+       WHERE ClientID=?
+       ORDER BY startdate DESC`,
+      [id]
+    );
+
+    const today = new Date().toISOString().slice(0, 10);
+    const done = [];
+    const upcoming = [];
+    for (const r of rows) {
+      const enddate = addDaysISO(r.startdate, r.daysNeeded);
+      const item = { ...r, enddate };
+      (enddate && enddate < today ? done : upcoming).push(item);
+    }
+    res.json({ ok: true, done, upcoming });
+  } catch (e) {
+    console.error("TRIPS error:", e);
+    res.status(500).json({ ok: false, error: "Failed to load trips" });
+  } finally {
+    conn?.release?.();
+  }
+});
+
+/* =========================
+   Points (computed)
+   ========================= */
+app.get("/api/users/:id/points", async (req, res) => {
+  const id = Number(req.params.id);
+  if (!id) return res.status(400).json({ ok: false, error: "Bad id" });
+
+  const conn = await pool.getConnection();
+  try {
+    const [rows] = await conn.query(
+      `SELECT price, daysNeeded, startdate FROM cart_items WHERE ClientID=?`,
+      [id]
+    );
+    const today = new Date().toISOString().slice(0, 10);
+    const spent = rows
+      .filter((r) => (addDaysISO(r.startdate, r.daysNeeded) || "") < today)
+      .reduce((s, r) => s + Number(r.price || 0), 0);
+
+    res.json({
+      ok: true,
+      points: Math.floor(spent / 100),
+      rule: "1 point for every ₹100 spent on completed trips",
+    });
+  } catch (e) {
+    console.error("POINTS error:", e);
+    res.status(500).json({ ok: false, error: "Failed to load points" });
+  } finally {
+    conn?.release?.();
+  }
+});
+
+/* =========================
+   Purchases
+   ========================= */
+app.get("/api/users/:id/purchases", async (req, res) => {
+  const id = Number(req.params.id);
+  if (!id) return res.status(400).json({ ok: false, error: "Bad id" });
+
+  const conn = await pool.getConnection();
+  try {
+    // Prefer a dedicated purchases table if present
+    let rows;
+    try {
+      const q = await conn.query(
+        `SELECT item, amount, purchased_at
+         FROM purchases
+         WHERE ClientID=?
+         ORDER BY purchased_at DESC`,
+        [id]
+      );
+      rows = q[0];
+      const items = rows.map((r) => ({
+        item: r.item,
+        amount: Number(r.amount || 0),
+        startdate: r.purchased_at,
+      }));
+      return res.json({ ok: true, items });
+    } catch (err) {
+      if (err?.code !== "ER_NO_SUCH_TABLE") throw err;
+      // fall through to cart_items fallback
+    }
+
+    // Fallback: derive from cart_items
+    const [fallback] = await conn.query(
+      `SELECT placeName AS item, price AS amount, startdate
+       FROM cart_items
+       WHERE ClientID=?
+       ORDER BY startdate DESC`,
+      [id]
+    );
+    res.json({
+      ok: true,
+      items: fallback.map((r) => ({ ...r, amount: Number(r.amount || 0) })),
+    });
+  } catch (e) {
+    console.error("PURCHASES error:", e);
+    res.status(500).json({ ok: false, error: "Failed to load purchases" });
+  } finally {
+    conn?.release?.();
   }
 });
 

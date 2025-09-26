@@ -1,4 +1,5 @@
-/* ===== Account page tone ===== */
+/* CSS/account.css – refreshed, interactive account UI */
+
 :root {
   --card: #0d1526;
   --line: #1b2440;
@@ -30,6 +31,16 @@
   border-radius: 16px;
   padding: 16px;
   box-shadow: var(--glow);
+}
+.h2,
+h2 {
+  margin: 0 0 10px;
+}
+.h3 {
+  font-weight: 700;
+}
+.small {
+  font-size: 12px;
 }
 
 .row {
@@ -74,7 +85,6 @@
   border-color: #2a3a66;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
-
 .badge {
   background: #1b2a4a;
   padding: 2px 8px;
@@ -84,4 +94,183 @@
 }
 .muted {
   opacity: 0.85;
+}
+.hide {
+  display: none !important;
+}
+
+.btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.btn,
+.btn-outline,
+.btn-ghost {
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: #1a2a4a;
+  color: #e9f2ff;
+}
+.btn:hover {
+  filter: brightness(1.1);
+}
+.btn-outline {
+  background: transparent;
+  border-color: #27406d;
+}
+.btn-ghost {
+  background: transparent;
+  color: #a5b4fc;
+}
+.btn-ghost.danger {
+  color: #ff7b7b;
+}
+
+.form {
+  display: grid;
+  gap: 10px;
+}
+.field {
+  display: grid;
+  gap: 6px;
+}
+.field label {
+  font-size: 13px;
+  opacity: 0.9;
+}
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #223056;
+  background: #0f182b;
+  color: #eaf0ff;
+  outline: none;
+}
+.field input:focus,
+.field textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.tab {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #20305a;
+  background: #10203a;
+  cursor: pointer;
+}
+.tab[aria-selected="true"] {
+  background: #1b2c52;
+  border-color: #3b82f6;
+}
+
+.callout {
+  padding: 12px;
+  border: 1px dashed #2a3b65;
+  border-radius: 12px;
+  background: #0d1830;
+}
+.link {
+  color: #a5b4fc;
+  text-decoration: none;
+}
+.link:hover {
+  text-decoration: underline;
+}
+/* ---- inline field messages & invalid state ---- */
+.field-msg {
+  font-size: 12px;
+  margin-top: 4px;
+}
+.field-msg[data-type="error"] {
+  color: #fca5a5;
+}
+.field input[data-invalid="true"] {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
+}
+/* ---- inline field messages & invalid state (already added earlier) ---- */
+.field-msg {
+  font-size: 12px;
+  margin-top: 4px;
+}
+.field-msg[data-type="error"] {
+  color: #fca5a5;
+}
+.field input[data-invalid="true"] {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
+}
+
+/* ---- anchored popover next to the submit button ---- */
+.popover-anchor {
+  position: relative;
+}
+
+.popover {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 10px);
+  transform: translateY(-50%);
+  min-width: 220px;
+  max-width: 280px;
+  background: #0f182b;
+  border: 1px solid #223056;
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: var(--glow);
+  z-index: 20;
+  animation: pop 0.14s ease-out;
+}
+.popover[data-type="error"] {
+  border-color: #ef4444;
+}
+.popover[data-type="success"] {
+  border-color: #22c55e;
+}
+
+.popover-arrow {
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background: #0f182b;
+  border-left: 1px solid #223056;
+  border-top: 1px solid #223056;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .popover {
+    left: 0;
+    right: 0;
+    transform: none;
+    top: calc(100% + 8px);
+  }
+  .popover-arrow {
+    display: none;
+  }
 }

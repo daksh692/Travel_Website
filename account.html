@@ -8,60 +8,187 @@
     <link rel="stylesheet" href="./CSS/account.css" />
   </head>
   <body>
-    <header class="lp-header">
-      <a class="brand" href="./main.html">Travel</a>
-      <div class="lp-grow"></div>
-      <button id="settingsBtn" class="icon-btn" aria-expanded="false">
-        ⚙️
-      </button>
-      <div id="settingsMenu" class="menu" aria-hidden="true">
-        <a href="./currenttrip.html">Current trip</a>
-        <a href="./cart.html">Cart</a>
-        <a href="./transportation.html">Transportation</a>
-        <a href="./redeem.html">Redeem</a>
-        <a href="./deals.html">Deals</a>
-        <a class="active" href="./account.html">Account</a>
+    <header class="site-header">
+      <div class="header-left">
+        <a class="logo-button" href="main.html" aria-label="Home">
+          <img src="./assets/logo.png" alt="" />
+        </a>
       </div>
-      <button id="avatarBtn" class="avatar-btn" aria-expanded="false">
-        <span id="avatarInitial">U</span>
-      </button>
-      <div id="userMenu" class="menu" aria-hidden="true">
-        <a href="./account.html">Account</a>
-        <button id="logoutBtn" class="link danger">Log out</button>
+      <nav class="header-center">
+        <ul class="nav">
+          <li><a href="places/INDmap.html">Explore</a></li>
+          <li><a href="transportation.html">Transportation</a></li>
+          <li><a href="deals.html">Deals</a></li>
+          <li><a href="about.html">About Us</a></li>
+        </ul>
+      </nav>
+      <div class="header-right">
+        <button
+          id="settingsBtn"
+          class="icon-btn guest-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+        >
+          ⚙️
+        </button>
+        <button
+          id="avatarBtn"
+          class="avatar-btn auth-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="userMenu"
+        >
+          <span id="avatarInitial">U</span>
+        </button>
+        <div
+          id="settingsMenu"
+          class="menu guest-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="auth.html?tab=login">Login</a>
+          <a class="menu-item" href="auth.html?tab=register">Register</a>
+        </div>
+        <div
+          id="userMenu"
+          class="menu auth-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="account.html" role="menuitem">Account</a>
+          <a class="menu-item" href="currenttrip.html" role="menuitem"
+            >Your Current Trip</a
+          >
+
+          <a class="menu-item" href="points.html" role="menuitem"
+            >Points Redeem</a
+          >
+          <a class="menu-item" href="cart.html" role="menuitem">Cart</a>
+          <button class="menu-item danger" id="logoutBtn" role="menuitem">
+            Logout
+          </button>
+        </div>
       </div>
     </header>
 
     <main class="shell">
-      <div class="grid">
+      <!-- Signed-out blurb -->
+      <section id="signedOut" class="card hide">
+        <h2>You're not signed in</h2>
+        <p class="muted">
+          Sign in to view and manage your profile, trips, points, and purchase
+          history.
+        </p>
+        <div class="btns">
+          <a class="btn" href="./auth.html">Sign in / Register</a>
+        </div>
+      </section>
+
+      <!-- Identity + Security -->
+      <div id="signedIn" class="grid">
         <section class="card">
           <h2>Your profile</h2>
-          <div class="row">
-            <div class="avatar" id="accAvatar">U</div>
-            <div>
-              <div id="accName" class="h3">Guest</div>
-              <div id="accEmail" class="muted">—</div>
+
+          <!-- View mode -->
+          <div id="profileView">
+            <div class="row">
+              <div class="avatar" id="accAvatar">U</div>
+              <div>
+                <div id="accName" class="h3">Guest</div>
+                <div id="accEmail" class="muted">—</div>
+              </div>
+            </div>
+            <div class="kv">
+              <div>Phone</div>
+              <div id="accPhone">—</div>
+            </div>
+            <div class="kv">
+              <div>Address</div>
+              <div id="accAddr">—</div>
+            </div>
+            <div class="btns">
+              <button class="btn-outline" id="editToggle">Edit details</button>
             </div>
           </div>
-          <div class="kv">
-            <div>Phone</div>
-            <div id="accPhone">—</div>
-          </div>
-          <div class="kv">
-            <div>Address</div>
-            <div id="accAddr">—</div>
-          </div>
-          <div class="btns">
-            <a class="btn-outline" href="./auth.html">Edit details</a>
+
+          <!-- Edit mode -->
+          <div id="profileForm" class="form hide" aria-hidden="true">
+            <div class="field">
+              <label for="firstName">First name</label><input id="firstName" />
+            </div>
+            <div class="field">
+              <label for="lastName">Last name</label><input id="lastName" />
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label><input id="phone" />
+            </div>
+            <div class="field">
+              <label for="address">Address</label
+              ><textarea id="address" rows="2"></textarea>
+            </div>
+            <div class="btns">
+              <button class="btn" id="saveProfile">Save</button>
+              <button
+                class="btn-ghost"
+                type="button"
+                id="editToggleCancel"
+                onclick="document.getElementById('editToggle').click()"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </section>
 
         <section class="card">
           <h2>Security</h2>
-          <p class="muted">Manage your sign-in and password.</p>
-          <a class="btn" href="./auth.html#reset">Change password</a>
+          <p class="muted">Change your password.</p>
+          <form id="pwForm" class="form">
+            <div class="field">
+              <label for="currentPassword">Current password (optional)</label>
+              <input
+                id="currentPassword"
+                type="password"
+                autocomplete="current-password"
+              />
+            </div>
+            <div class="field">
+              <label for="newPassword">New password</label>
+              <input
+                id="newPassword"
+                type="password"
+                autocomplete="new-password"
+              />
+            </div>
+            <div class="field">
+              <label for="confirmPassword">Confirm new password</label>
+              <input
+                id="confirmPassword"
+                type="password"
+                autocomplete="new-password"
+              />
+            </div>
+            <div class="btns popover-anchor">
+              <button class="btn" id="pwSubmit" type="submit">
+                Update password
+              </button>
+              <div
+                id="pwPopover"
+                class="popover"
+                role="status"
+                aria-live="polite"
+                hidden
+              >
+                <div class="popover-arrow"></div>
+                <div class="popover-body"></div>
+              </div>
+            </div>
+          </form>
         </section>
       </div>
 
+      <!-- Mini summary (recent items) -->
       <section class="card">
         <h2>Trip summary</h2>
         <div id="accSummary" class="list">
@@ -69,6 +196,63 @@
         </div>
       </section>
 
+      <!-- Trips block with simple tabs -->
+      <section class="card">
+        <h2>Your trips</h2>
+        <div class="tabs" role="tablist">
+          <button
+            class="tab"
+            role="tab"
+            aria-selected="true"
+            onclick="document.getElementById('tabUpcoming').classList.remove('hide');document.getElementById('tabDone').classList.add('hide');this.setAttribute('aria-selected','true');this.nextElementSibling.setAttribute('aria-selected','false')"
+          >
+            Upcoming
+          </button>
+          <button
+            class="tab"
+            role="tab"
+            aria-selected="false"
+            onclick="document.getElementById('tabUpcoming').classList.add('hide');document.getElementById('tabDone').classList.remove('hide');this.setAttribute('aria-selected','true');this.previousElementSibling.setAttribute('aria-selected','false')"
+          >
+            Completed
+          </button>
+        </div>
+        <div id="tabUpcoming">
+          <div id="accTripsUpcoming" class="list">
+            <div class="muted">Loading…</div>
+          </div>
+        </div>
+        <div id="tabDone" class="hide">
+          <div id="accTripsDone" class="list">
+            <div class="muted">Loading…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Points -->
+      <section class="card">
+        <h2>Points</h2>
+        <div class="kv">
+          <div>Available</div>
+          <div class="h3" id="accPoints">—</div>
+        </div>
+        <div class="callout">
+          <span id="accPointsRule" class="muted small"></span>
+        </div>
+        <div class="btns">
+          <a class="btn" href="./points.html">Use points</a>
+        </div>
+      </section>
+
+      <!-- Purchases -->
+      <section class="card">
+        <h2>Purchase history</h2>
+        <div id="accPurchases" class="list">
+          <div class="muted">Loading…</div>
+        </div>
+      </section>
+
+      <!-- Device cart -->
       <section class="card">
         <h2>Saved cart (device)</h2>
         <div id="accCartLocal" class="list"></div>
@@ -84,48 +268,6 @@
     <div id="toasts"></div>
 
     <script src="./JS/main.js"></script>
-    <script>
-      // header fallback
-      (function () {
-        const s = document.getElementById("settingsBtn"),
-          m = document.getElementById("settingsMenu");
-        const a = document.getElementById("avatarBtn"),
-          u = document.getElementById("userMenu");
-        function close() {
-          [m, u].forEach((x) => x?.classList.remove("open"));
-          [s, a].forEach((b) => b?.setAttribute("aria-expanded", "false"));
-        }
-        function tog(btn, menu) {
-          const o = menu?.classList.contains("open");
-          close();
-          if (!o) {
-            menu?.classList.add("open");
-            btn?.setAttribute("aria-expanded", "true");
-          }
-        }
-        s?.addEventListener("click", (e) => {
-          e.stopPropagation();
-          tog(s, m);
-        });
-        a?.addEventListener("click", (e) => {
-          e.stopPropagation();
-          tog(a, u);
-        });
-        document.addEventListener("click", (e) => {
-          if (
-            !m?.contains(e.target) &&
-            !s?.contains(e.target) &&
-            !u?.contains(e.target) &&
-            !a?.contains(e.target)
-          )
-            close();
-        });
-        document.getElementById("logoutBtn")?.addEventListener("click", () => {
-          localStorage.removeItem("sessionClient");
-          location.reload();
-        });
-      })();
-    </script>
     <script src="./JS/account.js"></script>
   </body>
 </html>
