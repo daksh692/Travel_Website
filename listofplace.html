@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Places · Travel</title>
+    <link rel="stylesheet" href="./CSS/main.css" />
+    <link rel="stylesheet" href="./CSS/listofplace.css" />
+  </head>
+  <body class="lp-page" data-auth="false">
+    <div class="lp-aurora" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="header-left">
+        <a class="logo-button" href="main.html" aria-label="Home">
+          <img src="./assets/logo.png" alt="" />
+        </a>
+      </div>
+      <nav class="header-center">
+        <ul class="nav">
+          <li><a href="places/INDmap.html">Explore</a></li>
+          <li><a href="transportation.html">Transportation</a></li>
+          <li><a href="deals.html">Deals</a></li>
+          <li><a href="about.html">About Us</a></li>
+        </ul>
+      </nav>
+      <div class="header-right">
+        <button
+          id="settingsBtn"
+          class="icon-btn guest-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+        >
+          ⚙️
+        </button>
+        <button
+          id="avatarBtn"
+          class="avatar-btn auth-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="userMenu"
+        >
+          <span id="avatarInitial">U</span>
+        </button>
+        <div
+          id="settingsMenu"
+          class="menu guest-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="auth.html?tab=login">Login</a>
+          <a class="menu-item" href="auth.html?tab=register">Register</a>
+        </div>
+        <div
+          id="userMenu"
+          class="menu auth-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="account.html" role="menuitem">Account</a>
+          <a class="menu-item" href="currenttrip.html" role="menuitem"
+            >Your Current Trip</a
+          >
+
+          <a class="menu-item" href="points.html" role="menuitem"
+            >Points Redeem</a
+          >
+          <a class="menu-item" href="cart.html" role="menuitem">Cart</a>
+          <button class="menu-item danger" id="logoutBtn" role="menuitem">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="lp-shell">
+      <section class="lp-head">
+        <h1 id="lpTitle">Places in …</h1>
+        <div class="lp-controls">
+          <input id="lpSearch" type="search" placeholder="Search places…" />
+          <select id="lpSort">
+            <option value="alpha">Alphabetical</option>
+            <option value="days">Shortest trip first</option>
+            <option value="price">Lowest price first</option>
+          </select>
+        </div>
+      </section>
+
+      <section id="lpGrid" class="lp-grid" aria-live="polite"></section>
+
+      <!-- Card template -->
+      <template id="cardTmpl">
+        <article class="lp-card">
+          <div class="lp-media"><img alt="" /></div>
+          <div class="lp-body">
+            <h2 class="lp-place"></h2>
+            <p class="lp-desc"></p>
+            <details class="lp-more">
+              <summary>Things to do</summary>
+              <p class="lp-things"></p>
+            </details>
+          </div>
+
+          <!-- CTA: prices on the left, actions on the right (Duration on top, Add below) -->
+          <div class="lp-cta">
+            <div
+              class="lp-prices"
+              role="group"
+              aria-label="Select a package"
+            ></div>
+            <div class="lp-actions">
+              <span class="lp-daysbadge"></span>
+              <button class="btn-add">Add to cart</button>
+            </div>
+          </div>
+        </article>
+      </template>
+    </main>
+
+    <!-- Package chooser dialog (when user clicks Add with nothing selected) -->
+    <dialog id="priceDialog" class="lp-dialog">
+      <h3>Choose a package</h3>
+      <p id="priceDialogPlace"></p>
+      <div id="priceDialogOptions" class="lp-dialog-options"></div>
+      <form method="dialog" class="lp-dialog-actions">
+        <button value="cancel" class="btn-outline">Cancel</button>
+      </form>
+    </dialog>
+
+    <script src="./JS/main.js"></script>
+    <script src="./JS/listofplace.js"></script>
+    <div
+      id="toasts"
+      class="lp-toasts"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+  </body>
+</html>

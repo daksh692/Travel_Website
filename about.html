@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>About Us — Travel</title>
+
+    <link rel="stylesheet" href="./CSS/about.css" />
+    <link rel="stylesheet" href="./CSS/main.css" />
+    <meta
+      name="description"
+      content="Learn about Travel — our mission, features, roadmap, privacy and accessibility. Explore Maps, Transportation, Deals, Rewards and a clean Account experience."
+    />
+  </head>
+
+  <body class="about-page">
+    <!-- Header (shared) -->
+    <header class="site-header">
+      <div class="header-left">
+        <a class="logo-button" href="main.html" aria-label="Home">
+          <img src="./assets/logo.png" alt="" />
+        </a>
+      </div>
+      <nav class="header-center">
+        <ul class="nav">
+          <li><a href="places/INDmap.html">Explore</a></li>
+          <li><a href="transportation.html">Transportation</a></li>
+          <li><a href="deals.html">Deals</a></li>
+          <li><a href="about.html">About Us</a></li>
+        </ul>
+      </nav>
+      <div class="header-right">
+        <button
+          id="settingsBtn"
+          class="icon-btn guest-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+        >
+          ⚙️
+        </button>
+        <button
+          id="avatarBtn"
+          class="avatar-btn auth-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="userMenu"
+        >
+          <span id="avatarInitial">U</span>
+        </button>
+        <div
+          id="settingsMenu"
+          class="menu guest-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="auth.html?tab=login">Login</a>
+          <a class="menu-item" href="auth.html?tab=register">Register</a>
+        </div>
+        <div
+          id="userMenu"
+          class="menu auth-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="account.html" role="menuitem">Account</a>
+          <a class="menu-item" href="currenttrip.html" role="menuitem"
+            >Your Current Trip</a
+          >
+          <a class="menu-item" href="points.html" role="menuitem"
+            >Points Redeem</a
+          >
+          <a class="menu-item" href="cart.html" role="menuitem">Cart</a>
+          <button class="menu-item danger" id="logoutBtn" role="menuitem">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="top" class="page">
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-bg" aria-hidden="true">
+          <span class="blob b1"></span>
+          <span class="blob b2"></span>
+          <span class="blob b3"></span>
+        </div>
+
+        <div class="hero-content">
+          <h1>Travel — plan smarter, explore better</h1>
+          <p>
+            Travel is a modern trip platform designed for clarity and speed:
+            interactive maps for discovery, clean Transportation bookings,
+            stable personalized Deals, rewarding Loyalty, and a thoughtful
+            Account experience with clear feedback.
+          </p>
+          <div class="hero-cta">
+            <a class="btn primary" href="places/INDmap.html">Start Exploring</a>
+            <button class="btn ghost" data-scroll-to="#story">
+              How we built it
+            </button>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat">
+              <div class="num" data-count-to="36">0</div>
+              <div class="label">States & Territories</div>
+            </div>
+            <div class="stat">
+              <div class="num" data-count-to="1260">0</div>
+              <div class="label">Trips Planned</div>
+            </div>
+            <div class="stat">
+              <div class="num" data-count-to="99.9">0</div>
+              <div class="label">Uptime (%)</div>
+            </div>
+            <div class="stat">
+              <div class="num" data-count-to="4">0</div>
+              <div class="label">Core Modules</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Values marquee -->
+      <section class="values" aria-label="Our values">
+        <div class="marquee">
+          <span>Speed</span><span>Clarity</span><span>Playfulness</span>
+          <span>Trust</span><span>Craft</span><span>Accessibility</span>
+          <span>Reliability</span><span>Privacy</span>
+        </div>
+      </section>
+
+      <!-- Story / Product evolution -->
+      <section id="story" class="story section">
+        <div class="section-head">
+          <h2>Our story</h2>
+          <p>
+            Travel started as a simple idea: build tools that feel fast, make
+            sense, and look great. We iterated openly, improving layout, states,
+            and feedback at every step.
+          </p>
+        </div>
+
+        <ol class="timeline">
+          <li class="tl-item reveal">
+            <div class="dot"></div>
+            <div class="card">
+              <h3>Consistent UI foundation</h3>
+              <p>
+                Unified header/nav and base styles ensure every page feels
+                familiar and responsive, with clear spacing and readable
+                typography.
+              </p>
+            </div>
+          </li>
+
+          <li class="tl-item reveal">
+            <div class="dot"></div>
+            <div class="card">
+              <h3>Explore with interactive maps</h3>
+              <p>
+                A dynamic India SVG map leads to state pages. Hover and tap
+                cues, smooth transitions, and accessible labels make discovery
+                intuitive.
+              </p>
+            </div>
+          </li>
+
+          <li class="tl-item reveal">
+            <div class="dot"></div>
+            <div class="card">
+              <h3>Transportation that flows</h3>
+              <p>
+                Two tabs: <strong>Booking</strong> and
+                <strong>Already Booked</strong> (self-added trips). A 2-column
+                card grid avoids overlap; buttons and totals stay visible and
+                legible on any screen.
+              </p>
+            </div>
+          </li>
+
+          <li class="tl-item reveal">
+            <div class="dot"></div>
+            <div class="card">
+              <h3>Deals that stay put</h3>
+              <p>
+                Bundled places with transparent pricing and a random
+                <strong>5–15%</strong> discount. Each surfaced deal remains
+                stable for <strong>72 hours</strong> and biases
+                <em>1–2 deals toward your most-visited state</em>.
+              </p>
+            </div>
+          </li>
+
+          <li class="tl-item reveal">
+            <div class="dot"></div>
+            <div class="card">
+              <h3>Loyalty & Account clarity</h3>
+              <p>
+                Loyalty points with a clean <em>Redeem</em> flow. Account pages
+                have accessible validation, specific error messages, and a
+                friendly password-change popover for instant feedback.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <!-- What Travel includes -->
+      <section class="features section">
+        <div class="section-head">
+          <h2>Everything you need</h2>
+          <p>Four pillars power the experience.</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature reveal">
+            <div class="icon i-explore" aria-hidden="true"></div>
+            <h3>Explore</h3>
+            <ul class="bullets">
+              <li>Interactive India map with state pages</li>
+              <li>Hover/tap cues and smooth transitions</li>
+              <li>Accessible labels and keyboard hints</li>
+            </ul>
+            <a class="chip" href="places/INDmap.html">Open Map</a>
+          </article>
+
+          <article class="feature reveal">
+            <div class="icon i-transport" aria-hidden="true"></div>
+            <h3>Transportation</h3>
+            <ul class="bullets">
+              <li>Booking & “Already Booked” tabs</li>
+              <li>2-per-row card grid (no overlaps)</li>
+              <li>Responsive totals and clear actions</li>
+            </ul>
+            <a class="chip" href="transportation.html">Plan a Trip</a>
+          </article>
+
+          <article class="feature reveal">
+            <div class="icon i-deals" aria-hidden="true"></div>
+            <h3>Deals</h3>
+            <ul class="bullets">
+              <li>Bundles with Basic/Plus/Premium labels</li>
+              <li>5–15% discount, fixed for 72 hours</li>
+              <li>Bias toward your most-visited state</li>
+            </ul>
+            <a class="chip" href="deals.html">See Deals</a>
+          </article>
+
+          <article class="feature reveal">
+            <div class="icon i-rewards" aria-hidden="true"></div>
+            <h3>Rewards</h3>
+            <ul class="bullets">
+              <li>Earn on bookings, redeem with preview</li>
+              <li>Clear breakdown before confirmation</li>
+              <li>Accessible messages and status</li>
+            </ul>
+            <a class="chip" href="redeem.html">Redeem Points</a>
+          </article>
+        </div>
+      </section>
+
+      <!-- Testimonials -->
+      <section class="testimonials section">
+        <div class="section-head">
+          <h2>What travelers say</h2>
+          <p>Small delights add up to big wins.</p>
+        </div>
+
+        <div class="carousel" data-carousel>
+          <button class="car-btn prev" aria-label="Previous" data-prev>
+            ‹
+          </button>
+          <div class="track">
+            <figure class="slide active">
+              <blockquote>
+                “The Explore map is smooth and actually useful.”
+              </blockquote>
+              <figcaption>— Explorer</figcaption>
+            </figure>
+            <figure class="slide">
+              <blockquote>
+                “Deals don’t jump around anymore. Love the 3-day stability.”
+              </blockquote>
+              <figcaption>— Saver</figcaption>
+            </figure>
+            <figure class="slide">
+              <blockquote>
+                “Transportation cards are clean. Buttons do exactly what I
+                expect.”
+              </blockquote>
+              <figcaption>— Frequent Flier</figcaption>
+            </figure>
+          </div>
+          <button class="car-btn next" aria-label="Next" data-next>›</button>
+          <div class="dots" data-dots></div>
+        </div>
+      </section>
+
+      <!-- Privacy & Accessibility -->
+      <section class="policies section">
+        <div class="section-head">
+          <h2>Privacy & Accessibility</h2>
+          <p>We design for trust and inclusion.</p>
+        </div>
+        <div class="policy-grid">
+          <article class="card reveal">
+            <h3>Data & Privacy</h3>
+            <ul class="bullets">
+              <li>No dark patterns — clear consent and opt-outs</li>
+              <li>Minimal local storage (e.g., draft bookings)</li>
+              <li>Readable policies and simple language</li>
+            </ul>
+          </article>
+          <article class="card reveal">
+            <h3>Performance</h3>
+            <ul class="bullets">
+              <li>Lightweight animations, fast interactions</li>
+              <li>Optimized card grids (no overflow)</li>
+              <li>Semantic HTML for better SEO</li>
+            </ul>
+          </article>
+          <article class="card reveal">
+            <h3>Accessibility</h3>
+            <ul class="bullets">
+              <li>Color-contrast safe and keyboardable</li>
+              <li>ARIA labels on key controls</li>
+              <li>Polite live regions for status</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- Roadmap -->
+      <section class="roadmap section">
+        <div class="section-head">
+          <h2>Roadmap</h2>
+          <p>Shipped and next up.</p>
+        </div>
+        <div class="accordion">
+          <details class="acc reveal" open>
+            <summary><span>Now</span><em>Polish & Performance</em></summary>
+            <ul>
+              <li>Refined card sizing to prevent overflow</li>
+              <li>Specific validation errors & password popovers</li>
+              <li>Faster page loads and lighter motion</li>
+            </ul>
+          </details>
+
+          <details class="acc reveal">
+            <summary><span>Next</span><em>Personalized Recs</em></summary>
+            <ul>
+              <li>State-aware suggestions on Explore</li>
+              <li>Deal logic tuned by recent activity</li>
+              <li>Trip templates for frequent routes</li>
+            </ul>
+          </details>
+
+          <details class="acc reveal">
+            <summary><span>Later</span><em>Social & Sharing</em></summary>
+            <ul>
+              <li>Shareable itineraries</li>
+              <li>Friend groups & collaborative planning</li>
+              <li>Calendar export</li>
+            </ul>
+          </details>
+        </div>
+      </section>
+
+      <!-- Tech stack -->
+      <section class="stack section">
+        <div class="section-head">
+          <h2>Under the hood</h2>
+          <p>Simple, reliable technologies — thoughtfully put together.</p>
+        </div>
+        <ul class="badges">
+          <li>HTML</li>
+          <li>CSS</li>
+          <li>JavaScript</li>
+          <li>Node/Express</li>
+          <li>MySQL</li>
+          <li>SVG Maps</li>
+          <li>ARIA & A11y</li>
+          <li>Animations</li>
+        </ul>
+      </section>
+
+      <!-- Contact -->
+      <section class="contact section">
+        <div class="section-head">
+          <h2>Say hello</h2>
+          <p>Ideas or feedback? We’d love to hear it.</p>
+        </div>
+        <div class="contact-actions">
+          <a class="btn primary" href="mailto:hello@example.com">Email Us</a>
+          <button class="btn" data-copy="hello@example.com">Copy Email</button>
+          <a
+            class="btn ghost"
+            href="https://github.com/daksh692"
+            target="_blank"
+            rel="noopener"
+            >GitHub</a
+          >
+        </div>
+        <p
+          class="tiny note"
+          role="status"
+          aria-live="polite"
+          id="copyStatus"
+        ></p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> Travel — Built with care.</p>
+      <a href="#top" class="to-top" aria-label="Back to top">↑</a>
+    </footer>
+
+    <div id="toasts" aria-live="polite" aria-atomic="true"></div>
+    <script src="./JS/about.js" defer></script>
+
+    <script src="./JS/main.js"></script>
+  </body>
+</html>

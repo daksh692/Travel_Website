@@ -1,0 +1,322 @@
+/* ===== Palette & base ===== */
+:root {
+  --surface: #070b14;
+  --card: rgba(14, 20, 37, 0.72);
+  --line: #1a2340;
+  --txt: #eaf0ff;
+  --muted: #b9c2e0;
+  --accent: #22d3ee;
+  --accent-warm: #f59e0b;
+  --ring: 0 0 0 2px rgba(34, 211, 238, 0.35);
+  --glow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 10px 28px rgba(34, 211, 238, 0.08);
+}
+
+body {
+  color: var(--txt);
+  background: var(--surface);
+}
+
+/* ===== Layout ===== */
+.shell {
+  max-width: 1180px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 18px;
+}
+@media (max-width: 980px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .sticky {
+    position: static;
+    top: auto;
+  }
+}
+
+.col-left {
+  display: grid;
+  gap: 18px;
+}
+.col-right {
+  min-width: 0;
+}
+
+/* ===== Cards ===== */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 18px 18px 16px;
+  box-shadow: var(--glow);
+  backdrop-filter: blur(8px);
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.badge {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fff;
+}
+.badge--glow {
+  background: rgba(34, 211, 238, 0.12);
+  border-color: rgba(34, 211, 238, 0.45);
+}
+
+.sticky {
+  position: sticky;
+  top: 96px;
+}
+
+/* ===== Form bits ===== */
+.row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+input.code,
+.points-input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--txt);
+  width: 100%;
+}
+input.code:focus,
+.points-input:focus {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* quick chips */
+.chips {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.chip {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--txt);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s;
+}
+.chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.chip:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+/* ===== Points area ===== */
+.points-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 240px 1fr;
+  margin-top: 8px;
+}
+@media (max-width: 720px) {
+  .points-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.points-balance {
+  background: linear-gradient(
+    180deg,
+    rgba(34, 211, 238, 0.18),
+    rgba(34, 211, 238, 0.04)
+  );
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  border-radius: 14px;
+  padding: 14px;
+}
+.points-balance .label {
+  color: var(--muted);
+  font-size: 13px;
+}
+.points-balance .value {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+}
+
+.points-apply .label {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* slider */
+#pointsRange {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  outline: none;
+}
+#pointsRange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.25);
+  cursor: pointer;
+}
+#pointsRange::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.25);
+  cursor: pointer;
+}
+
+.range-row {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.points-input {
+  width: 120px;
+}
+
+.inline-note {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ===== Totals ===== */
+.sum {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.total {
+  font-size: 18px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.14);
+  padding-top: 10px;
+  margin-top: 2px;
+}
+
+/* ===== Buttons (compatible with your main.css) ===== */
+.btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.btn,
+.btn-outline,
+.btn-primary,
+.btn-ghost {
+  border-radius: 12px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.btn,
+.btn-primary {
+  background: linear-gradient(180deg, #22d3ee, #16a3b9);
+  color: #031117;
+  border-color: rgba(34, 211, 238, 0.25);
+}
+.btn:hover,
+.btn-primary:hover {
+  filter: brightness(1.05);
+}
+.btn-ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: var(--txt);
+}
+.btn-outline {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--txt);
+}
+/* --- Fix: stop anything from spilling outside the card --- */
+.card {
+  overflow: hidden; /* clip inner elements to the rounded card */
+}
+
+/* --- Fix: keep grid/flex children from forcing overflow --- */
+.points-grid,
+.points-apply,
+.range-row {
+  min-width: 0; /* allow content to shrink within the card */
+}
+
+/* --- Slider should never be wider than its column --- */
+#pointsRange {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box; /* include padding/borders if any */
+  margin-right: 0;
+}
+
+/* --- Inputs & buttons wrap nicely instead of pushing out --- */
+.range-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap; /* wrap on small widths */
+}
+.points-input {
+  flex: 0 1 140px; /* shrink if needed */
+  min-width: 0;
+}
+#usePointsBtn,
+#clearPointsBtn {
+  white-space: nowrap; /* keep labels on one line */
+}
+
+/* --- Slightly wider right column on large screens to avoid tight fits --- */
+@media (min-width: 981px) {
+  .layout {
+    grid-template-columns: 1fr 0.95fr;
+  }
+}
+
+/* --- Extra breathing room below a sticky/fixed header --- */
+.site-header + .shell {
+  padding-top: 96px; /* adjust to match your header height */
+}
+@media (max-width: 720px) {
+  .site-header + .shell {
+    padding-top: 76px;
+  }
+}

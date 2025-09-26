@@ -207,6 +207,7 @@ body[data-auth="true"] .auth-only {
   inset: 0;
   background-size: cover;
   background-position: center;
+
   opacity: 0;
   transition: opacity 800ms ease-in-out;
   transform: scale(1);
@@ -214,7 +215,7 @@ body[data-auth="true"] .auth-only {
 }
 .hero-slide.is-active {
   opacity: 1;
-  animation: kenburns 7s linear forwards;
+  animation: kenburns 6s linear forwards;
 }
 @keyframes kenburns {
   from {

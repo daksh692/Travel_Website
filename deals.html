@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Deals — Travel</title>
+    <link rel="stylesheet" href="./CSS/main.css" />
+    <link rel="stylesheet" href="./CSS/deals.css" />
+  </head>
+  <body>
+    <!-- Header -->
+     <header class="site-header">
+      <div class="header-left">
+        <a class="logo-button" href="main.html" aria-label="Home">
+          <img src="./assets/logo.png" alt="" />
+        </a>
+      </div>
+      <nav class="header-center">
+        <ul class="nav">
+          <li><a href="places/INDmap.html">Explore</a></li>
+          <li><a href="transportation.html">Transportation</a></li>
+          <li><a href="deals.html">Deals</a></li>
+          <li><a href="about.html">About Us</a></li>
+        </ul>
+      </nav>
+      <div class="header-right">
+        <button
+          id="settingsBtn"
+          class="icon-btn guest-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+        >
+          ⚙️
+        </button>
+        <button
+          id="avatarBtn"
+          class="avatar-btn auth-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="userMenu"
+        >
+          <span id="avatarInitial">U</span>
+        </button>
+        <div
+          id="settingsMenu"
+          class="menu guest-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="auth.html?tab=login">Login</a>
+          <a class="menu-item" href="auth.html?tab=register">Register</a>
+        </div>
+        <div
+          id="userMenu"
+          class="menu auth-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="account.html" role="menuitem">Account</a>
+          <a class="menu-item" href="currenttrip.html" role="menuitem"
+            >Your Current Trip</a
+          >
+
+          <a class="menu-item" href="points.html" role="menuitem"
+            >Points Redeem</a
+          >
+          <a class="menu-item" href="cart.html" role="menuitem">Cart</a>
+          <button class="menu-item danger" id="logoutBtn" role="menuitem">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page">
+      <!-- REGULAR DEALS (TOP) -->
+      <section id="autoDeals" class="shell">
+        <div class="hero">
+          <h1>Deals</h1>
+          <p class="muted">
+            Fresh bundles & individual picks. We’ll learn your taste in the
+            first 1–2 days, then personalize from day 3.
+          </p>
+
+          <!-- Tabs are now ONLY for regular deals -->
+          <div class="tabs" style="margin-top: 10px">
+            <button
+              id="tabBtnBundles"
+              class="tab-btn active"
+              data-tab="auto-bundles"
+            >
+              Bundles
+            </button>
+            <button
+              id="tabBtnSingles"
+              class="tab-btn"
+              data-tab="auto-individual"
+            >
+              Individual
+            </button>
+             <div id="auto-bundles" class="tab-panel">
+          <div id="bundleList" class="grid"></div>
+        </div>
+        <div id="auto-individual" class="tab-panel" hidden>
+          <div id="individualList" class="grid"></div>
+        </div>
+      </section>
+
+          </div>
+        </div>
+
+       
+      <!-- HAND-PICKED (BOTTOM) — hidden until we have learned results -->
+      <section id="dealsSection" class="shell deals-bottom" hidden>
+        <div class="hero">
+          <h2>Hand-picked deals</h2>
+          <p class="muted">
+            Curated from what you view and add most. Appears from day 3.
+          </p>
+        </div>
+        <div id="handpickList" class="grid"></div>
+      </section>
+    </main>
+
+    <div id="toasts"></div>
+
+    <script src="./JS/main.js"></script>
+
+    <script src="./JS/deals.js"></script>
+  </body>
+</html>
