@@ -246,28 +246,22 @@ app.post("/api/users/:id/password", async (req, res) => {
         .json({ ok: false, error: "All fields are required" });
     }
     if (new_password.length < 8) {
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          error: "New password must be at least 8 characters",
-        });
+      return res.status(400).json({
+        ok: false,
+        error: "New password must be at least 8 characters",
+      });
     }
     if (new_password !== confirm_password) {
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          error: "New password and confirm password must match",
-        });
+      return res.status(400).json({
+        ok: false,
+        error: "New password and confirm password must match",
+      });
     }
     if (new_password === current_password) {
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          error: "New password must be different from current password",
-        });
+      return res.status(400).json({
+        ok: false,
+        error: "New password must be different from current password",
+      });
     }
 
     const conn = await pool.getConnection();
@@ -337,7 +331,7 @@ app.get("/api/users/:id/trips", async (req, res) => {
 });
 
 /* =========================
-   Points (computed)
+   Points (earned - redeemed)
    ========================= */
 app.get("/api/users/:id/points", async (req, res) => {
   const id = Number(req.params.id);
@@ -345,6 +339,7 @@ app.get("/api/users/:id/points", async (req, res) => {
 
   const conn = await pool.getConnection();
   try {
+    // Earned: 1 point per ₹100 spent on completed trips (as you had)
     const [rows] = await conn.query(
       `SELECT price, daysNeeded, startdate FROM cart_items WHERE ClientID=?`,
       [id]
@@ -354,14 +349,82 @@ app.get("/api/users/:id/points", async (req, res) => {
       .filter((r) => (addDaysISO(r.startdate, r.daysNeeded) || "") < today)
       .reduce((s, r) => s + Number(r.price || 0), 0);
 
+    const earned = Math.floor(spent / 100);
+
+    // Redeemed total from point_redemptions
+    const [redeemRows] = await conn.query(
+      `SELECT COALESCE(SUM(points),0) AS used FROM point_redemptions WHERE ClientID=?`,
+      [id]
+    );
+    const used = Number(redeemRows?.[0]?.used || 0);
+
+    const balance = Math.max(0, earned - used);
     res.json({
       ok: true,
-      points: Math.floor(spent / 100),
-      rule: "1 point for every ₹100 spent on completed trips",
+      points: balance,
+      rule: "1 point for every ₹100 spent on completed trips (₹1 per point redemption)",
+      earned,
+      used,
     });
   } catch (e) {
     console.error("POINTS error:", e);
     res.status(500).json({ ok: false, error: "Failed to load points" });
+  } finally {
+    conn?.release?.();
+  }
+});
+
+/* =========================
+   Points: Redeem
+   ========================= */
+app.post("/api/users/:id/points/redeem", async (req, res) => {
+  const id = Number(req.params.id);
+  const { points, reason } = req.body || {};
+  if (!id) return res.status(400).json({ ok: false, error: "Bad id" });
+
+  const n = Number(points || 0);
+  if (!Number.isFinite(n) || n <= 0) {
+    return res.status(400).json({ ok: false, error: "Invalid points" });
+  }
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    // compute latest balance (same as GET)
+    const [rows] = await conn.query(
+      `SELECT price, daysNeeded, startdate FROM cart_items WHERE ClientID=?`,
+      [id]
+    );
+    const today = new Date().toISOString().slice(0, 10);
+    const spent = rows
+      .filter((r) => (addDaysISO(r.startdate, r.daysNeeded) || "") < today)
+      .reduce((s, r) => s + Number(r.price || 0), 0);
+    const earned = Math.floor(spent / 100);
+
+    const [redeemRows] = await conn.query(
+      `SELECT COALESCE(SUM(points),0) AS used FROM point_redemptions WHERE ClientID=? FOR UPDATE`,
+      [id]
+    );
+    const used = Number(redeemRows?.[0]?.used || 0);
+    const balance = Math.max(0, earned - used);
+
+    if (n > balance) {
+      await conn.rollback();
+      return res.status(400).json({ ok: false, error: "Not enough points" });
+    }
+
+    await conn.query(
+      `INSERT INTO point_redemptions (ClientID, points, reason) VALUES (?,?,?)`,
+      [id, n, reason || "checkout"]
+    );
+
+    await conn.commit();
+    res.json({ ok: true, redeemed: n, remaining: balance - n });
+  } catch (e) {
+    await conn.rollback();
+    console.error("REDEEM error:", e);
+    res.status(500).json({ ok: false, error: "Failed to redeem points" });
   } finally {
     conn?.release?.();
   }

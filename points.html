@@ -8,118 +8,188 @@
     <link rel="stylesheet" href="./CSS/redeem.css" />
   </head>
   <body>
-    <header class="lp-header">
-      <a class="brand" href="./main.html">Travel</a>
-      <div class="lp-grow"></div>
-      <button id="settingsBtn" class="icon-btn" aria-expanded="false">
-        ⚙️
-      </button>
-      <div id="settingsMenu" class="menu" aria-hidden="true">
-        <a href="./currenttrip.html">Current trip</a>
-        <a href="./cart.html">Cart</a>
-        <a href="./transportation.html">Transportation</a>
-        <a class="active" href="./redeem.html">Redeem</a>
-        <a href="./deals.html">Deals</a>
-        <a href="./account.html">Account</a>
+    <header class="site-header">
+      <div class="header-left">
+        <a class="logo-button" href="main.html" aria-label="Home">
+          <img src="./assets/logo.png" alt="" />
+        </a>
       </div>
-      <button id="avatarBtn" class="avatar-btn" aria-expanded="false">
-        <span id="avatarInitial">U</span>
-      </button>
-      <div id="userMenu" class="menu" aria-hidden="true">
-        <a href="./account.html">Account</a>
-        <button id="logoutBtn" class="link danger">Log out</button>
+      <nav class="header-center">
+        <ul class="nav">
+          <li><a href="places/INDmap.html">Explore</a></li>
+          <li><a href="transportation.html">Transportation</a></li>
+          <li><a href="deals.html">Deals</a></li>
+          <li><a href="about.html">About Us</a></li>
+        </ul>
+      </nav>
+      <div class="header-right">
+        <button
+          id="settingsBtn"
+          class="icon-btn guest-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+        >
+          ⚙️
+        </button>
+        <button
+          id="avatarBtn"
+          class="avatar-btn auth-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="userMenu"
+        >
+          <span id="avatarInitial">U</span>
+        </button>
+        <div
+          id="settingsMenu"
+          class="menu guest-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="auth.html?tab=login">Login</a>
+          <a class="menu-item" href="auth.html?tab=register">Register</a>
+        </div>
+        <div
+          id="userMenu"
+          class="menu auth-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="account.html" role="menuitem">Account</a>
+          <a class="menu-item" href="currenttrip.html" role="menuitem"
+            >Your Current Trip</a
+          >
+          <a class="menu-item" href="points.html" role="menuitem"
+            >Points Redeem</a
+          >
+          <a class="menu-item" href="cart.html" role="menuitem">Cart</a>
+          <button class="menu-item danger" id="logoutBtn" role="menuitem">
+            Logout
+          </button>
+        </div>
       </div>
     </header>
 
+    <!-- ===== New 2-column layout ===== -->
     <main class="shell">
-      <section class="card">
-        <h2>Have a promo code?</h2>
-        <p class="muted">
-          Codes apply on this device and can be removed anytime.
-        </p>
-        <div class="row">
-          <input
-            id="code"
-            class="code"
-            placeholder="Enter code (e.g., WELCOME10)"
-          />
-          <button class="btn" id="apply">Apply</button>
-          <button class="btn-ghost" id="remove">Remove</button>
-        </div>
-      </section>
+      <div class="layout">
+        <!-- LEFT: Promo + Points -->
+        <div class="col-left">
+          <!-- Promo -->
+          <section class="card card--promo">
+            <div class="card-head">
+              <h2>Have a promo code?</h2>
+              <span class="badge">Instant</span>
+            </div>
+            <p class="muted">
+              Codes apply on this device and can be removed anytime.
+            </p>
 
-      <section class="card">
-        <h2>Totals with promo</h2>
-        <div class="sum">
-          <div class="line">
-            <span>Cart subtotal</span><strong id="sub">₹0</strong>
-          </div>
-          <div class="line">
-            <span>Service (0.5%)</span><strong id="serv">₹0</strong>
-          </div>
-          <div class="line">
-            <span>Tax (12%)</span><strong id="tax">₹0</strong>
-          </div>
-          <div class="line">
-            <span>Promo (<span id="promoPct">0%</span>)</span
-            ><strong id="disc">−₹0</strong>
-          </div>
-          <div class="line" style="font-size: 18px">
-            <span>Final total</span><strong id="tot">₹0</strong>
-          </div>
+            <div class="row">
+              <input
+                id="code"
+                class="code"
+                placeholder="Enter code (e.g., WELCOME10)"
+              />
+              <button class="btn" id="apply">Apply</button>
+              <button class="btn-ghost" id="remove">Remove</button>
+            </div>
+
+            <div class="chips" aria-label="Quick codes">
+              <button class="chip" data-code="WELCOME10">WELCOME10</button>
+              <button class="chip" data-code="FESTIVE15">FESTIVE15</button>
+              <button class="chip" data-code="VIP20">VIP20</button>
+            </div>
+          </section>
+
+          <!-- Points -->
+          <section class="card card--points">
+            <div class="card-head">
+              <h2>Your loyalty points</h2>
+              <span class="badge badge--glow" id="pointsRule"
+                >Login to use points</span
+              >
+            </div>
+
+            <div class="points-grid">
+              <div class="points-balance">
+                <div class="label">Available</div>
+                <div class="value" id="pointsBalance">0</div>
+              </div>
+
+              <div class="points-apply">
+                <label for="pointsRange" class="label">Use on this order</label>
+                <input
+                  id="pointsRange"
+                  type="range"
+                  min="0"
+                  max="0"
+                  value="0"
+                />
+                <div class="range-row">
+                  <input
+                    id="pointsInput"
+                    class="points-input"
+                    type="number"
+                    min="0"
+                    value="0"
+                  />
+                  <button class="btn" id="usePointsBtn">Apply points</button>
+                  <button class="btn-ghost" id="clearPointsBtn">Clear</button>
+                </div>
+                <p class="muted" id="pointsHint">
+                  Choose how many points to use (max shown).
+                </p>
+              </div>
+            </div>
+
+            <div class="inline-note" id="persistNote" hidden>
+              Applied points are saved on this device until checkout.
+            </div>
+          </section>
         </div>
-        <div style="margin-top: 12px" class="btns">
-          <a class="btn-outline" href="./currenttrip.html"
-            >Back to Current Trip</a
-          >
-        </div>
-      </section>
+
+        <!-- RIGHT: Sticky totals -->
+        <aside class="col-right">
+          <section class="card card--totals sticky">
+            <h2>Order summary</h2>
+            <div class="sum">
+              <div class="line">
+                <span>Cart subtotal</span><strong id="sub">₹0</strong>
+              </div>
+              <div class="line">
+                <span>Service (0.5%)</span><strong id="serv">₹0</strong>
+              </div>
+              <div class="line">
+                <span>Tax (12%)</span><strong id="tax">₹0</strong>
+              </div>
+              <div class="line">
+                <span>Promo (<span id="promoPct">0%</span>)</span
+                ><strong id="disc">−₹0</strong>
+              </div>
+              <div class="line">
+                <span>Points (<span id="pointsUsed">0</span>)</span
+                ><strong id="pointsDisc">−₹0</strong>
+              </div>
+              <div class="line total">
+                <span>Final total</span><strong id="tot">₹0</strong>
+              </div>
+            </div>
+
+            <div class="btns">
+              <a class="btn-outline" href="./currenttrip.html"
+                >Back to Current Trip</a
+              >
+              <a class="btn-primary" href="./cart.html">Go to Cart</a>
+            </div>
+          </section>
+        </aside>
+      </div>
     </main>
 
     <div id="toasts"></div>
     <script src="./JS/main.js"></script>
-    <script>
-      // header fallback
-      (function () {
-        const s = document.getElementById("settingsBtn"),
-          m = document.getElementById("settingsMenu");
-        const a = document.getElementById("avatarBtn"),
-          u = document.getElementById("userMenu");
-        function close() {
-          [m, u].forEach((x) => x?.classList.remove("open"));
-          [s, a].forEach((b) => b?.setAttribute("aria-expanded", "false"));
-        }
-        function tog(btn, menu) {
-          const o = menu?.classList.contains("open");
-          close();
-          if (!o) {
-            menu?.classList.add("open");
-            btn?.setAttribute("aria-expanded", "true");
-          }
-        }
-        s?.addEventListener("click", (e) => {
-          e.stopPropagation();
-          tog(s, m);
-        });
-        a?.addEventListener("click", (e) => {
-          e.stopPropagation();
-          tog(a, u);
-        });
-        document.addEventListener("click", (e) => {
-          if (
-            !m?.contains(e.target) &&
-            !s?.contains(e.target) &&
-            !u?.contains(e.target) &&
-            !a?.contains(e.target)
-          )
-            close();
-        });
-        document.getElementById("logoutBtn")?.addEventListener("click", () => {
-          localStorage.removeItem("sessionClient");
-          location.reload();
-        });
-      })();
-    </script>
     <script src="./JS/redeem.js"></script>
   </body>
 </html>

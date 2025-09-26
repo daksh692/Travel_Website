@@ -60,7 +60,6 @@
           <a class="menu-item" href="currenttrip.html" role="menuitem"
             >Your Current Trip</a
           >
-
           <a class="menu-item" href="points.html" role="menuitem"
             >Points Redeem</a
           >
@@ -72,7 +71,8 @@
       </div>
     </header>
 
-    <main class="shell">
+    <!-- 2-up grid -->
+    <main class="shell masonry-2">
       <!-- Signed-out blurb -->
       <section id="signedOut" class="card hide">
         <h2>You're not signed in</h2>
@@ -85,8 +85,9 @@
         </div>
       </section>
 
-      <!-- Identity + Security -->
-      <div id="signedIn" class="grid">
+      <!-- NOTE: now spans both columns with .wide -->
+      <div id="signedIn" class="grid wide">
+        <!-- Profile -->
         <section class="card">
           <h2>Your profile</h2>
 
@@ -115,17 +116,20 @@
           <!-- Edit mode -->
           <div id="profileForm" class="form hide" aria-hidden="true">
             <div class="field">
-              <label for="firstName">First name</label><input id="firstName" />
+              <label for="firstName">First name</label>
+              <input id="firstName" autocomplete="given-name" />
             </div>
             <div class="field">
-              <label for="lastName">Last name</label><input id="lastName" />
+              <label for="lastName">Last name</label>
+              <input id="lastName" autocomplete="family-name" />
             </div>
             <div class="field">
-              <label for="phone">Phone</label><input id="phone" />
+              <label for="phone">Phone</label>
+              <input id="phone" inputmode="tel" placeholder="+1 555 123 4567" />
             </div>
             <div class="field">
-              <label for="address">Address</label
-              ><textarea id="address" rows="2"></textarea>
+              <label for="address">Address</label>
+              <textarea id="address" rows="2"></textarea>
             </div>
             <div class="btns">
               <button class="btn" id="saveProfile">Save</button>
@@ -141,34 +145,82 @@
           </div>
         </section>
 
+        <!-- Security -->
         <section class="card">
           <h2>Security</h2>
           <p class="muted">Change your password.</p>
-          <form id="pwForm" class="form">
+
+          <form id="pwForm" class="form" novalidate>
             <div class="field">
-              <label for="currentPassword">Current password (optional)</label>
-              <input
-                id="currentPassword"
-                type="password"
-                autocomplete="current-password"
-              />
+              <label for="currentPassword">Current password (required)</label>
+              <div class="pw-wrap">
+                <input
+                  id="currentPassword"
+                  type="password"
+                  autocomplete="current-password"
+                  aria-describedby="capsNote"
+                />
+                <button
+                  type="button"
+                  class="pw-toggle"
+                  data-for="currentPassword"
+                  aria-label="Show password"
+                >
+                  👁
+                </button>
+              </div>
+              <div id="capsNote" class="field-msg small" hidden>
+                Caps Lock is ON
+              </div>
             </div>
+
             <div class="field">
               <label for="newPassword">New password</label>
-              <input
-                id="newPassword"
-                type="password"
-                autocomplete="new-password"
-              />
+              <div class="pw-wrap">
+                <input
+                  id="newPassword"
+                  type="password"
+                  autocomplete="new-password"
+                  aria-describedby="pwReq pwStrengthMsg"
+                />
+                <button
+                  type="button"
+                  class="pw-toggle"
+                  data-for="newPassword"
+                  aria-label="Show password"
+                >
+                  👁
+                </button>
+              </div>
+              <div id="pwReq" class="hint">
+                Use at least 8 chars with a mix of letters, numbers, and
+                symbols.
+              </div>
+              <div class="pw-meter" aria-hidden="true">
+                <div id="pwBar" class="pw-bar" style="width: 0%"></div>
+              </div>
+              <div id="pwStrengthMsg" class="field-msg small muted"></div>
             </div>
+
             <div class="field">
               <label for="confirmPassword">Confirm new password</label>
-              <input
-                id="confirmPassword"
-                type="password"
-                autocomplete="new-password"
-              />
+              <div class="pw-wrap">
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  autocomplete="new-password"
+                />
+                <button
+                  type="button"
+                  class="pw-toggle"
+                  data-for="confirmPassword"
+                  aria-label="Show password"
+                >
+                  👁
+                </button>
+              </div>
             </div>
+
             <div class="btns popover-anchor">
               <button class="btn" id="pwSubmit" type="submit">
                 Update password
@@ -188,7 +240,7 @@
         </section>
       </div>
 
-      <!-- Mini summary (recent items) -->
+      <!-- Mini summary -->
       <section class="card">
         <h2>Trip summary</h2>
         <div id="accSummary" class="list">
@@ -196,7 +248,7 @@
         </div>
       </section>
 
-      <!-- Trips block with simple tabs -->
+      <!-- Trips -->
       <section class="card">
         <h2>Your trips</h2>
         <div class="tabs" role="tablist">
@@ -219,12 +271,12 @@
         </div>
         <div id="tabUpcoming">
           <div id="accTripsUpcoming" class="list">
-            <div class="muted">Loading…</div>
+            <div class="muted">No upcoming trips.</div>
           </div>
         </div>
         <div id="tabDone" class="hide">
           <div id="accTripsDone" class="list">
-            <div class="muted">Loading…</div>
+            <div class="muted">No completed trips yet.</div>
           </div>
         </div>
       </section>
@@ -265,7 +317,7 @@
       </section>
     </main>
 
-    <div id="toasts"></div>
+    <div id="toasts" aria-live="polite" aria-atomic="true"></div>
 
     <script src="./JS/main.js"></script>
     <script src="./JS/account.js"></script>

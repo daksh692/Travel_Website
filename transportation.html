@@ -9,116 +9,242 @@
   </head>
   <body>
     <!-- Header -->
-    <header class="lp-header">
-      <a class="brand" href="./main.html">Travel</a>
-      <div class="lp-grow"></div>
-      <button id="settingsBtn" class="icon-btn" aria-expanded="false">
-        ⚙️
-      </button>
-      <div id="settingsMenu" class="menu" aria-hidden="true">
-        <a href="./currenttrip.html">Current trip</a>
-        <a href="./cart.html">Cart</a>
-        <a class="active" href="./transportation.html">Transportation</a>
-        <a href="./redeem.html">Redeem</a>
-        <a href="./deals.html">Deals</a>
-        <a href="./account.html">Account</a>
+    <header class="site-header">
+      <div class="header-left">
+        <a class="logo-button" href="main.html" aria-label="Home">
+          <img src="./assets/logo.png" alt="" />
+        </a>
       </div>
-      <button id="avatarBtn" class="avatar-btn" aria-expanded="false">
-        <span id="avatarInitial">U</span>
-      </button>
-      <div id="userMenu" class="menu" aria-hidden="true">
-        <a href="./account.html">Account</a>
-        <button id="logoutBtn" class="link danger">Log out</button>
+      <nav class="header-center">
+        <ul class="nav">
+          <li><a href="places/INDmap.html">Explore</a></li>
+          <li>
+            <a href="transportation.html" aria-current="page">Transportation</a>
+          </li>
+          <li><a href="deals.html">Deals</a></li>
+          <li><a href="about.html">About Us</a></li>
+        </ul>
+      </nav>
+      <div class="header-right">
+        <button
+          id="settingsBtn"
+          class="icon-btn guest-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+        >
+          ⚙️
+        </button>
+        <button
+          id="avatarBtn"
+          class="avatar-btn auth-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="userMenu"
+        >
+          <span id="avatarInitial">U</span>
+        </button>
+        <div
+          id="settingsMenu"
+          class="menu guest-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="auth.html?tab=login">Login</a>
+          <a class="menu-item" href="auth.html?tab=register">Register</a>
+        </div>
+        <div
+          id="userMenu"
+          class="menu auth-only"
+          role="menu"
+          aria-hidden="true"
+        >
+          <a class="menu-item" href="account.html" role="menuitem">Account</a>
+          <a class="menu-item" href="currenttrip.html" role="menuitem"
+            >Your Current Trip</a
+          >
+          <a class="menu-item" href="points.html" role="menuitem"
+            >Points Redeem</a
+          >
+          <a class="menu-item" href="cart.html" role="menuitem">Cart</a>
+          <button class="menu-item danger" id="logoutBtn" role="menuitem">
+            Logout
+          </button>
+        </div>
       </div>
     </header>
 
+    <!-- Space below header -->
+    <div class="page-spacer"></div>
+
     <main class="shell">
-      <div class="tabs">
-        <button class="tab active" data-tab="booking">Booking</button>
-        <button class="tab" data-tab="manual">Already booked</button>
+      <div class="tabs" role="tablist" aria-label="Transportation tabs">
+        <button
+          class="tab active"
+          data-tab="booking"
+          role="tab"
+          aria-selected="true"
+        >
+          Booking
+        </button>
+        <button class="tab" data-tab="manual" role="tab" aria-selected="false">
+          Already booked
+        </button>
       </div>
 
-      <section class="grid" data-panel="booking">
-        <div class="card">
-          <h2>Add leg</h2>
-          <div class="row2">
-            <label
-              >Trip
-              <select id="tripSel"></select>
-            </label>
-            <label
-              >Rename trip
-              <input id="tripName" placeholder="Trip 1" />
-            </label>
+      <!-- BOOKING -->
+      <!-- BOOKING -->
+      <section data-panel="booking">
+        <!-- Row 1: Add leg | Trips -->
+        <div class="grid2">
+          <div class="card">
+            <h2>Add leg</h2>
+            <div class="row2">
+              <label
+                >Trip
+                <select id="tripSel" aria-label="Select trip"></select>
+              </label>
+              <label
+                >Rename trip
+                <input id="tripName" placeholder="Trip 1" />
+              </label>
+            </div>
+
+            <div class="row" style="margin-top: 10px">
+              <label
+                >Mode
+                <select id="mode">
+                  <option value="flight">✈️ Flight</option>
+                  <option value="train">🚆 Train</option>
+                  <option value="bus">🚌 Bus</option>
+                  <option value="car">🚗 Car rental</option>
+                </select>
+              </label>
+              <label>From <input id="from" placeholder="City/Code" /></label>
+              <label>To <input id="to" placeholder="City/Code" /></label>
+            </div>
+
+            <div class="row2" style="margin-top: 10px">
+              <label
+                >Date <input id="date" type="date" placeholder="yyyy-mm-dd"
+              /></label>
+              <label
+                >Price (₹)
+                <input id="price" type="number" min="0" inputmode="numeric"
+              /></label>
+            </div>
+
+            <div class="btns" style="margin-top: 12px">
+              <button class="btn" id="add">Add leg</button>
+              <button class="btn-ghost" id="newTrip">New Trip</button>
+            </div>
           </div>
-          <div class="row" style="margin-top: 10px">
-            <label
-              >Mode
-              <select id="mode">
-                <option value="flight">✈️ Flight</option>
-                <option value="train">🚆 Train</option>
-                <option value="bus">🚌 Bus</option>
-                <option value="car">🚗 Car rental</option>
-              </select>
-            </label>
-            <label>From <input id="from" placeholder="City/Code" /></label>
-            <label>To <input id="to" placeholder="City/Code" /></label>
-          </div>
-          <div class="row2" style="margin-top: 10px">
-            <label>Date <input id="date" type="date" /></label>
-            <label
-              >Price (₹)
-              <input id="price" type="number" min="0" inputmode="numeric"
-            /></label>
-          </div>
-          <div class="btns" style="margin-top: 12px">
-            <button class="btn" id="add">Add leg</button>
-            <button class="btn-ghost" id="newTrip">New Trip</button>
+
+          <div class="card">
+            <h2>Trips</h2>
+
+            <!-- Bulk actions -->
+            <div class="bulk" id="bulkBar" hidden>
+              <span id="selCount">0</span> selected
+              <div class="spacer"></div>
+              <label class="inline"
+                >Move to
+                <select id="moveToTripSel" style="min-width: 140px"></select>
+              </label>
+              <button class="btn-ghost" id="moveToTrip">Move</button>
+              <button class="btn-ghost" id="bulkEdit">Edit</button>
+              <button class="btn-ghost danger" id="bulkDelete">Remove</button>
+              <button class="btn-ghost" id="bulkClear">Clear</button>
+            </div>
+
+            <div id="trips" class="list empty-muted pad-empty"></div>
           </div>
         </div>
 
-        <div class="card">
-          <h2>Trips & totals</h2>
-          <div id="trips" class="list"></div>
-          <hr />
-          <div class="sum">
-            <div class="line">
-              <span>All trips total</span><strong id="grand">₹0</strong>
+        <!-- Row 2: Totals only (full width) -->
+        <div class="grid1">
+          <aside class="card">
+            <h2>Totals & actions</h2>
+
+            <div class="btns" style="margin-bottom: 8px">
+              <button class="btn-ghost" id="dupTrip">Duplicate trip</button>
+              <button class="btn-ghost danger" id="clearTrip">
+                Clear trip
+              </button>
             </div>
-          </div>
+
+            <hr class="rule" />
+
+            <div class="sum">
+              <div class="line">
+                <span>All trips total</span>
+                <strong id="grand">₹0</strong>
+              </div>
+              <div class="muted small" id="breakdown">—</div>
+            </div>
+
+            <div class="meta">
+              <h3 class="meta-h">By mode</h3>
+              <div id="modeTotals" class="chips"></div>
+            </div>
+
+            <div class="meta">
+              <h3 class="meta-h">Rates</h3>
+              <div class="row2">
+                <label
+                  >Service %
+                  <input id="svcPct" type="number" step="0.1" min="0"
+                /></label>
+                <label
+                  >Tax % <input id="taxPct" type="number" step="0.1" min="0"
+                /></label>
+              </div>
+              <div class="btns" style="margin-top: 8px">
+                <button class="btn-ghost" id="saveRates">Save rates</button>
+                <button class="btn-ghost" id="resetRates">Reset</button>
+              </div>
+            </div>
+          </aside>
         </div>
       </section>
 
-      <section class="grid" data-panel="manual" hidden>
-        <div class="card">
-          <h2>Record a booking</h2>
-          <p class="small">If you booked elsewhere, keep the details here.</p>
-          <div class="row2">
-            <label
-              >Trip
-              <select id="mTripSel"></select
-            ></label>
-            <label
-              >Provider <input id="mProv" placeholder="Airline/Operator"
-            /></label>
+      <!-- ALREADY BOOKED -->
+      <section data-panel="manual" hidden>
+        <div class="grid2">
+          <div class="card">
+            <h2>Record a booking</h2>
+            <p class="small muted">
+              If you booked elsewhere, keep the details here.
+            </p>
+            <div class="row2">
+              <label
+                >Trip
+                <select id="mTripSel"></select>
+              </label>
+              <label
+                >Provider <input id="mProv" placeholder="Airline/Operator"
+              /></label>
+            </div>
+            <div class="row" style="margin-top: 10px">
+              <label>From <input id="mFrom" /></label>
+              <label>To <input id="mTo" /></label>
+              <label>Date <input id="mDate" type="date" /></label>
+            </div>
+            <div class="row2" style="margin-top: 10px">
+              <label>PNR / Ref <input id="mRef" /></label>
+              <label
+                >Amount (₹) <input id="mAmt" type="number" min="0"
+              /></label>
+            </div>
+            <div class="btns" style="margin-top: 12px">
+              <button class="btn" id="mAdd">Save record</button>
+            </div>
           </div>
-          <div class="row" style="margin-top: 10px">
-            <label>From <input id="mFrom" /></label>
-            <label>To <input id="mTo" /></label>
-            <label>Date <input id="mDate" type="date" /></label>
-          </div>
-          <div class="row2" style="margin-top: 10px">
-            <label>PNR / Ref <input id="mRef" /></label>
-            <label>Amount (₹) <input id="mAmt" type="number" min="0" /></label>
-          </div>
-          <div class="btns" style="margin-top: 12px">
-            <button class="btn" id="mAdd">Save record</button>
-          </div>
-        </div>
 
-        <div class="card">
-          <h2>Saved records</h2>
-          <div id="manualList" class="list"></div>
+          <div class="card">
+            <h2>Saved records</h2>
+            <div id="manualList" class="list"></div>
+          </div>
         </div>
       </section>
     </main>
@@ -126,48 +252,6 @@
     <div id="toasts"></div>
 
     <script src="./JS/main.js"></script>
-    <script>
-      // header fallback
-      (function () {
-        const s = document.getElementById("settingsBtn"),
-          m = document.getElementById("settingsMenu");
-        const a = document.getElementById("avatarBtn"),
-          u = document.getElementById("userMenu");
-        function close() {
-          [m, u].forEach((x) => x?.classList.remove("open"));
-          [s, a].forEach((b) => b?.setAttribute("aria-expanded", "false"));
-        }
-        function tog(btn, menu) {
-          const o = menu?.classList.contains("open");
-          close();
-          if (!o) {
-            menu?.classList.add("open");
-            btn?.setAttribute("aria-expanded", "true");
-          }
-        }
-        s?.addEventListener("click", (e) => {
-          e.stopPropagation();
-          tog(s, m);
-        });
-        a?.addEventListener("click", (e) => {
-          e.stopPropagation();
-          tog(a, u);
-        });
-        document.addEventListener("click", (e) => {
-          if (
-            !m?.contains(e.target) &&
-            !s?.contains(e.target) &&
-            !u?.contains(e.target) &&
-            !a?.contains(e.target)
-          )
-            close();
-        });
-        document.getElementById("logoutBtn")?.addEventListener("click", () => {
-          localStorage.removeItem("sessionClient");
-          location.reload();
-        });
-      })();
-    </script>
     <script src="./JS/transportation.js"></script>
   </body>
 </html>

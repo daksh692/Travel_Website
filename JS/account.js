@@ -19,7 +19,7 @@ function showToast({
   title = "OK",
   message = "",
   type = "info",
-  timeout = 1800,
+  timeout = 2000,
 } = {}) {
   const host = $("#toasts");
   if (!host) return;
@@ -27,13 +27,25 @@ function showToast({
   el.className = "lp-toast";
   el.setAttribute("data-type", type);
   el.innerHTML = `
-    <div class="lp-toast__icon">ℹ</div>
+    <div class="lp-toast__icon">${
+      type === "success"
+        ? "✓"
+        : type === "error"
+        ? "⨯"
+        : type === "warning"
+        ? "!"
+        : "ℹ"
+    }</div>
     <div class="lp-toast__body">
       <div class="lp-toast__title">${title}</div>
-      <div class="lp-toast__msg">${message}</div>
+      ${message ? `<div class="lp-toast__msg">${message}</div>` : ""}
     </div>`;
   host.appendChild(el);
-  setTimeout(() => el.remove(), timeout);
+  requestAnimationFrame(() => el.classList.add("show"));
+  setTimeout(() => {
+    el.classList.remove("show");
+    setTimeout(() => el.remove(), 180);
+  }, timeout);
 }
 
 /* ------------ Session & local cart ------------ */
@@ -109,6 +121,7 @@ function renderList(host, items, empty = "Nothing here yet.") {
     host.appendChild(row);
   }
 }
+
 /* ------------ Field error helpers ------------ */
 function setFieldError(inputEl, msg) {
   const field = inputEl.closest(".field");
@@ -120,6 +133,7 @@ function setFieldError(inputEl, msg) {
     msgEl.dataset.type = "error";
     field.appendChild(msgEl);
   }
+  inputEl.setAttribute("aria-invalid", msg ? "true" : "false");
   msgEl.textContent = msg || "";
   if (msg) inputEl.setAttribute("data-invalid", "true");
 }
@@ -130,11 +144,13 @@ function clearFieldError(inputEl) {
   const msgEl = field.querySelector(".field-msg");
   if (msgEl) msgEl.textContent = "";
   inputEl.removeAttribute("data-invalid");
+  inputEl.setAttribute("aria-invalid", "false");
 }
 
 function clearGroupErrors(inputs = []) {
   inputs.forEach(clearFieldError);
 }
+
 /* ------------ Popover helpers ------------ */
 let _pwPopTimer;
 function pwShow(message, type = "error", duration = 4000) {
@@ -144,9 +160,7 @@ function pwShow(message, type = "error", duration = 4000) {
   pop.querySelector(".popover-body").innerHTML = message;
   pop.hidden = false;
   clearTimeout(_pwPopTimer);
-  if (duration > 0) {
-    _pwPopTimer = setTimeout(() => pwHide(), duration);
-  }
+  if (duration > 0) _pwPopTimer = setTimeout(() => pwHide(), duration);
 }
 function pwHide() {
   const pop = $("#pwPopover");
@@ -155,14 +169,55 @@ function pwHide() {
   clearTimeout(_pwPopTimer);
 }
 
+/* ------------ Password UX helpers ------------ */
+function estimatePasswordStrength(pw = "") {
+  // Simple heuristic: length + char-set variety + penalties for repeats/sequences
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  // Penalize super common patterns
+  if (/^(password|qwerty|123456|letmein|admin|welcome)$/i.test(pw)) score = 0;
+  if (/([a-zA-Z0-9])\1\1/.test(pw)) score = Math.max(0, score - 1);
+  // Clamp 0..4
+  score = Math.max(0, Math.min(score, 4));
+  const labels = ["Very weak", "Weak", "Okay", "Good", "Strong"];
+  const percents = [10, 30, 55, 80, 100];
+  return { score, label: labels[score], pct: percents[score] };
+}
+
+function bindPasswordToggles() {
+  $$(".pw-toggle").forEach((btn) => {
+    const id = btn.getAttribute("data-for");
+    const input = document.getElementById(id);
+    btn.addEventListener("click", () => {
+      const isPw = input.type === "password";
+      input.type = isPw ? "text" : "password";
+      btn.setAttribute("aria-label", isPw ? "Hide password" : "Show password");
+    });
+  });
+}
+
+function bindCapsLockDetect() {
+  const cur = $("#currentPassword");
+  const note = $("#capsNote");
+  const handler = (e) => {
+    if (e.getModifierState && e.getModifierState("CapsLock"))
+      note.hidden = false;
+    else note.hidden = true;
+  };
+  cur.addEventListener("keyup", handler);
+  cur.addEventListener("keydown", handler);
+}
+
 /* ------------ Boot ------------ */
 async function boot() {
-  // basic header menus (if present)
-  // basic header settings menu only (no avatar wiring here)
+  // Header menu (settings) + logout
   (function () {
     const s = $("#settingsBtn"),
       m = $("#settingsMenu");
-
     function close() {
       m?.classList.remove("open");
       s?.setAttribute("aria-expanded", "false");
@@ -175,7 +230,6 @@ async function boot() {
         btn?.setAttribute("aria-expanded", "true");
       }
     }
-
     s?.addEventListener("click", (e) => {
       e.stopPropagation();
       tog(s, m);
@@ -183,8 +237,6 @@ async function boot() {
     document.addEventListener("click", (e) => {
       if (![m, s].some((x) => x?.contains(e.target))) close();
     });
-
-    // keep logout if present anywhere in the header/menu
     $("#logoutBtn")?.addEventListener("click", () => {
       localStorage.removeItem("sessionClient");
       location.reload();
@@ -303,30 +355,44 @@ async function boot() {
     view.classList.toggle("hide", !!on);
     form.classList.toggle("hide", !on);
   }
-
   editBtn?.addEventListener("click", () => showForm(true));
   $("#editToggleCancel")?.addEventListener("click", () => showForm(false));
 
+  // Basic client validation on profile save
   saveBtn?.addEventListener("click", async () => {
+    const first = $("#firstName");
+    const last = $("#lastName");
+    const phoneIn = $("#phone");
+    const addrIn = $("#address");
+
+    clearGroupErrors([first, last, phoneIn, addrIn]);
+
     const body = {
-      first_name: $("#firstName").value.trim(),
-      last_name: $("#lastName").value.trim(),
-      phone: $("#phone").value.trim(),
-      address: $("#address").value.trim(),
+      first_name: first.value.trim(),
+      last_name: last.value.trim(),
+      phone: phoneIn.value.trim(),
+      address: addrIn.value.trim(),
     };
+
+    // Optional phone format hint (non-blocking)
+    if (body.phone && !/^\+?\d[\d\s\-()]{6,}$/.test(body.phone)) {
+      setFieldError(phoneIn, "Use a valid phone format, e.g. +1 555 123 4567");
+    }
+
     saveBtn.disabled = true;
     saveBtn.textContent = "Saving…";
     try {
       const { user } = await apiUpdate(s.ClientID, body);
-      localStorage.setItem("sessionClient", JSON.stringify(user)); // keep cache in sync
+      localStorage.setItem("sessionClient", JSON.stringify(user));
       showToast({ title: "Profile updated", type: "success" });
+
       // Reflect on page immediately
       name.textContent = `${user.FirstName || ""} ${
         user.LastName || ""
       }`.trim();
       phone.textContent = maskPhone(user.PhoneNumber);
       addr.textContent = user.Address || "—";
-      avatar.textContent = initials(name.textContent);
+      $("#accAvatar").textContent = initials(name.textContent);
       showForm(false);
     } catch (e) {
       showToast({ title: "Update failed", message: e.message, type: "error" });
@@ -336,12 +402,51 @@ async function boot() {
     }
   });
 
-  /* ----- Change password flow (strict + inline errors + popover) ----- */
+  /* ----- Password field UX ----- */
+  bindPasswordToggles();
+  bindCapsLockDetect();
+
+  const newEl = $("#newPassword");
+  const conEl = $("#confirmPassword");
+  const curEl = $("#currentPassword");
+  const bar = $("#pwBar");
+  const strengthMsg = $("#pwStrengthMsg");
+
+  function refreshStrength() {
+    const { score, label, pct } = estimatePasswordStrength(newEl.value);
+    bar.style.width = `${pct}%`;
+    bar.dataset.score = String(score);
+    strengthMsg.textContent = newEl.value ? `Strength: ${label}` : "";
+  }
+
+  newEl.addEventListener("input", () => {
+    refreshStrength();
+    // live check for confirm match
+    if (conEl.value && newEl.value !== conEl.value) {
+      setFieldError(conEl, "Confirm password must match the new password");
+    } else {
+      clearFieldError(conEl);
+    }
+    // clear its own error while typing
+    if (newEl.value.length >= 8) clearFieldError(newEl);
+  });
+
+  conEl.addEventListener("input", () => {
+    if (newEl.value !== conEl.value)
+      setFieldError(conEl, "Confirm password must match the new password");
+    else clearFieldError(conEl);
+  });
+
+  [curEl, newEl, conEl].forEach((el) => {
+    el.addEventListener("input", () => pwHide());
+    el.addEventListener("input", () => {
+      if (el.value) clearFieldError(el);
+    });
+  });
+
+  /* ----- Change password submit (strict + popover) ----- */
   $("#pwForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const curEl = $("#currentPassword");
-    const newEl = $("#newPassword");
-    const conEl = $("#confirmPassword");
     const submitBtn = $("#pwSubmit");
 
     const current_password = curEl.value;
@@ -388,6 +493,8 @@ async function boot() {
       showToast({ title: "Password changed", type: "success" });
       pwShow("Password updated successfully.", "success", 3000);
       e.target.reset();
+      bar.style.width = "0%";
+      strengthMsg.textContent = "";
       clearGroupErrors([curEl, newEl, conEl]);
     } catch (err) {
       const msg = String(err.message || "Password change failed");
@@ -419,12 +526,6 @@ async function boot() {
       submitBtn.disabled = false;
       submitBtn.textContent = "Update password";
     }
-  });
-
-  // hide popover when user starts typing again
-  ["currentPassword", "newPassword", "confirmPassword"].forEach((id) => {
-    const el = document.getElementById(id);
-    el?.addEventListener("input", () => pwHide());
   });
 }
 
