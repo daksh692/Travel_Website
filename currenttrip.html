@@ -62,7 +62,6 @@
           <a class="menu-item" href="currenttrip.html" role="menuitem"
             >Your Current Trip</a
           >
-
           <a class="menu-item" href="points.html" role="menuitem"
             >Points Redeem</a
           >
@@ -78,6 +77,39 @@
       <div class="ct-actions">
         <button id="backBtn" class="btn-ghost">← Back</button>
         <button id="exploreBtn" class="btn-outline">Explore more places</button>
+
+        <div class="group-actions">
+          <div class="filter-toggle">
+            <button id="filterPast" class="btn-chip" data-mode="past">
+              Past
+            </button>
+            <button
+              id="filterOngoing"
+              class="btn-chip active"
+              data-mode="ongoing"
+            >
+              Ongoing
+            </button>
+            <button id="filterFuture" class="btn-chip" data-mode="future">
+              Future
+            </button>
+          </div>
+
+          <button id="editToggle" class="btn-outline">Edit mode: OFF</button>
+          <div id="editOnlyBar" class="edit-only hidden">
+            <button
+              id="manualGroupBtn"
+              class="btn-outline tooltip"
+              data-tip="Select multiple individual trips, then click Group."
+            >
+              Group
+            </button>
+            <button id="smartGroupBtn" class="btn-outline">Smart group</button>
+            <span id="selectionCount" class="sel-count" hidden
+              >Selected: 0</span
+            >
+          </div>
+        </div>
       </div>
 
       <section class="ct-top">
@@ -85,11 +117,10 @@
 
         <div class="ct-meta">
           <label class="field">
-            <span class="label">Start date</span>
-            <input type="date" id="tripStart" />
+            <span class="label">Global start date</span>
+            <input type="date" id="tripStart" class="edit-only-input" />
           </label>
 
-          <!-- FIXED RATES (readonly chips) -->
           <div class="field">
             <span class="label">Service fee (fixed)</span>
             <div class="chips">
@@ -104,45 +135,67 @@
             </div>
           </div>
 
-          <div class="field">
-            <span class="label">Trip duration</span>
-            <div class="chips">
-              <span class="chip" id="tripDays">— days</span>
-              <span class="chip" id="tripEnd">Ends —</span>
-            </div>
+          <div class="field view-only">
+            <span class="label">Summary date (view mode)</span>
+            <input type="date" id="summaryDate" />
           </div>
         </div>
       </section>
 
       <section class="ct-grid">
         <div>
+          <div id="groupsHost" class="ct-groups"></div>
+
+          <h3 class="subhead">Ungrouped</h3>
           <div id="items" class="ct-items"></div>
         </div>
 
         <aside class="ct-summary" aria-label="Cost summary">
           <h2>Summary</h2>
+          <p id="sumHint" class="muted"></p>
+
           <div class="sum-row">
-            <span>Subtotal</span><strong id="sumSubtotal">₹0</strong>
+            <span>Subtotal</span><strong id="sumSubtotal">—</strong>
           </div>
           <div class="sum-row">
             <span>Service (<span id="sumServiceRate">0.5%</span>)</span
-            ><strong id="sumService">₹0</strong>
+            ><strong id="sumService">—</strong>
           </div>
           <div class="sum-row">
             <span>Tax (<span id="sumTaxRate">12%</span>)</span
-            ><strong id="sumTax">₹0</strong>
+            ><strong id="sumTax">—</strong>
           </div>
           <div class="sum-row total">
-            <span>Total</span><strong id="sumTotal">₹0</strong>
+            <span>Total</span><strong id="sumTotal">—</strong>
           </div>
 
-          <button id="saveBtn" class="btn-primary">Save changes</button>
-          <button id="clearBtn" class="btn-clear">Clear trip</button>
+          <div class="sum-aux">
+            <div>
+              <span class="label">Trip duration</span>
+              <div id="sumDays" class="aux-val">—</div>
+            </div>
+            <div>
+              <span class="label">Start</span>
+              <div id="sumStart" class="aux-val">—</div>
+            </div>
+            <div>
+              <span class="label">Expected end</span>
+              <div id="sumEnd" class="aux-val">—</div>
+            </div>
+            <div>
+              <span class="label">States</span>
+              <div id="sumStates" class="aux-val">—</div>
+            </div>
+          </div>
+
+          <button id="saveBtn" class="btn-primary edit-only">
+            Save changes
+          </button>
+          <button id="clearBtn" class="btn-clear edit-only">Clear trip</button>
         </aside>
       </section>
     </main>
 
-    <!-- Edit package dialog -->
     <dialog id="pkgDialog" class="ct-dialog">
       <h3>Edit package</h3>
       <p id="pkgPlace" class="muted"></p>
@@ -152,7 +205,19 @@
       </form>
     </dialog>
 
-    <!-- Toasts -->
+    <dialog id="alertDialog" class="ct-dialog">
+      <h3 id="alertTitle">Action required</h3>
+      <p id="alertMsg" class="muted"></p>
+      <form method="dialog"><button class="btn-ghost">OK</button></form>
+    </dialog>
+
+    <dialog id="stateDialog" class="ct-dialog">
+      <h3>Choose a state to group</h3>
+      <p class="muted">We found multiple states. Pick one to auto-group.</p>
+      <div id="stateChoices" class="pkg-options"></div>
+      <form method="dialog"><button class="btn-ghost">Cancel</button></form>
+    </dialog>
+
     <div
       id="toasts"
       class="lp-toasts"
