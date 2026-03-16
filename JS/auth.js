@@ -39,7 +39,7 @@ function computeNext() {
     /* ignore */
   }
   // default (home)
-  return "main.html";
+  return "index.html";
 }
 const NEXT_URL = computeNext();
 

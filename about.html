@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./CSS/main.css" />
     <meta
       name="description"
-      content="Learn about Travel — our mission, features, roadmap, privacy and accessibility. Explore Maps, Transportation, Deals, Rewards and a clean Account experience."
+      content="Travel — your trusted companion for stress-free, transparent, and rewarding travel across India. Discover verified destinations, honest pricing, and 24/7 support."
     />
   </head>
 
@@ -17,7 +17,7 @@
     <!-- Header (shared) -->
     <header class="site-header">
       <div class="header-left">
-        <a class="logo-button" href="main.html" aria-label="Home">
+        <a class="logo-button" href="index.html" aria-label="Home">
           <img src="./assets/logo.png" alt="" />
         </a>
       </div>
@@ -88,17 +88,16 @@
         </div>
 
         <div class="hero-content">
-          <h1>Travel — plan smarter, explore better</h1>
+          <img src="./assets/logo.png" alt="Travel Logo" class="about-hero-logo" style="width: 120px; height: auto; margin-bottom: 24px;">
+          <p class="hero-badge">India's Trusted Travel Platform</p>
+          <h1>Travel with confidence, explore without limits</h1>
           <p>
-            Travel is a modern trip platform designed for clarity and speed:
-            interactive maps for discovery, clean Transportation bookings,
-            stable personalized Deals, rewarding Loyalty, and a thoughtful
-            Account experience with clear feedback.
+            We are dedicated to making every journey unforgettable. From hand-picked deals and transparent pricing to seamless itineraries — your adventure begins the moment you start planning.
           </p>
           <div class="hero-cta">
-            <a class="btn primary" href="places/INDmap.html">Start Exploring</a>
+            <a class="btn primary" href="places/INDmap.html">🗺️ Start Exploring</a>
             <button class="btn ghost" data-scroll-to="#story">
-              How we built it
+              Our Promise ↓
             </button>
           </div>
 
@@ -108,16 +107,16 @@
               <div class="label">States & Territories</div>
             </div>
             <div class="stat">
-              <div class="num" data-count-to="1260">0</div>
-              <div class="label">Trips Planned</div>
+              <div class="num" data-count-to="98">0</div>
+              <div class="label">Global Partners</div>
             </div>
             <div class="stat">
               <div class="num" data-count-to="99.9">0</div>
-              <div class="label">Uptime (%)</div>
+              <div class="label">Booking Success (%)</div>
             </div>
             <div class="stat">
-              <div class="num" data-count-to="4">0</div>
-              <div class="label">Core Modules</div>
+              <div class="num" data-count-to="24">0</div>
+              <div class="label">Hour Support</div>
             </div>
           </div>
         </div>
@@ -126,138 +125,95 @@
       <!-- Values marquee -->
       <section class="values" aria-label="Our values">
         <div class="marquee">
-          <span>Speed</span><span>Clarity</span><span>Playfulness</span>
-          <span>Trust</span><span>Craft</span><span>Accessibility</span>
-          <span>Reliability</span><span>Privacy</span>
+          <span>Trust</span><span>Clarity</span><span>Adventure</span>
+          <span>Security</span><span>Support</span><span>Reliability</span>
+          <span>Comfort</span><span>Discovery</span>
         </div>
       </section>
 
-      <!-- Story / Product evolution -->
+      <!-- Story / Promise -->
       <section id="story" class="story section">
         <div class="section-head">
-          <h2>Our story</h2>
+          <h2>Our Promise</h2>
           <p>
-            Travel started as a simple idea: build tools that feel fast, make
-            sense, and look great. We iterated openly, improving layout, states,
-            and feedback at every step.
+            Travel should be about the destination, not the stress of getting there. We built this platform to guarantee total peace of mind for every tourist who steps out their door.
           </p>
         </div>
 
-        <ol class="timeline">
-          <li class="tl-item reveal">
-            <div class="dot"></div>
-            <div class="card">
-              <h3>Consistent UI foundation</h3>
-              <p>
-                Unified header/nav and base styles ensure every page feels
-                familiar and responsive, with clear spacing and readable
-                typography.
-              </p>
-            </div>
-          </li>
-
-          <li class="tl-item reveal">
-            <div class="dot"></div>
-            <div class="card">
-              <h3>Explore with interactive maps</h3>
-              <p>
-                A dynamic India SVG map leads to state pages. Hover and tap
-                cues, smooth transitions, and accessible labels make discovery
-                intuitive.
-              </p>
-            </div>
-          </li>
-
-          <li class="tl-item reveal">
-            <div class="dot"></div>
-            <div class="card">
-              <h3>Transportation that flows</h3>
-              <p>
-                Two tabs: <strong>Booking</strong> and
-                <strong>Already Booked</strong> (self-added trips). A 2-column
-                card grid avoids overlap; buttons and totals stay visible and
-                legible on any screen.
-              </p>
-            </div>
-          </li>
-
-          <li class="tl-item reveal">
-            <div class="dot"></div>
-            <div class="card">
-              <h3>Deals that stay put</h3>
-              <p>
-                Bundled places with transparent pricing and a random
-                <strong>5–15%</strong> discount. Each surfaced deal remains
-                stable for <strong>72 hours</strong> and biases
-                <em>1–2 deals toward your most-visited state</em>.
-              </p>
-            </div>
-          </li>
-
-          <li class="tl-item reveal">
-            <div class="dot"></div>
-            <div class="card">
-              <h3>Loyalty & Account clarity</h3>
-              <p>
-                Loyalty points with a clean <em>Redeem</em> flow. Account pages
-                have accessible validation, specific error messages, and a
-                friendly password-change popover for instant feedback.
-              </p>
-            </div>
-          </li>
-        </ol>
+        <div class="promise-grid">
+          <div class="promise-card reveal">
+            <div class="promise-num">1</div>
+            <h3>Verified Destinations</h3>
+            <p>Every location on our interactive map is thoroughly vetted. We ensure you only see the safest, most breathtaking spots India has to offer.</p>
+          </div>
+          <div class="promise-card reveal">
+            <div class="promise-num">2</div>
+            <h3>Transparent Pricing</h3>
+            <p>No hidden fees or sudden price hikes. The deals you see are locked in and guaranteed with an honest, upfront breakdown.</p>
+          </div>
+          <div class="promise-card reveal">
+            <div class="promise-num">3</div>
+            <h3>Stress-Free Itineraries</h3>
+            <p>Never lose track of your bookings. Our unified dashboard keeps your entire journey perfectly organized on a beautiful timeline.</p>
+          </div>
+          <div class="promise-card reveal">
+            <div class="promise-num">4</div>
+            <h3>Rewarding Loyalty</h3>
+            <p>Earn points on every journey and redeem them for genuine discounts on future trips, guided tours, and premium upgrades.</p>
+          </div>
+        </div>
       </section>
 
       <!-- What Travel includes -->
       <section class="features section">
         <div class="section-head">
-          <h2>Everything you need</h2>
-          <p>Four pillars power the experience.</p>
+          <h2>Everything you need for the perfect trip</h2>
+          <p>Four pillars power a seamless travel experience.</p>
         </div>
 
         <div class="feature-grid">
           <article class="feature reveal">
-            <div class="icon i-explore" aria-hidden="true"></div>
-            <h3>Explore</h3>
+            <div class="feature-emoji">🗺️</div>
+            <h3>Discover Securely</h3>
             <ul class="bullets">
-              <li>Interactive India map with state pages</li>
-              <li>Hover/tap cues and smooth transitions</li>
-              <li>Accessible labels and keyboard hints</li>
+              <li>Curated state guides and verified maps</li>
+              <li>Highest safety standards for every listing</li>
+              <li>Local emergency contacts & travel tips</li>
             </ul>
-            <a class="chip" href="places/INDmap.html">Open Map</a>
+            <a class="chip" href="places/INDmap.html">→ Explore Map</a>
           </article>
 
           <article class="feature reveal">
-            <div class="icon i-transport" aria-hidden="true"></div>
-            <h3>Transportation</h3>
+            <div class="feature-emoji">✈️</div>
+            <h3>Travel Smoothly</h3>
             <ul class="bullets">
-              <li>Booking & “Already Booked” tabs</li>
-              <li>2-per-row card grid (no overlaps)</li>
-              <li>Responsive totals and clear actions</li>
+              <li>Unified itinerary timeline dashboard</li>
+              <li>Consolidate all external bookings</li>
+              <li>Real-time support access on every leg</li>
             </ul>
-            <a class="chip" href="transportation.html">Plan a Trip</a>
+            <a class="chip" href="transportation.html">→ Book Transit</a>
           </article>
 
           <article class="feature reveal">
-            <div class="icon i-deals" aria-hidden="true"></div>
-            <h3>Deals</h3>
+            <div class="feature-emoji">💰</div>
+            <h3>Book Honestly</h3>
             <ul class="bullets">
-              <li>Bundles with Basic/Plus/Premium labels</li>
-              <li>5–15% discount, fixed for 72 hours</li>
-              <li>Bias toward your most-visited state</li>
+              <li>Locked-in, guaranteed prices</li>
+              <li>Zero hidden service fees</li>
+              <li>Curated premium destination bundles</li>
             </ul>
-            <a class="chip" href="deals.html">See Deals</a>
+            <a class="chip" href="deals.html">→ View Packages</a>
           </article>
 
           <article class="feature reveal">
-            <div class="icon i-rewards" aria-hidden="true"></div>
-            <h3>Rewards</h3>
+            <div class="feature-emoji">⭐</div>
+            <h3>Earn Meaningfully</h3>
             <ul class="bullets">
-              <li>Earn on bookings, redeem with preview</li>
-              <li>Clear breakdown before confirmation</li>
-              <li>Accessible messages and status</li>
+              <li>Points valid for 24 months</li>
+              <li>Instant, transparent redemption</li>
+              <li>No blackout dates, no fine print</li>
             </ul>
-            <a class="chip" href="redeem.html">Redeem Points</a>
+            <a class="chip" href="redeem.html">→ Member Benefits</a>
           </article>
         </div>
       </section>
@@ -266,155 +222,94 @@
       <section class="testimonials section">
         <div class="section-head">
           <h2>What travelers say</h2>
-          <p>Small delights add up to big wins.</p>
+          <p>Real experiences from real adventurers.</p>
         </div>
 
-        <div class="carousel" data-carousel>
-          <button class="car-btn prev" aria-label="Previous" data-prev>
-            ‹
-          </button>
-          <div class="track">
-            <figure class="slide active">
-              <blockquote>
-                “The Explore map is smooth and actually useful.”
-              </blockquote>
-              <figcaption>— Explorer</figcaption>
-            </figure>
-            <figure class="slide">
-              <blockquote>
-                “Deals don’t jump around anymore. Love the 3-day stability.”
-              </blockquote>
-              <figcaption>— Saver</figcaption>
-            </figure>
-            <figure class="slide">
-              <blockquote>
-                “Transportation cards are clean. Buttons do exactly what I
-                expect.”
-              </blockquote>
-              <figcaption>— Frequent Flier</figcaption>
-            </figure>
+        <div class="testimonial-grid">
+          <div class="testimonial-card reveal">
+            <div>
+              <div class="quote-icon">“</div>
+              <blockquote>I've never felt so secure booking a multi-city trip. Everything was perfectly organized from start to finish.</blockquote>
+            </div>
+            <div>
+              <div class="reviewer">— Sarah L.</div>
+              <div class="reviewer-role">Globetrotter</div>
+            </div>
           </div>
-          <button class="car-btn next" aria-label="Next" data-next>›</button>
-          <div class="dots" data-dots></div>
+
+          <div class="testimonial-card reveal">
+            <div>
+              <div class="quote-icon">“</div>
+              <blockquote>The transparent pricing is a breath of fresh air. What you see is exactly what they charge. No surprises.</blockquote>
+            </div>
+            <div>
+              <div class="reviewer">— David M.</div>
+              <div class="reviewer-role">Business Traveler</div>
+            </div>
+          </div>
+
+          <div class="testimonial-card reveal">
+            <div>
+              <div class="quote-icon">“</div>
+              <blockquote>Knowing there's 24/7 support standing behind every ticket gives me total peace of mind on every trip.</blockquote>
+            </div>
+            <div>
+              <div class="reviewer">— The Patel Family</div>
+              <div class="reviewer-role">Family Vacationers</div>
+            </div>
+          </div>
         </div>
       </section>
 
       <!-- Privacy & Accessibility -->
       <section class="policies section">
         <div class="section-head">
-          <h2>Privacy & Accessibility</h2>
-          <p>We design for trust and inclusion.</p>
+          <h2>Trust & Safety</h2>
+          <p>We are uncompromising when it comes to your security.</p>
         </div>
         <div class="policy-grid">
           <article class="card reveal">
-            <h3>Data & Privacy</h3>
+            <h3>Secure Payments</h3>
             <ul class="bullets">
-              <li>No dark patterns — clear consent and opt-outs</li>
-              <li>Minimal local storage (e.g., draft bookings)</li>
-              <li>Readable policies and simple language</li>
+              <li>End-to-end encryption on all transactions</li>
+              <li>PCI compliant payment gateways</li>
+              <li>Zero hidden fees or forced subscriptions</li>
             </ul>
           </article>
           <article class="card reveal">
-            <h3>Performance</h3>
+            <h3>Traveler Privacy</h3>
             <ul class="bullets">
-              <li>Lightweight animations, fast interactions</li>
-              <li>Optimized card grids (no overflow)</li>
-              <li>Semantic HTML for better SEO</li>
+              <li>We never sell your itinerary data</li>
+              <li>Strict privacy adherence globally</li>
+              <li>Full control over your account data</li>
             </ul>
           </article>
           <article class="card reveal">
-            <h3>Accessibility</h3>
+            <h3>24/7 Accessibility</h3>
             <ul class="bullets">
-              <li>Color-contrast safe and keyboardable</li>
-              <li>ARIA labels on key controls</li>
-              <li>Polite live regions for status</li>
+              <li>Round-the-clock emergency support</li>
+              <li>Multi-lingual assistance options</li>
+              <li>Inclusive booking designs for everyone</li>
             </ul>
           </article>
         </div>
       </section>
 
-      <!-- Roadmap -->
-      <section class="roadmap section">
-        <div class="section-head">
-          <h2>Roadmap</h2>
-          <p>Shipped and next up.</p>
+      <!-- CTA Banner -->
+      <section class="cta-banner section">
+        <div class="cta-banner-inner">
+          <h2>Ready to plan your next adventure?</h2>
+          <p>Join thousands of travelers who trust us for honest deals, seamless planning, and 24/7 support.</p>
+          <div class="hero-cta">
+            <a class="btn primary" href="places/INDmap.html">🗺️ Explore Destinations</a>
+            <a class="btn ghost" href="deals.html">View Deals</a>
+          </div>
         </div>
-        <div class="accordion">
-          <details class="acc reveal" open>
-            <summary><span>Now</span><em>Polish & Performance</em></summary>
-            <ul>
-              <li>Refined card sizing to prevent overflow</li>
-              <li>Specific validation errors & password popovers</li>
-              <li>Faster page loads and lighter motion</li>
-            </ul>
-          </details>
-
-          <details class="acc reveal">
-            <summary><span>Next</span><em>Personalized Recs</em></summary>
-            <ul>
-              <li>State-aware suggestions on Explore</li>
-              <li>Deal logic tuned by recent activity</li>
-              <li>Trip templates for frequent routes</li>
-            </ul>
-          </details>
-
-          <details class="acc reveal">
-            <summary><span>Later</span><em>Social & Sharing</em></summary>
-            <ul>
-              <li>Shareable itineraries</li>
-              <li>Friend groups & collaborative planning</li>
-              <li>Calendar export</li>
-            </ul>
-          </details>
-        </div>
-      </section>
-
-      <!-- Tech stack -->
-      <section class="stack section">
-        <div class="section-head">
-          <h2>Under the hood</h2>
-          <p>Simple, reliable technologies — thoughtfully put together.</p>
-        </div>
-        <ul class="badges">
-          <li>HTML</li>
-          <li>CSS</li>
-          <li>JavaScript</li>
-          <li>Node/Express</li>
-          <li>MySQL</li>
-          <li>SVG Maps</li>
-          <li>ARIA & A11y</li>
-          <li>Animations</li>
-        </ul>
-      </section>
-
-      <!-- Contact -->
-      <section class="contact section">
-        <div class="section-head">
-          <h2>Say hello</h2>
-          <p>Ideas or feedback? We’d love to hear it.</p>
-        </div>
-        <div class="contact-actions">
-          <a class="btn primary" href="mailto:hello@example.com">Email Us</a>
-          <button class="btn" data-copy="hello@example.com">Copy Email</button>
-          <a
-            class="btn ghost"
-            href="https://github.com/daksh692"
-            target="_blank"
-            rel="noopener"
-            >GitHub</a
-          >
-        </div>
-        <p
-          class="tiny note"
-          role="status"
-          aria-live="polite"
-          id="copyStatus"
-        ></p>
       </section>
     </main>
 
     <footer class="site-footer">
-      <p>© <span id="year"></span> Travel — Built with care.</p>
+      <p>© <span id="year"></span> Travel — Your journey, our promise.</p>
       <a href="#top" class="to-top" aria-label="Back to top">↑</a>
     </footer>
 

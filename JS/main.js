@@ -17,14 +17,14 @@ function firstInitial(name) {
 
 /* Declare hero images once so loader + slideshow share them */
 const HERO_IMAGES = [
-  "../assets/1.jpeg",
-  "../assets/2.jpeg",
-  "../assets/3.jpeg",
-  "../assets/4.jpeg",
-  "../assets/5.jpeg",
-  "../assets/6.jpeg",
-  "../assets/7.jpeg",
-  "../assets/8.jpeg",
+  "./assets/1.jpeg",
+  "./assets/2.jpeg",
+  "./assets/3.jpeg",
+  "./assets/4.jpeg",
+  "./assets/5.jpeg",
+  "./assets/6.jpeg",
+  "./assets/7.jpeg",
+  "./assets/8.jpeg",
 ];
 
 /* ================= Loader ================= */
@@ -190,13 +190,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("SearchCountry");
   const btn = document.getElementById("searchButton");
   function go() {
-    const q = (input?.value || "").trim().toLowerCase();
-    if (!q) return;
-    if (q === "india") window.location.href = "places/INDmap.html";
-    else {
-      alert(`${q} not added yet.`);
-      input.value = "";
-    }
+    // Input is locked to INDIA in index.html
+    window.location.href = "places/INDmap.html";
   }
   btn?.addEventListener("click", go);
   input?.addEventListener("keypress", (e) => {

@@ -25,6 +25,7 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
   connectionLimit: 10,
   charset: "utf8mb4",
+  ssl: { rejectUnauthorized: true },
 });
 
 /* =========================
@@ -38,6 +39,7 @@ const statesPool = mysql.createPool({
   database: process.env.STATES_DB_NAME || "states",
   connectionLimit: 5,
   charset: "utf8mb4",
+  ssl: { rejectUnauthorized: true },
 });
 
 /* =========================

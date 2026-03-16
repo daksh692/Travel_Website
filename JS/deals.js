@@ -444,7 +444,9 @@ function hideHandpicked() {
     renderBundles(bundles, "bundleList");
     renderSingles(singles);
 
-    // HAND-PICKED (bottom) — only if we’re in learned phase (day >=2)
+    // HAND-PICKED (bottom) — DISABLED PER USER REQUEST
+    hideHandpicked();
+    /*
     if (getLearningPhaseDays() >= 2) {
       const learnedBundles = await buildBundles({ learned: true });
       const host = $("#handpickList");
@@ -455,6 +457,7 @@ function hideHandpicked() {
     } else {
       hideHandpicked();
     }
+    */
   } catch (e) {
     console.error(e);
     hideHandpicked();
