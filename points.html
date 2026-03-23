@@ -3,11 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Redeem — Travel</title>
+    <title>Points & Promos · Travel</title>
+    <meta
+      name="description"
+      content="Redeem your loyalty points and apply promo codes to save on your perfect journey."
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./CSS/main.css" />
     <link rel="stylesheet" href="./CSS/redeem.css" />
   </head>
-  <body>
+  <body class="lp-page">
+    <div class="lp-aurora" aria-hidden="true"></div>
+
     <header class="site-header">
       <div class="header-left">
         <a class="logo-button" href="index.html" aria-label="Home">
@@ -71,125 +81,195 @@
       </div>
     </header>
 
-    <!-- ===== New 2-column layout ===== -->
-    <main class="shell">
-      <div class="layout">
+    <main class="ct-shell">
+      <!-- Hero title section -->
+      <section class="ct-hero">
+        <div class="ct-hero-text">
+          <h1 class="ct-title">Points & Promos</h1>
+          <p class="ct-subtitle">Redeem loyalty points and apply promotional codes to maximize savings on your upcoming trips.</p>
+        </div>
+        <div class="ct-hero-actions">
+          <a href="./currenttrip.html" class="ct-hero-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back to Trip
+          </a>
+        </div>
+      </section>
+
+      <section class="ct-grid">
         <!-- LEFT: Promo + Points -->
-        <div class="col-left">
+        <div class="ct-main-col controls-col">
+          
           <!-- Promo -->
-          <section class="card card--promo">
-            <div class="card-head">
-              <h2>Have a promo code?</h2>
-              <span class="badge">Instant</span>
-            </div>
-            <p class="muted">
-              Codes apply on this device and can be removed anytime.
-            </p>
-
-            <div class="row">
-              <input
-                id="code"
-                class="code"
-                placeholder="Enter code (e.g., WELCOME10)"
-              />
-              <button class="btn" id="apply">Apply</button>
-              <button class="btn-ghost" id="remove">Remove</button>
+          <div class="group-card">
+            <div class="group-head">
+              <div class="group-meta">
+                <div class="card-icon-halo">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                </div>
+                <div>
+                  <h2 class="group-title">Have a promo code?</h2>
+                  <p class="muted small">Codes apply instantly on this device.</p>
+                </div>
+              </div>
             </div>
 
-            <div class="chips" aria-label="Quick codes">
-              <button class="chip" data-code="WELCOME10">WELCOME10</button>
-              <button class="chip" data-code="FESTIVE15">FESTIVE15</button>
-              <button class="chip" data-code="VIP20">VIP20</button>
+            <div class="promo-inputs">
+              <div class="promo-row">
+                <input
+                  id="code"
+                  class="input-faded"
+                  placeholder="Enter code (e.g., WELCOME10)"
+                />
+                <button class="btn-primary btn-sm" id="apply">Apply</button>
+                <button class="ct-hero-btn" id="remove">Remove</button>
+              </div>
+
+              <div class="chips" aria-label="Quick codes">
+                <button class="chip" data-code="WELCOME10">WELCOME10</button>
+                <button class="chip" data-code="FESTIVE15">FESTIVE15</button>
+                <button class="chip" data-code="VIP20">VIP20</button>
+              </div>
             </div>
-          </section>
+          </div>
 
           <!-- Points -->
-          <section class="card card--points">
-            <div class="card-head">
-              <h2>Your loyalty points</h2>
-              <span class="badge badge--glow" id="pointsRule"
-                >Login to use points</span
-              >
+          <div class="group-card points-card">
+            <div class="group-head points-head">
+              <div class="group-meta">
+                <div class="card-icon-halo accent">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                </div>
+                <div>
+                  <h2 class="group-title">Your loyalty points</h2>
+                  <span class="badge badge-glow" id="pointsRule">Login to use points</span>
+                </div>
+              </div>
             </div>
 
             <div class="points-grid">
-              <div class="points-balance">
-                <div class="label">Available</div>
-                <div class="value" id="pointsBalance">0</div>
+              <div class="points-balance-card">
+                <span class="stat-label">Available Balance</span>
+                <div class="stat-value huge" id="pointsBalance">0</div>
               </div>
 
-              <div class="points-apply">
-                <label for="pointsRange" class="label">Use on this order</label>
-                <input
-                  id="pointsRange"
-                  type="range"
-                  min="0"
-                  max="0"
-                  value="0"
-                />
+              <div class="points-apply-col">
+                <span class="stat-label">Use on this order</span>
+                
+                <div class="slider-wrapper">
+                  <div class="slider-track" id="sliderTrack">
+                    <div class="slider-fill" id="sliderFill"></div>
+                  </div>
+                  <input
+                    id="pointsRange"
+                    type="range"
+                    min="0"
+                    max="0"
+                    value="0"
+                  />
+                </div>
+                
                 <div class="range-row">
                   <input
                     id="pointsInput"
-                    class="points-input"
+                    class="input-faded"
                     type="number"
                     min="0"
                     value="0"
                   />
-                  <button class="btn" id="usePointsBtn">Apply points</button>
-                  <button class="btn-ghost" id="clearPointsBtn">Clear</button>
+                  <div class="btn-group">
+                    <button class="btn-primary btn-sm" id="usePointsBtn">Update</button>
+                    <button class="ct-hero-btn" id="clearPointsBtn">Clear</button>
+                  </div>
                 </div>
-                <p class="muted" id="pointsHint">
-                  Choose how many points to use (max shown).
+                
+                <p class="summary-hint" id="pointsHint">
+                  Choose how many points to use (limited to max cart value).
                 </p>
+                
+                <div class="inline-note" id="persistNote" hidden>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  Applied points locked for checkout.
+                </div>
               </div>
             </div>
-
-            <div class="inline-note" id="persistNote" hidden>
-              Applied points are saved on this device until checkout.
-            </div>
-          </section>
+          </div>
         </div>
 
         <!-- RIGHT: Sticky totals -->
-        <aside class="col-right">
-          <section class="card card--totals sticky">
-            <h2>Order summary</h2>
-            <div class="sum">
-              <div class="line">
+        <aside class="ct-summary" aria-label="Order summary">
+          <div class="summary-glow"></div>
+          <div class="summary-inner">
+            <div class="summary-header">
+              <div class="summary-title-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              </div>
+              <h2>Order Summary</h2>
+            </div>
+            <p class="summary-hint">Your final breakdown before checkout.</p>
+
+            <div class="sum-breakdown">
+              <div class="sum-row">
                 <span>Cart subtotal</span><strong id="sub">₹0</strong>
               </div>
-              <div class="line">
+              <div class="sum-row">
                 <span>Service (0.5%)</span><strong id="serv">₹0</strong>
               </div>
-              <div class="line">
+              <div class="sum-row">
                 <span>Tax (12%)</span><strong id="tax">₹0</strong>
               </div>
-              <div class="line">
-                <span>Promo (<span id="promoPct">0%</span>)</span
-                ><strong id="disc">−₹0</strong>
+              <div class="sum-row promo-row">
+                <span>Promo (<span id="promoPct">0%</span>)</span>
+                <strong id="disc" class="success-text">−₹0</strong>
               </div>
-              <div class="line">
-                <span>Points (<span id="pointsUsed">0</span>)</span
-                ><strong id="pointsDisc">−₹0</strong>
+              <div class="sum-row promo-row">
+                <span>Points (<span id="pointsUsed">0</span>)</span>
+                <strong id="pointsDisc" class="success-text">−₹0</strong>
               </div>
-              <div class="line total">
+            </div>
+
+            <div class="sum-total-wrap">
+              <div class="sum-row total">
                 <span>Final total</span><strong id="tot">₹0</strong>
               </div>
             </div>
 
-            <div class="btns">
-              <a class="btn-outline" href="./currenttrip.html"
-                >Back to Current Trip</a
-              >
-              <a class="btn-primary" href="./cart.html">Go to Cart</a>
+            <div class="sum-actions">
+              <a href="./cart.html" class="btn-primary">
+                Proceed to Checkout
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
             </div>
-          </section>
+          </div>
         </aside>
-      </div>
+      </section>
     </main>
 
-    <div id="toasts"></div>
+    <div id="toasts" class="lp-toasts" aria-live="polite" aria-atomic="true"></div>
+
     <script src="./JS/main.js"></script>
     <script src="./JS/redeem.js"></script>
+    
+    <!-- inline script to drive the custom slider visual fill if range input changes -->
+    <script>
+      (function() {
+        const slider = document.getElementById('pointsRange');
+        const fill = document.getElementById('sliderFill');
+        function updateSlider() {
+          const min = parseFloat(slider.min) || 0;
+          const max = parseFloat(slider.max) || 100;
+          const val = parseFloat(slider.value) || 0;
+          const pct = max === min ? 0 : ((val - min) / (max - min)) * 100;
+          fill.style.width = pct + '%';
+        }
+        slider.addEventListener('input', updateSlider);
+        // observe value changes from the JS API when it syncs slider to text input
+        const observer = new MutationObserver(updateSlider);
+        observer.observe(slider, { attributes: true, attributeFilter: ['max'] });
+        
+        // Also fire periodically in case `redeem.js` changes the .value directly without firing an event
+        setInterval(updateSlider, 150);
+      })();
+    </script>
   </body>
 </html>

@@ -482,27 +482,37 @@ function render() {
     groupWrap.className = "group-card";
     groupWrap.innerHTML = `
       <div class="group-head">
-        <div class="group-meta">
-          <div class="group-select">
-            <input type="checkbox" class="group-check" ${
-              EDIT_MODE ? "" : "disabled"
-            } />
-            <h4 class="group-title" contenteditable="${EDIT_MODE}" spellcheck="false">${
-      g.name
-    }</h4>
+        <div class="group-meta" style="flex:1; justify-content: space-between; flex-wrap: wrap;">
+          <div style="display: flex; gap: 16px; align-items: center;">
+            <div class="group-select">
+              <input type="checkbox" class="group-check styled-checkbox" ${
+                EDIT_MODE ? "" : "disabled"
+              } />
+            </div>
+            <div class="card-icon-halo">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+            <div>
+              <h4 class="group-title" contenteditable="${EDIT_MODE}" spellcheck="false" style="font-size: 18px; margin: 0; outline: none; transition: 0.2s padding;">${
+        g.name
+      }</h4>
+              <p class="muted small" style="margin-top:2px; margin-bottom:0;">Group details.</p>
+            </div>
           </div>
-          <label class="field" style="min-width: 180px;">
-            <span class="label">Start date</span>
-            <input type="date" value="${
-              g.start || tripStart.value
-            }" class="group-start edit-only-input" ${
-      EDIT_MODE ? "" : "disabled"
-    } />
-          </label>
-          <span class="chip">Items: ${rows.length}</span>
-        </div>
-        <div class="group-actions-row edit-only ${EDIT_MODE ? "" : "hidden"}">
-          <button class="btn-sm" data-act="ungroup">Ungroup</button>
+          <div class="group-controls" style="display:flex; gap:12px; align-items: center;">
+            <label class="inline">
+              <span class="label small" style="color:var(--muted); text-transform:uppercase; font-weight:700;">Start Date</span>
+              <input type="date" value="${
+                g.start || tripStart.value
+              }" class="group-start input-faded edit-only-input" style="padding: 6px 10px;" ${
+        EDIT_MODE ? "" : "disabled"
+      } />
+            </label>
+            <span class="badge badge-glow" style="margin-right:12px; background:rgba(99,102,241,0.1); border-color:rgba(99,102,241,0.2);">Items: ${rows.length}</span>
+            <div class="group-actions-row edit-only ${EDIT_MODE ? "" : "hidden"}">
+              <button class="btn-ghost" style="padding: 6px 12px; font-size: 13px;" data-act="ungroup">Ungroup</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="group-items"></div>`;
@@ -593,9 +603,11 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
   card.dataset.idx = idx;
   if (selected.has(idx)) card.classList.add("selected");
   card.innerHTML = `
-    <div class="sel-box"><input type="checkbox" ${
-      selected.has(idx) ? "checked" : ""
-    } ${EDIT_MODE ? "" : "disabled"} aria-label="Select"/></div>
+    <div class="sel-box" style="align-self:center; display:flex;">
+      <input type="checkbox" class="styled-checkbox" ${
+        selected.has(idx) ? "checked" : ""
+      } ${EDIT_MODE ? "" : "disabled"} aria-label="Select"/>
+    </div>
     <div class="ct-thumb">
       <img alt="${
         it.place
@@ -607,15 +619,16 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
       };">${initials}</span>
     </div>
     <div class="ct-body">
-      <h3>${it.place || "(Unknown place)"}</h3>
-      <div class="ct-meta-row">
-        <span class="badge">State: ${it.state || "—"}</span>
-        <span class="badge">Package: ${it.package || "—"}</span>
-        <span class="badge days">${
+      <h3 style="font-size:16.5px; margin-bottom: 6px;">${it.place || "(Unknown place)"}</h3>
+      <div class="ct-meta-row" style="color:var(--muted); font-size:13px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <span style="display:flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${it.state || "—"}</span>
+        <span style="display:flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${
           it.days ? `${it.days} day${it.days > 1 ? "s" : ""}` : "—"
         }</span>
-        <label class="inline"><span class="label">Start</span>
-          <input type="date" class="item-start edit-only-input" value="${
+        <span class="badge" style="background:rgba(99,102,241,0.1); color:var(--accent-soft); border-color:rgba(99,102,241,0.2);">Pkg: ${it.package || "—"}</span>
+        <label class="inline" style="display:flex; gap:6px; align-items:center; margin-left: auto;">
+          <span class="label small" style="text-transform:uppercase; font-weight:700;">Start</span>
+          <input type="date" class="item-start input-faded edit-only-input" style="padding:4px 8px; font-size:12.5px;" value="${
             it.start || ""
           }" ${EDIT_MODE ? "" : "disabled"} ${
     inGroup && group?.start ? `min="${group.start}"` : ""
@@ -623,29 +636,29 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
         </label>
       </div>
     </div>
-    <div class="ct-actions-col">
-      <div class="price">${fmtINR(price)}</div>
-      <div class="qty" role="group" aria-label="Quantity">
-        <button class="q-dec" ${
+    <div class="ct-actions-col" style="align-items:flex-end;">
+      <div class="price" style="font-size:18px; color:#fff; font-weight:800; margin-bottom: 2px;">${fmtINR(price)}</div>
+      <div class="qty" role="group" aria-label="Quantity" style="display:flex; border:1px solid var(--btn-border); border-radius:10px; overflow:hidden; background:rgba(255,255,255,0.03);">
+        <button class="q-dec" style="padding:4px 10px; background:transparent; color:#fff; cursor:pointer; border:none;" ${
           EDIT_MODE ? "" : "disabled"
         } aria-label="Decrease">−</button>
-        <input class="q-val" type="number" min="1" value="${qty}" inputmode="numeric" ${
+        <input class="q-val" style="width:36px; text-align:center; background:transparent; border:none; color:#fff; font-weight:700;" type="number" min="1" value="${qty}" inputmode="numeric" ${
     EDIT_MODE ? "" : "disabled"
   } />
-        <button class="q-inc" ${
+        <button class="q-inc" style="padding:4px 10px; background:transparent; color:#fff; cursor:pointer; border:none;" ${
           EDIT_MODE ? "" : "disabled"
         } aria-label="Increase">+</button>
       </div>
-      <div class="ct-row-btns">
-        <button class="btn-sm" data-act="pkg" ${
+      <div class="ct-row-btns" style="margin-top:auto; display:flex; gap:8px;">
+        <button class="btn-ghost" style="padding:4px 8px; font-size:12px;" data-act="pkg" ${
           EDIT_MODE ? "" : "disabled"
-        }>Edit package</button>
+        }>Edit Pkg</button>
         ${
           inGroup
-            ? `<button class="btn-sm" data-act="remove-from-group" ${
+            ? `<button class="btn-ghost" style="padding:4px 8px; font-size:12px; color:#fca5a5;" data-act="remove-from-group" ${
                 EDIT_MODE ? "" : "disabled"
               }>Remove</button>`
-            : `<button class="btn-sm" data-act="remove" ${
+            : `<button class="btn-ghost" style="padding:4px 8px; font-size:12px; color:#fca5a5;" data-act="remove" ${
                 EDIT_MODE ? "" : "disabled"
               }>Remove</button>`
         }

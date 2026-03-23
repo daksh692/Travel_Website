@@ -4,6 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Your Current Trip · Travel</title>
+    <meta
+      name="description"
+      content="Plan and manage your current trip — group destinations, track costs, and organize your itinerary."
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./CSS/main.css" />
     <link rel="stylesheet" href="./CSS/currenttrip.css" />
   </head>
@@ -74,124 +82,155 @@
     </header>
 
     <main class="ct-shell">
-      <div class="ct-actions">
-        <button id="backBtn" class="btn-ghost">← Back</button>
-        <button id="exploreBtn" class="btn-outline">Explore more places</button>
+      <!-- Hero title section -->
+      <section class="ct-hero">
+        <div class="ct-hero-text">
+          <h1 class="ct-title">Your Current Trip</h1>
+          <p class="ct-subtitle">Organize destinations, manage budgets, and plan your perfect journey.</p>
+        </div>
+        <div class="ct-hero-actions">
+          <button id="backBtn" class="ct-hero-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back
+          </button>
+          <button id="exploreBtn" class="ct-hero-btn ct-hero-btn--accent">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Explore more
+          </button>
+        </div>
+      </section>
 
-        <div class="group-actions">
+      <!-- Controls bar -->
+      <div class="ct-controls">
+        <div class="ct-filter-group">
           <div class="filter-toggle">
-            <button id="filterPast" class="btn-chip" data-mode="past">
-              Past
-            </button>
-            <button
-              id="filterOngoing"
-              class="btn-chip active"
-              data-mode="ongoing"
-            >
-              Ongoing
-            </button>
-            <button id="filterFuture" class="btn-chip" data-mode="future">
-              Future
-            </button>
+            <button id="filterPast" class="btn-chip" data-mode="past">Past</button>
+            <button id="filterOngoing" class="btn-chip active" data-mode="ongoing">Ongoing</button>
+            <button id="filterFuture" class="btn-chip" data-mode="future">Future</button>
           </div>
+        </div>
 
-          <button id="editToggle" class="btn-outline">Edit mode: OFF</button>
+        <div class="ct-edit-group">
+          <button id="editToggle" class="ct-edit-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M10.5 1.5l2 2-8 8H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            Edit mode: OFF
+          </button>
           <div id="editOnlyBar" class="edit-only hidden">
             <button
               id="manualGroupBtn"
-              class="btn-outline tooltip"
+              class="ct-action-pill tooltip"
               data-tip="Select multiple individual trips, then click Group."
             >
               Group
             </button>
-            <button id="smartGroupBtn" class="btn-outline">Smart group</button>
-            <span id="selectionCount" class="sel-count" hidden
-              >Selected: 0</span
-            >
+            <button id="smartGroupBtn" class="ct-action-pill">Smart group</button>
+            <span id="selectionCount" class="sel-count" hidden>Selected: 0</span>
           </div>
         </div>
       </div>
 
-      <section class="ct-top">
-        <h1 class="ct-title">Your Current Trip</h1>
-
-        <div class="ct-meta">
-          <label class="field">
-            <span class="label">Global start date</span>
-            <input type="date" id="tripStart" class="edit-only-input" />
-          </label>
-
-          <div class="field">
-            <span class="label">Service fee (fixed)</span>
-            <div class="chips">
-              <span id="serviceRateVal" class="chip">0.5%</span>
-            </div>
+      <!-- Trip info cards -->
+      <section class="ct-info-strip">
+        <div class="info-card">
+          <div class="info-card-icon">📅</div>
+          <div class="info-card-content">
+            <span class="info-card-label">Global start date</span>
+            <input type="date" id="tripStart" class="edit-only-input info-card-value" />
           </div>
-
-          <div class="field">
-            <span class="label">Tax (fixed)</span>
-            <div class="chips">
-              <span id="taxRateVal" class="chip">12%</span>
-            </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-icon">💳</div>
+          <div class="info-card-content">
+            <span class="info-card-label">Service fee</span>
+            <span id="serviceRateVal" class="info-card-value info-card-chip">0.5%</span>
           </div>
-
-          <div class="field view-only">
-            <span class="label">Summary date (view mode)</span>
-            <input type="date" id="summaryDate" />
+        </div>
+        <div class="info-card">
+          <div class="info-card-icon">🏛️</div>
+          <div class="info-card-content">
+            <span class="info-card-label">Tax rate</span>
+            <span id="taxRateVal" class="info-card-value info-card-chip">12%</span>
+          </div>
+        </div>
+        <div class="info-card view-only">
+          <div class="info-card-icon">🔍</div>
+          <div class="info-card-content">
+            <span class="info-card-label">Summary date</span>
+            <input type="date" id="summaryDate" class="info-card-value" />
           </div>
         </div>
       </section>
 
+      <!-- Content grid -->
       <section class="ct-grid">
-        <div>
+        <div class="ct-main-col">
           <div id="groupsHost" class="ct-groups"></div>
 
-          <h3 class="subhead">Ungrouped</h3>
+          <div class="ct-section-head">
+            <div class="ct-section-dot"></div>
+            <h3 class="subhead">Ungrouped destinations</h3>
+          </div>
           <div id="items" class="ct-items"></div>
         </div>
 
         <aside class="ct-summary" aria-label="Cost summary">
-          <h2>Summary</h2>
-          <p id="sumHint" class="muted"></p>
+          <div class="summary-glow"></div>
+          <div class="summary-inner">
+            <div class="summary-header">
+              <div class="summary-title-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 8h8M6 11h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <h2>Cost Summary</h2>
+            </div>
+            <p id="sumHint" class="summary-hint"></p>
 
-          <div class="sum-row">
-            <span>Subtotal</span><strong id="sumSubtotal">—</strong>
-          </div>
-          <div class="sum-row">
-            <span>Service (<span id="sumServiceRate">0.5%</span>)</span
-            ><strong id="sumService">—</strong>
-          </div>
-          <div class="sum-row">
-            <span>Tax (<span id="sumTaxRate">12%</span>)</span
-            ><strong id="sumTax">—</strong>
-          </div>
-          <div class="sum-row total">
-            <span>Total</span><strong id="sumTotal">—</strong>
-          </div>
+            <div class="sum-breakdown">
+              <div class="sum-row">
+                <span>Subtotal</span><strong id="sumSubtotal">—</strong>
+              </div>
+              <div class="sum-row">
+                <span>Service (<span id="sumServiceRate">0.5%</span>)</span>
+                <strong id="sumService">—</strong>
+              </div>
+              <div class="sum-row">
+                <span>Tax (<span id="sumTaxRate">12%</span>)</span>
+                <strong id="sumTax">—</strong>
+              </div>
+            </div>
 
-          <div class="sum-aux">
-            <div>
-              <span class="label">Trip duration</span>
-              <div id="sumDays" class="aux-val">—</div>
+            <div class="sum-total-wrap">
+              <div class="sum-row total">
+                <span>Total</span><strong id="sumTotal">—</strong>
+              </div>
             </div>
-            <div>
-              <span class="label">Start</span>
-              <div id="sumStart" class="aux-val">—</div>
+
+            <div class="sum-stats">
+              <div class="stat-card">
+                <span class="stat-label">Duration</span>
+                <div id="sumDays" class="stat-value">—</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Start</span>
+                <div id="sumStart" class="stat-value">—</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">End</span>
+                <div id="sumEnd" class="stat-value">—</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">States</span>
+                <div id="sumStates" class="stat-value">—</div>
+              </div>
             </div>
-            <div>
-              <span class="label">Expected end</span>
-              <div id="sumEnd" class="aux-val">—</div>
-            </div>
-            <div>
-              <span class="label">States</span>
-              <div id="sumStates" class="aux-val">—</div>
+
+            <div class="sum-actions">
+              <button id="saveBtn" class="btn-primary edit-only">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Save changes
+              </button>
+              <button id="clearBtn" class="btn-clear edit-only">Clear trip</button>
             </div>
           </div>
-
-          <button id="saveBtn" class="btn-primary edit-only">
-            Save changes
-          </button>
-          <button id="clearBtn" class="btn-clear edit-only">Clear trip</button>
         </aside>
       </section>
     </main>

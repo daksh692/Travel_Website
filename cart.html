@@ -6,6 +6,7 @@
     <title>Your Cart · Travel</title>
     <link rel="stylesheet" href="./CSS/main.css" />
     <link rel="stylesheet" href="./CSS/cart.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   </head>
   <body class="lp-page" data-auth="false">
     <div class="lp-aurora" aria-hidden="true"></div>
@@ -25,118 +26,76 @@
         </ul>
       </nav>
       <div class="header-right">
-        <button
-          id="settingsBtn"
-          class="icon-btn guest-only"
-          aria-haspopup="menu"
-          aria-expanded="false"
-          aria-controls="settingsMenu"
-        >
-          ⚙️
-        </button>
-        <button
-          id="avatarBtn"
-          class="avatar-btn auth-only"
-          aria-haspopup="menu"
-          aria-expanded="false"
-          aria-controls="userMenu"
-        >
+        <button id="settingsBtn" class="icon-btn guest-only" aria-haspopup="menu" aria-expanded="false" aria-controls="settingsMenu">⚙️</button>
+        <button id="avatarBtn" class="avatar-btn auth-only" aria-haspopup="menu" aria-expanded="false" aria-controls="userMenu">
           <span id="avatarInitial">U</span>
         </button>
-        <div
-          id="settingsMenu"
-          class="menu guest-only"
-          role="menu"
-          aria-hidden="true"
-        >
+        <div id="settingsMenu" class="menu guest-only" role="menu" aria-hidden="true">
           <a class="menu-item" href="auth.html?tab=login">Login</a>
           <a class="menu-item" href="auth.html?tab=register">Register</a>
         </div>
-        <div
-          id="userMenu"
-          class="menu auth-only"
-          role="menu"
-          aria-hidden="true"
-        >
+        <div id="userMenu" class="menu auth-only" role="menu" aria-hidden="true">
           <a class="menu-item" href="account.html" role="menuitem">Account</a>
-          <a class="menu-item" href="currenttrip.html" role="menuitem"
-            >Your Current Trip</a
-          >
-
-          <a class="menu-item" href="points.html" role="menuitem"
-            >Points Redeem</a
-          >
-          <a
-            class="menu-item"
-            href="cart.html"
-            role="menuitem"
-            aria-current="page"
-            >Cart</a
-          >
-          <button class="menu-item danger" id="logoutBtn" role="menuitem">
-            Logout
-          </button>
+          <a class="menu-item" href="currenttrip.html" role="menuitem">Your Current Trip</a>
+          <a class="menu-item" href="points.html" role="menuitem">Points Redeem</a>
+          <a class="menu-item" href="cart.html" role="menuitem" aria-current="page">Cart</a>
+          <button class="menu-item danger" id="logoutBtn" role="menuitem">Logout</button>
         </div>
       </div>
     </header>
 
     <main class="cart-shell">
-      <!-- actions row -->
       <div class="cart-actions">
-        <button id="backBtnTop" class="btn-ghost">← Back</button>
+        <button id="backBtnTop" class="btn-ghost">
+          Back
+        </button>
         <button id="exploreBtnTop" class="btn-outline">
-          Explore more places
+          Keep Exploring
         </button>
       </div>
 
       <!-- login notice (shown to guests) -->
       <div id="loginNotice" class="cart-banner hidden">
         <div class="banner-dot"></div>
-        You’re not logged in. <a id="loginNow" href="#">Log in</a> to save and
-        check out.
+        You’re browsing as a guest. <a id="loginNow" href="#">Log in</a> to save your progress and check out safely.
       </div>
 
+      <h1 class="cart-title">Your Cart</h1>
+
       <section class="cart-grid">
-        <div>
-          <h1 class="cart-title">Your Cart</h1>
+        <div class="cart-main-col controls-col">
           <div id="cartItems" class="cart-items"></div>
         </div>
 
         <aside class="cart-summary" aria-label="Order summary">
-          <h2>Summary</h2>
+          <h2>Order Summary</h2>
           <div class="sum-row">
             <span>Subtotal</span><strong id="sumSubtotal">₹0</strong>
           </div>
           <div class="sum-row">
-            <span>Service</span><strong id="sumService">₹0</strong>
+            <span>Service Fee (0.5%)</span><strong id="sumService">₹0</strong>
           </div>
           <div class="sum-row">
-            <span>Tax</span><strong id="sumTax">₹0</strong>
+            <span>Tax (12%)</span><strong id="sumTax">₹0</strong>
           </div>
-
+          <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:12px 0;"/>
           <div class="sum-row total">
-            <span>Total</span><strong id="sumTotal">₹0</strong>
+            <span>Final total</span><strong id="sumTotal">₹0</strong>
           </div>
+          <p class="sum-note small muted" style="margin-top:4px;">
+            Does not yet include promo codes.
+          </p>
 
           <button id="checkoutBtn" class="btn-checkout">
-            Proceed to checkout
+            Proceed to Checkout
           </button>
-          <button id="clearBtn" class="btn-clear">Clear cart</button>
-          <p class="sum-note">
-            Prices shown are estimates. Final totals may vary based on travel
-            dates.
-          </p>
+          <button id="clearBtn" class="btn-clear">Clear Cart</button>
         </aside>
       </section>
     </main>
 
     <!-- Toasts -->
-    <div
-      id="toasts"
-      class="lp-toasts"
-      aria-live="polite"
-      aria-atomic="true"
-    ></div>
+    <div id="toasts" class="lp-toasts" aria-live="polite" aria-atomic="true"></div>
 
     <script src="./JS/main.js"></script>
     <script src="./JS/cart.js"></script>
