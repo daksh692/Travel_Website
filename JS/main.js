@@ -63,7 +63,7 @@ const HERO_IMAGES = [
 
     // Kick off all image loads
     const imagePromises = toLoad.map((item) =>
-      loadImage(item.src).then(report)
+      loadImage(item.src).then(report),
     );
 
     // Wait for fonts (where supported)
@@ -158,10 +158,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const avatarBtn = document.getElementById("avatarBtn");
 
   settingsBtn?.addEventListener("click", (ev) =>
-    toggleMenu(settingsBtn, "settingsMenu", ev)
+    toggleMenu(settingsBtn, "settingsMenu", ev),
   );
   avatarBtn?.addEventListener("click", (ev) =>
-    toggleMenu(avatarBtn, "userMenu", ev)
+    toggleMenu(avatarBtn, "userMenu", ev),
   );
 
   document.getElementById("logoutBtn")?.addEventListener("click", () => {

@@ -1,5 +1,5 @@
 // Build API base (kept for future server POSTs)
-const API_HOST = `http://${location.hostname}:3001`;
+const API_HOST = `http://${location.hostname || "localhost"}:3001`;
 const API_BASE = `${API_HOST}/api`;
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -102,7 +102,7 @@ const exploreBtnTop = $("#exploreBtnTop");
 backBtnTop?.addEventListener("click", goBackSmart);
 exploreBtnTop?.addEventListener(
   "click",
-  () => (location.href = preferredExploreTarget())
+  () => (location.href = preferredExploreTarget()),
 );
 
 // Show skeletons first
@@ -129,7 +129,7 @@ function render() {
 
   // Login banner
   loginNotice.classList.toggle("hidden", isLoggedIn());
-  if(loginNow) {
+  if (loginNow) {
     loginNow.onclick = (e) => {
       e.preventDefault();
       const next = encodeURIComponent(location.href);
@@ -140,7 +140,7 @@ function render() {
   // Empty cart UI
   if (!cart.length) {
     let target = preferredExploreTarget();
-    if(target === "places/INDmap.html") target = "../places/INDmap.html"; // relative fix if needed
+    if (target === "places/INDmap.html") target = "../places/INDmap.html"; // relative fix if needed
     itemsHost.innerHTML = `<div class="c-empty">
       <div style="display:inline-flex; width:64px; height:64px; background:rgba(255,255,255,0.05); border-radius:50%; align-items:center; justify-content:center; margin-bottom:16px;">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" class="stroke-current" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
@@ -210,8 +210,8 @@ function render() {
     if (!imgEl && !it.img) {
       ensureItemImage(it).then((url) => {
         if (url && card.isConnected) {
-            const thumb = card.querySelector(".c-thumb");
-            thumb.innerHTML = `<img src="${url}" alt="${it.place}" loading="lazy" decoding="async" referrerpolicy="no-referrer" />`;
+          const thumb = card.querySelector(".c-thumb");
+          thumb.innerHTML = `<img src="${url}" alt="${it.place}" loading="lazy" decoding="async" referrerpolicy="no-referrer" />`;
         }
       });
     }
@@ -234,8 +234,12 @@ function render() {
       render();
     };
 
-    inc.addEventListener("click", () => commitQty((Number(val.value) || 1) + 1));
-    dec.addEventListener("click", () => commitQty((Number(val.value) || 1) - 1));
+    inc.addEventListener("click", () =>
+      commitQty((Number(val.value) || 1) + 1),
+    );
+    dec.addEventListener("click", () =>
+      commitQty((Number(val.value) || 1) - 1),
+    );
     val.addEventListener("change", () => commitQty(val.value));
 
     rem.addEventListener("click", () => {
@@ -259,11 +263,12 @@ function render() {
 
   sumSubtotal.textContent = fmtINR(subtotal);
   sumService.textContent = fmtINR(service);
-  if(document.getElementById("sumTax")) document.getElementById("sumTax").textContent = fmtINR(tax);
+  if (document.getElementById("sumTax"))
+    document.getElementById("sumTax").textContent = fmtINR(tax);
   sumTotal.textContent = fmtINR(total);
 
   // Clear & checkout
-  if(clearBtn) {
+  if (clearBtn) {
     clearBtn.onclick = () => {
       // Custom confirmation using window.confirm
       if (confirm("Clear all items from your cart?")) {
@@ -273,7 +278,7 @@ function render() {
     };
   }
 
-  if(checkoutBtn) {
+  if (checkoutBtn) {
     checkoutBtn.onclick = () => {
       if (!isLoggedIn()) {
         showToast({
@@ -284,7 +289,7 @@ function render() {
         const next = encodeURIComponent(location.href);
         setTimeout(
           () => (location.href = `auth.html?tab=login&next=${next}`),
-          900
+          900,
         );
         return;
       }
@@ -305,7 +310,7 @@ async function getStateData(stateName) {
   const key = String(stateName || "").trim();
   if (stateCache.has(key)) return stateCache.get(key);
   const res = await fetch(
-    `${API_HOST}/api/states/${encodeURIComponent(key)}/places`
+    `${API_HOST}/api/states/${encodeURIComponent(key)}/places`,
   );
   const json = await res.json();
   if (!res.ok || json.ok === false)
@@ -328,7 +333,7 @@ async function ensureItemImage(item) {
           p.state === item.state &&
           p.place === item.place &&
           p.package === item.package &&
-          p.price === item.price
+          p.price === item.price,
       );
       if (idx >= 0) {
         list[idx].img = row.img;

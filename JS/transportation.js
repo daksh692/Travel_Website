@@ -7,7 +7,7 @@ const CFG_KEY = "transportCfgV1";
 function loadCfg() {
   try {
     return JSON.parse(
-      localStorage.getItem(CFG_KEY) || '{"servicePct":0.5,"taxPct":12}'
+      localStorage.getItem(CFG_KEY) || '{"servicePct":0.5,"taxPct":12}',
     );
   } catch {
     return { servicePct: 0.5, taxPct: 12 };
@@ -22,7 +22,7 @@ function loadT() {
   try {
     return JSON.parse(
       localStorage.getItem("transportDraftV5") ||
-        '{"trips":[{"id":"t1","name":"Trip 1","legs":[]}],"manual":[]}'
+        '{"trips":[{"id":"t1","name":"Trip 1","legs":[]}],"manual":[]}',
     );
   } catch {
     return { trips: [{ id: "t1", name: "Trip 1", legs: [] }], manual: [] };
@@ -49,9 +49,10 @@ function fillTripSelects(model) {
 function calcTripTotals(trip) {
   const globalRates = loadCfg();
   // Prefer per-trip settings if they exist, otherwise fallback to global
-  const servicePct = trip.servicePct !== undefined ? trip.servicePct : globalRates.servicePct;
+  const servicePct =
+    trip.servicePct !== undefined ? trip.servicePct : globalRates.servicePct;
   const taxPct = trip.taxPct !== undefined ? trip.taxPct : globalRates.taxPct;
-  
+
   const sub = trip.legs.reduce((s, l) => s + Number(l.price || 0), 0);
   const serv = Math.round(sub * (servicePct / 100));
   const tax = Math.round((sub + serv) * (taxPct / 100));
@@ -61,10 +62,10 @@ function icon(mode) {
   return mode === "flight"
     ? "✈️"
     : mode === "train"
-    ? "🚆"
-    : mode === "bus"
-    ? "🚌"
-    : "🚗";
+      ? "🚆"
+      : mode === "bus"
+        ? "🚌"
+        : "🚗";
 }
 
 /* ===== Internal vs External Widget Toggle ===== */
@@ -72,14 +73,14 @@ $$(".mini-tab").forEach((tab) => {
   tab.onclick = () => {
     $$(".mini-tab").forEach((x) => x.classList.remove("active"));
     tab.classList.add("active");
-    
+
     // Hide all booking flows internally
     $$(".booking-flow").forEach((sec) => sec.classList.add("panel-hidden"));
-    
+
     // Show the active one
     const flowId = `booking-${tab.dataset.btype}`;
     const target = $(`#${flowId}`);
-    if(target) target.classList.remove("panel-hidden");
+    if (target) target.classList.remove("panel-hidden");
   };
 });
 
@@ -127,8 +128,8 @@ function render() {
       <div class="trip-h">
         <div class="trip-name">${t.name}</div>
         <span class="pill">${t.legs.length} leg${
-      t.legs.length === 1 ? "" : "s"
-    }</span>
+          t.legs.length === 1 ? "" : "s"
+        }</span>
         <span class="pill">Due ${fmtINR(totals.total)}</span>
         <div class="grow"></div>
         <span class="small muted">Svc ${totals.servicePct}% · Tax ${totals.taxPct}%</span>
@@ -151,36 +152,42 @@ function render() {
     `;
 
     // Hook trip edit controls
-    const tripEditWrap = wrap.querySelector('.trip-edit-wrap');
-    wrap.querySelector('[data-edit-trip]').onclick = () => {
-        tripEditWrap.classList.toggle('open');
+    const tripEditWrap = wrap.querySelector(".trip-edit-wrap");
+    wrap.querySelector("[data-edit-trip]").onclick = () => {
+      tripEditWrap.classList.toggle("open");
     };
-    
+
     wrap.querySelector(`[data-trip-save="${ti}"]`).onclick = () => {
-        const m = loadT();
-        const tripNode = wrap.querySelector(`.trip-edit-wrap`);
-        
-        const newName = tripNode.querySelector(`[data-trip-name="${ti}"]`).value.trim();
-        
-        if(newName) m.trips[ti].name = newName;
-        
-        saveT(m);
-        render();
-        toast("Trip updated");
+      const m = loadT();
+      const tripNode = wrap.querySelector(`.trip-edit-wrap`);
+
+      const newName = tripNode
+        .querySelector(`[data-trip-name="${ti}"]`)
+        .value.trim();
+
+      if (newName) m.trips[ti].name = newName;
+
+      saveT(m);
+      render();
+      toast("Trip updated");
     };
 
     wrap.querySelector(`[data-trip-del="${ti}"]`).onclick = () => {
-        if(confirm(`Are you sure you want to permanently delete "${t.name}" and all its legs?`)) {
-            const m = loadT();
-            m.trips.splice(ti, 1);
-            saveT(m);
-            // Re-select first trip if none active
-            if(m.trips.length === 0) {
-               addTripIfNeeded();
-            }
-            render();
-            toast("Trip deleted");
+      if (
+        confirm(
+          `Are you sure you want to permanently delete "${t.name}" and all its legs?`,
+        )
+      ) {
+        const m = loadT();
+        m.trips.splice(ti, 1);
+        saveT(m);
+        // Re-select first trip if none active
+        if (m.trips.length === 0) {
+          addTripIfNeeded();
         }
+        render();
+        toast("Trip deleted");
+      }
     };
 
     const list = wrap.querySelector(".list");
@@ -290,8 +297,8 @@ function render() {
       row.querySelector("[data-open]").onclick = () => {
         const wrap = row.querySelector(".edit-wrap");
         wrap.classList.toggle("open");
-        if(wrap.classList.contains("open")) {
-            wrap.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (wrap.classList.contains("open")) {
+          wrap.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       };
 
@@ -435,7 +442,7 @@ $("#add").onclick = () => {
 $("#newTripExternal")?.addEventListener("click", () => {
   $("#newTrip").click(); // Trigger same core logic
   setTimeout(() => {
-     $(`[data-btype="external"]`)?.click(); // Keep external mode active
+    $(`[data-btype="external"]`)?.click(); // Keep external mode active
   }, 10);
 });
 
@@ -464,7 +471,7 @@ $("#mAdd")?.addEventListener("click", () => {
     date: rawDate,
     ref: rawRef,
     amount: rawAmt,
-    tripId: selTId 
+    tripId: selTId,
   });
   saveT(m);
 

@@ -1,5 +1,5 @@
 // Build API base from current host (avoids localhost/127 mismatch)
-const API_HOST = `http://${location.hostname}:3001`;
+const API_HOST = `http://${location.hostname || "localhost"}:3001`;
 const API_BASE = `${API_HOST}/api`;
 
 const $ = (sel) => document.querySelector(sel);

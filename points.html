@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -86,11 +86,22 @@
       <section class="ct-hero">
         <div class="ct-hero-text">
           <h1 class="ct-title">Points & Promos</h1>
-          <p class="ct-subtitle">Redeem loyalty points and apply promotional codes to maximize savings on your upcoming trips.</p>
+          <p class="ct-subtitle">
+            Redeem loyalty points and apply promotional codes to maximize
+            savings on your upcoming trips.
+          </p>
         </div>
         <div class="ct-hero-actions">
           <a href="./currenttrip.html" class="ct-hero-btn">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M10 12L6 8l4-4"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
             Back to Trip
           </a>
         </div>
@@ -99,17 +110,32 @@
       <section class="ct-grid">
         <!-- LEFT: Promo + Points -->
         <div class="ct-main-col controls-col">
-          
           <!-- Promo -->
           <div class="group-card">
             <div class="group-head">
               <div class="group-meta">
                 <div class="card-icon-halo">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"
+                    ></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                  </svg>
                 </div>
                 <div>
                   <h2 class="group-title">Have a promo code?</h2>
-                  <p class="muted small">Codes apply instantly on this device.</p>
+                  <p class="muted small">
+                    Codes apply instantly on this device.
+                  </p>
                 </div>
               </div>
             </div>
@@ -138,11 +164,26 @@
             <div class="group-head points-head">
               <div class="group-meta">
                 <div class="card-icon-halo accent">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polygon
+                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                    ></polygon>
+                  </svg>
                 </div>
                 <div>
                   <h2 class="group-title">Your loyalty points</h2>
-                  <span class="badge badge-glow" id="pointsRule">Login to use points</span>
+                  <span class="badge badge-glow" id="pointsRule"
+                    >Login to use points</span
+                  >
                 </div>
               </div>
             </div>
@@ -155,7 +196,7 @@
 
               <div class="points-apply-col">
                 <span class="stat-label">Use on this order</span>
-                
+
                 <div class="slider-wrapper">
                   <div class="slider-track" id="sliderTrack">
                     <div class="slider-fill" id="sliderFill"></div>
@@ -168,7 +209,7 @@
                     value="0"
                   />
                 </div>
-                
+
                 <div class="range-row">
                   <input
                     id="pointsInput"
@@ -178,17 +219,33 @@
                     value="0"
                   />
                   <div class="btn-group">
-                    <button class="btn-primary btn-sm" id="usePointsBtn">Update</button>
-                    <button class="ct-hero-btn" id="clearPointsBtn">Clear</button>
+                    <button class="btn-primary btn-sm" id="usePointsBtn">
+                      Update
+                    </button>
+                    <button class="ct-hero-btn" id="clearPointsBtn">
+                      Clear
+                    </button>
                   </div>
                 </div>
-                
+
                 <p class="summary-hint" id="pointsHint">
                   Choose how many points to use (limited to max cart value).
                 </p>
-                
+
                 <div class="inline-note" id="persistNote" hidden>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
                   Applied points locked for checkout.
                 </div>
               </div>
@@ -202,7 +259,21 @@
           <div class="summary-inner">
             <div class="summary-header">
               <div class="summary-title-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
               </div>
               <h2>Order Summary</h2>
             </div>
@@ -237,7 +308,19 @@
             <div class="sum-actions">
               <a href="./cart.html" class="btn-primary">
                 Proceed to Checkout
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
               </a>
             </div>
           </div>
@@ -245,28 +328,36 @@
       </section>
     </main>
 
-    <div id="toasts" class="lp-toasts" aria-live="polite" aria-atomic="true"></div>
+    <div
+      id="toasts"
+      class="lp-toasts"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
 
     <script src="./JS/main.js"></script>
     <script src="./JS/redeem.js"></script>
-    
+
     <!-- inline script to drive the custom slider visual fill if range input changes -->
     <script>
-      (function() {
-        const slider = document.getElementById('pointsRange');
-        const fill = document.getElementById('sliderFill');
+      (function () {
+        const slider = document.getElementById("pointsRange");
+        const fill = document.getElementById("sliderFill");
         function updateSlider() {
           const min = parseFloat(slider.min) || 0;
           const max = parseFloat(slider.max) || 100;
           const val = parseFloat(slider.value) || 0;
           const pct = max === min ? 0 : ((val - min) / (max - min)) * 100;
-          fill.style.width = pct + '%';
+          fill.style.width = pct + "%";
         }
-        slider.addEventListener('input', updateSlider);
+        slider.addEventListener("input", updateSlider);
         // observe value changes from the JS API when it syncs slider to text input
         const observer = new MutationObserver(updateSlider);
-        observer.observe(slider, { attributes: true, attributeFilter: ['max'] });
-        
+        observer.observe(slider, {
+          attributes: true,
+          attributeFilter: ["max"],
+        });
+
         // Also fire periodically in case `redeem.js` changes the .value directly without firing an event
         setInterval(updateSlider, 150);
       })();

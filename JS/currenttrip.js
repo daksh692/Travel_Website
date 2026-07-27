@@ -1,4 +1,4 @@
-const API_HOST = `http://${location.hostname}:3001`;
+const API_HOST = `http://${location.hostname || "localhost"}:3001`;
 const API_BASE = `${API_HOST}/api`;
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -64,7 +64,7 @@ const saveGroups = (v) => localStorage.setItem(GROUPS_KEY, JSON.stringify(v));
 const killEmptyGroups = () => {
   const cart = loadCart();
   const groups = loadGroups().filter((g) =>
-    cart.some((it) => it.groupId === g.id)
+    cart.some((it) => it.groupId === g.id),
   );
   localStorage.setItem(GROUPS_KEY, JSON.stringify(groups));
 };
@@ -84,7 +84,7 @@ filterButtons.forEach((btn) =>
     TRIP_FILTER = btn.dataset.mode;
     filterButtons.forEach((b) => b.classList.toggle("active", b === btn));
     render();
-  })
+  }),
 );
 
 function setEditMode(on) {
@@ -147,7 +147,7 @@ async function getStateData(stateName) {
   const key = String(stateName || "").trim();
   if (stateCache.has(key)) return stateCache.get(key);
   const res = await fetch(
-    `${API_BASE}/states/${encodeURIComponent(key)}/places`
+    `${API_BASE}/states/${encodeURIComponent(key)}/places`,
   );
   const json = await res.json();
   if (!res.ok || json.ok === false)
@@ -168,7 +168,7 @@ async function ensureItemImage(item) {
           p.state === item.state &&
           p.place === item.place &&
           p.package === item.package &&
-          Number(p.price) === Number(item.price)
+          Number(p.price) === Number(item.price),
       );
       if (idx >= 0) {
         list[idx].img = row.img;
@@ -282,7 +282,7 @@ function ungroup(id) {
   const groups = loadGroups().filter((g) => g.id !== id);
   saveGroups(groups);
   const cart = loadCart().map((it) =>
-    it.groupId === id ? { ...it, groupId: null } : it
+    it.groupId === id ? { ...it, groupId: null } : it,
   );
   saveCart(cart);
   showToast({ title: "Ungrouped", message: "Group removed.", type: "warning" });
@@ -494,8 +494,8 @@ function render() {
             </div>
             <div>
               <h4 class="group-title" contenteditable="${EDIT_MODE}" spellcheck="false" style="font-size: 18px; margin: 0; outline: none; transition: 0.2s padding;">${
-        g.name
-      }</h4>
+                g.name
+              }</h4>
               <p class="muted small" style="margin-top:2px; margin-bottom:0;">Group details.</p>
             </div>
           </div>
@@ -505,8 +505,8 @@ function render() {
               <input type="date" value="${
                 g.start || tripStart.value
               }" class="group-start input-faded edit-only-input" style="padding: 6px 10px;" ${
-        EDIT_MODE ? "" : "disabled"
-      } />
+                EDIT_MODE ? "" : "disabled"
+              } />
             </label>
             <span class="badge badge-glow" style="margin-right:12px; background:rgba(99,102,241,0.1); border-color:rgba(99,102,241,0.2);">Items: ${rows.length}</span>
             <div class="group-actions-row edit-only ${EDIT_MODE ? "" : "hidden"}">
@@ -519,7 +519,7 @@ function render() {
     const list = groupWrap.querySelector(".group-items");
 
     rows.forEach(({ it, idx }) =>
-      list.appendChild(renderItemRow(it, idx, { inGroup: true, group: g }))
+      list.appendChild(renderItemRow(it, idx, { inGroup: true, group: g })),
     );
 
     // group start change
@@ -543,7 +543,7 @@ function render() {
     const titleEl = groupWrap.querySelector(".group-title");
     titleEl.addEventListener(
       "blur",
-      () => EDIT_MODE && renameGroup(g.id, titleEl.textContent)
+      () => EDIT_MODE && renameGroup(g.id, titleEl.textContent),
     );
 
     // ungroup
@@ -612,8 +612,8 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
       <img alt="${
         it.place
       }" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="display:${
-    hasImg ? "block" : "none"
-  };" />
+        hasImg ? "block" : "none"
+      };" />
       <span class="ct-initials" style="display:${
         hasImg ? "none" : "grid"
       };">${initials}</span>
@@ -631,8 +631,8 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
           <input type="date" class="item-start input-faded edit-only-input" style="padding:4px 8px; font-size:12.5px;" value="${
             it.start || ""
           }" ${EDIT_MODE ? "" : "disabled"} ${
-    inGroup && group?.start ? `min="${group.start}"` : ""
-  }/>
+            inGroup && group?.start ? `min="${group.start}"` : ""
+          }/>
         </label>
       </div>
     </div>
@@ -643,8 +643,8 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
           EDIT_MODE ? "" : "disabled"
         } aria-label="Decrease">−</button>
         <input class="q-val" style="width:36px; text-align:center; background:transparent; border:none; color:#fff; font-weight:700;" type="number" min="1" value="${qty}" inputmode="numeric" ${
-    EDIT_MODE ? "" : "disabled"
-  } />
+          EDIT_MODE ? "" : "disabled"
+        } />
         <button class="q-inc" style="padding:4px 10px; background:transparent; color:#fff; cursor:pointer; border:none;" ${
           EDIT_MODE ? "" : "disabled"
         } aria-label="Increase">+</button>
@@ -750,7 +750,7 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
 function computeSummaryRows(sourceItems) {
   const subtotal = sourceItems.reduce(
     (s, it) => s + Number(it.price || 0) * Number(it.qty || 1),
-    0
+    0,
   );
   const service = Math.round(subtotal * (SERVICE_RATE_PCT / 100));
   const tax = Math.round((subtotal + service) * (TAX_RATE_PCT / 100));
@@ -859,7 +859,7 @@ $("#backBtn")?.addEventListener("click", () => {
 });
 $("#exploreBtn")?.addEventListener(
   "click",
-  () => (location.href = preferredExploreTarget())
+  () => (location.href = preferredExploreTarget()),
 );
 
 /* ===== Boot ===== */

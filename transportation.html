@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -98,15 +98,17 @@
           <div class="glass-card widget-card">
             <div class="widget-header">
               <h2>Add Booking</h2>
-              <div class="trip-controls" style="margin-top: 16px;">
-                 <!-- Internal vs External Segmented Toggle -->
-                 <div class="mini-tabs" role="tablist">
-                    <button class="mini-tab active" data-btype="internal">Leg</button>
-                    <button class="mini-tab" data-btype="external">Log</button>
-                 </div>
+              <div class="trip-controls" style="margin-top: 16px">
+                <!-- Internal vs External Segmented Toggle -->
+                <div class="mini-tabs" role="tablist">
+                  <button class="mini-tab active" data-btype="internal">
+                    Leg
+                  </button>
+                  <button class="mini-tab" data-btype="external">Log</button>
+                </div>
               </div>
-              
-              <div class="trip-controls" style="margin-top: 8px;">
+
+              <div class="trip-controls" style="margin-top: 8px">
                 <select id="tripSel" aria-label="Select trip"></select>
                 <input id="tripName" placeholder="Rename Trip..." />
               </div>
@@ -114,141 +116,181 @@
 
             <!-- TYPE: INTERNAL LEG -->
             <div id="booking-internal" class="booking-flow">
-                <div class="route-inputs" style="margin-top: 20px">
-                  <div class="transport-mode">
-                    <select id="mode">
-                      <option value="flight">✈️ Flight</option>
-                      <option value="train">🚆 Train</option>
-                      <option value="bus">🚌 Bus</option>
-                      <option value="car">🚗 Car</option>
-                    </select>
-                  </div>
-                  <div class="location-input">
-                    <input id="from" placeholder="Origin" />
-                  </div>
-                  <div class="route-divider">
-                    <div class="divider-line"></div>
-                    <div class="divider-icon">▶</div>
-                  </div>
-                  <div class="location-input">
-                    <input id="to" placeholder="Destination" />
-                  </div>
+              <div class="route-inputs" style="margin-top: 20px">
+                <div class="transport-mode">
+                  <select id="mode">
+                    <option value="flight">✈️ Flight</option>
+                    <option value="train">🚆 Train</option>
+                    <option value="bus">🚌 Bus</option>
+                    <option value="car">🚗 Car</option>
+                  </select>
                 </div>
+                <div class="location-input">
+                  <input id="from" placeholder="Origin" />
+                </div>
+                <div class="route-divider">
+                  <div class="divider-line"></div>
+                  <div class="divider-icon">▶</div>
+                </div>
+                <div class="location-input">
+                  <input id="to" placeholder="Destination" />
+                </div>
+              </div>
 
-                <div class="details-inputs" style="margin-top: 16px">
-                  <div class="input-group">
-                    <input id="date" type="date" placeholder="yyyy-mm-dd" />
-                  </div>
-                  <div class="input-group">
-                    <div class="currency-input">
-                      <span class="currency-symbol">₹</span>
-                      <input id="price" type="number" min="0" inputmode="numeric" placeholder="0" />
-                    </div>
+              <div class="details-inputs" style="margin-top: 16px">
+                <div class="input-group">
+                  <input id="date" type="date" placeholder="yyyy-mm-dd" />
+                </div>
+                <div class="input-group">
+                  <div class="currency-input">
+                    <span class="currency-symbol">₹</span>
+                    <input
+                      id="price"
+                      type="number"
+                      min="0"
+                      inputmode="numeric"
+                      placeholder="0"
+                    />
                   </div>
                 </div>
+              </div>
 
-                <div class="btns widget-actions" style="margin-top: 20px">
-                  <button class="btn primary-action" id="add">
-                    <span class="btn-text">Add Leg</span>
-                    <span class="btn-glow"></span>
-                  </button>
-                  <button class="btn-ghost" id="newTrip">New Trip</button>
-                </div>
+              <div class="btns widget-actions" style="margin-top: 20px">
+                <button class="btn primary-action" id="add">
+                  <span class="btn-text">Add Leg</span>
+                  <span class="btn-glow"></span>
+                </button>
+                <button class="btn-ghost" id="newTrip">New Trip</button>
+              </div>
             </div>
 
             <!-- TYPE: EXTERNAL LOG -->
             <div id="booking-external" class="booking-flow panel-hidden">
-                <p class="muted small" style="margin-top:20px; margin-bottom:16px;">Record tickets booked elsewhere.</p>
+              <p
+                class="muted small"
+                style="margin-top: 20px; margin-bottom: 16px"
+              >
+                Record tickets booked elsewhere.
+              </p>
+              <div class="input-group">
+                <input id="mProv" placeholder="Provider / Airline" />
+              </div>
+              <div class="details-inputs" style="margin-top: 16px">
                 <div class="input-group">
-                  <input id="mProv" placeholder="Provider / Airline" />
+                  <input id="mFrom" placeholder="From" />
                 </div>
-                <div class="details-inputs" style="margin-top: 16px">
-                   <div class="input-group"><input id="mFrom" placeholder="From" /></div>
-                   <div class="input-group"><input id="mTo" placeholder="To" /></div>
+                <div class="input-group">
+                  <input id="mTo" placeholder="To" />
                 </div>
-                <div class="details-inputs" style="margin-top: 16px">
-                   <div class="input-group"><input id="mDate" type="date" /></div>
-                   <div class="input-group"><input id="mRef" placeholder="PNR / Ref #"/></div>
+              </div>
+              <div class="details-inputs" style="margin-top: 16px">
+                <div class="input-group"><input id="mDate" type="date" /></div>
+                <div class="input-group">
+                  <input id="mRef" placeholder="PNR / Ref #" />
                 </div>
-                <div class="currency-input" style="margin-top: 16px;">
-                    <span class="currency-symbol">₹</span>
-                    <input class="payment-full-input" id="mAmt" type="number" min="0" placeholder="Amount Paid" />
-                </div>
+              </div>
+              <div class="currency-input" style="margin-top: 16px">
+                <span class="currency-symbol">₹</span>
+                <input
+                  class="payment-full-input"
+                  id="mAmt"
+                  type="number"
+                  min="0"
+                  placeholder="Amount Paid"
+                />
+              </div>
 
-                <div class="btns widget-actions" style="margin-top: 20px">
-                  <button class="btn primary-action" id="mAdd">
-                    <span class="btn-text">Save Record</span>
-                    <span class="btn-glow"></span>
-                  </button>
-                  <button class="btn-ghost" id="newTripExternal">New Trip</button>
-                </div>
+              <div class="btns widget-actions" style="margin-top: 20px">
+                <button class="btn primary-action" id="mAdd">
+                  <span class="btn-text">Save Record</span>
+                  <span class="btn-glow"></span>
+                </button>
+                <button class="btn-ghost" id="newTripExternal">New Trip</button>
+              </div>
             </div>
-
           </div>
         </section>
 
         <!-- Totals Panel always visible in sidebar -->
         <div class="glass-card receipt-card">
-            <div class="receipt-header">
-              <h2>Payment Summary</h2>
-              <div class="btns">
-                <button class="btn-icon danger small" id="clearTrip" title="Clear Trip">🗑️</button>
+          <div class="receipt-header">
+            <h2>Payment Summary</h2>
+            <div class="btns">
+              <button
+                class="btn-icon danger small"
+                id="clearTrip"
+                title="Clear Trip"
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
+
+          <div class="sum receipt-sum">
+            <div class="line">
+              <span>Total Due</span>
+              <strong id="grand" class="gradient-text">₹0</strong>
+            </div>
+            <div class="muted small" id="breakdown">—</div>
+          </div>
+
+          <details class="tax-details">
+            <summary>Tax & Fee Breakdown</summary>
+            <div class="tax-content">
+              <div class="row2">
+                <label
+                  >Svc % <input id="svcPct" type="number" step="0.1" min="0"
+                /></label>
+                <label
+                  >Tax % <input id="taxPct" type="number" step="0.1" min="0"
+                /></label>
+              </div>
+              <div class="btns" style="margin-top: 12px">
+                <button class="btn-ghost small grow" id="saveRates">
+                  Update
+                </button>
+                <button class="btn-ghost small" id="resetRates">Reset</button>
               </div>
             </div>
-
-            <div class="sum receipt-sum">
-              <div class="line">
-                <span>Total Due</span>
-                <strong id="grand" class="gradient-text">₹0</strong>
-              </div>
-              <div class="muted small" id="breakdown">—</div>
-            </div>
-
-            <details class="tax-details">
-                <summary>Tax & Fee Breakdown</summary>
-                <div class="tax-content">
-                    <div class="row2">
-                        <label>Svc % <input id="svcPct" type="number" step="0.1" min="0" /></label>
-                        <label>Tax % <input id="taxPct" type="number" step="0.1" min="0" /></label>
-                    </div>
-                    <div class="btns" style="margin-top: 12px">
-                        <button class="btn-ghost small grow" id="saveRates">Update</button>
-                        <button class="btn-ghost small" id="resetRates">Reset</button>
-                    </div>
-                </div>
-            </details>
+          </details>
         </div>
       </aside>
 
       <section class="dashboard-main">
-          
         <div>
-            <div class="timeline-header">
-                <h2>Your Itineraries</h2>
-                <div class="bulk" id="bulkBar" hidden>
-                  <span id="selCount" class="badge">0</span> selected
-                  <div class="spacer"></div>
-                  <label class="inline muted small" style="margin-right:10px;">
-                    Move to
-                    <select id="moveToTripSel" style="min-width: 120px"></select>
-                  </label>
-                  <button class="btn-ghost small" id="moveToTrip">Move</button>
-                  <button class="btn-ghost small" id="bulkEdit">Edit</button>
-                  <button class="btn-ghost danger small" id="bulkDelete">Remove</button>
-                  <button class="btn-ghost small" id="bulkClear">Clear</button>
-                </div>
+          <div class="timeline-header">
+            <h2>Your Itineraries</h2>
+            <div class="bulk" id="bulkBar" hidden>
+              <span id="selCount" class="badge">0</span> selected
+              <div class="spacer"></div>
+              <label class="inline muted small" style="margin-right: 10px">
+                Move to
+                <select id="moveToTripSel" style="min-width: 120px"></select>
+              </label>
+              <button class="btn-ghost small" id="moveToTrip">Move</button>
+              <button class="btn-ghost small" id="bulkEdit">Edit</button>
+              <button class="btn-ghost danger small" id="bulkDelete">
+                Remove
+              </button>
+              <button class="btn-ghost small" id="bulkClear">Clear</button>
             </div>
+          </div>
 
-            <div id="trips" class="timeline-container empty-state-container"></div>
+          <div
+            id="trips"
+            class="timeline-container empty-state-container"
+          ></div>
         </div>
 
-        <div style="margin-top: 40px;">
-            <div class="timeline-header">
-                <h2>Logged Records</h2>
-            </div>
-            <div id="manualList" class="timeline-container empty-state-container list"></div>
+        <div style="margin-top: 40px">
+          <div class="timeline-header">
+            <h2>Logged Records</h2>
+          </div>
+          <div
+            id="manualList"
+            class="timeline-container empty-state-container list"
+          ></div>
         </div>
-
       </section>
     </main>
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -6,7 +6,10 @@
     <title>Your Cart · Travel</title>
     <link rel="stylesheet" href="./CSS/main.css" />
     <link rel="stylesheet" href="./CSS/cart.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body class="lp-page" data-auth="false">
     <div class="lp-aurora" aria-hidden="true"></div>
@@ -26,38 +29,71 @@
         </ul>
       </nav>
       <div class="header-right">
-        <button id="settingsBtn" class="icon-btn guest-only" aria-haspopup="menu" aria-expanded="false" aria-controls="settingsMenu">⚙️</button>
-        <button id="avatarBtn" class="avatar-btn auth-only" aria-haspopup="menu" aria-expanded="false" aria-controls="userMenu">
+        <button
+          id="settingsBtn"
+          class="icon-btn guest-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="settingsMenu"
+        >
+          ⚙️
+        </button>
+        <button
+          id="avatarBtn"
+          class="avatar-btn auth-only"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="userMenu"
+        >
           <span id="avatarInitial">U</span>
         </button>
-        <div id="settingsMenu" class="menu guest-only" role="menu" aria-hidden="true">
+        <div
+          id="settingsMenu"
+          class="menu guest-only"
+          role="menu"
+          aria-hidden="true"
+        >
           <a class="menu-item" href="auth.html?tab=login">Login</a>
           <a class="menu-item" href="auth.html?tab=register">Register</a>
         </div>
-        <div id="userMenu" class="menu auth-only" role="menu" aria-hidden="true">
+        <div
+          id="userMenu"
+          class="menu auth-only"
+          role="menu"
+          aria-hidden="true"
+        >
           <a class="menu-item" href="account.html" role="menuitem">Account</a>
-          <a class="menu-item" href="currenttrip.html" role="menuitem">Your Current Trip</a>
-          <a class="menu-item" href="points.html" role="menuitem">Points Redeem</a>
-          <a class="menu-item" href="cart.html" role="menuitem" aria-current="page">Cart</a>
-          <button class="menu-item danger" id="logoutBtn" role="menuitem">Logout</button>
+          <a class="menu-item" href="currenttrip.html" role="menuitem"
+            >Your Current Trip</a
+          >
+          <a class="menu-item" href="points.html" role="menuitem"
+            >Points Redeem</a
+          >
+          <a
+            class="menu-item"
+            href="cart.html"
+            role="menuitem"
+            aria-current="page"
+            >Cart</a
+          >
+          <button class="menu-item danger" id="logoutBtn" role="menuitem">
+            Logout
+          </button>
         </div>
       </div>
     </header>
 
     <main class="cart-shell">
       <div class="cart-actions">
-        <button id="backBtnTop" class="btn-ghost">
-          Back
-        </button>
-        <button id="exploreBtnTop" class="btn-outline">
-          Keep Exploring
-        </button>
+        <button id="backBtnTop" class="btn-ghost">Back</button>
+        <button id="exploreBtnTop" class="btn-outline">Keep Exploring</button>
       </div>
 
       <!-- login notice (shown to guests) -->
       <div id="loginNotice" class="cart-banner hidden">
         <div class="banner-dot"></div>
-        You’re browsing as a guest. <a id="loginNow" href="#">Log in</a> to save your progress and check out safely.
+        You’re browsing as a guest. <a id="loginNow" href="#">Log in</a> to save
+        your progress and check out safely.
       </div>
 
       <h1 class="cart-title">Your Cart</h1>
@@ -78,11 +114,17 @@
           <div class="sum-row">
             <span>Tax (12%)</span><strong id="sumTax">₹0</strong>
           </div>
-          <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:12px 0;"/>
+          <hr
+            style="
+              border: 0;
+              border-top: 1px solid rgba(255, 255, 255, 0.1);
+              margin: 12px 0;
+            "
+          />
           <div class="sum-row total">
             <span>Final total</span><strong id="sumTotal">₹0</strong>
           </div>
-          <p class="sum-note small muted" style="margin-top:4px;">
+          <p class="sum-note small muted" style="margin-top: 4px">
             Does not yet include promo codes.
           </p>
 
@@ -95,7 +137,12 @@
     </main>
 
     <!-- Toasts -->
-    <div id="toasts" class="lp-toasts" aria-live="polite" aria-atomic="true"></div>
+    <div
+      id="toasts"
+      class="lp-toasts"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
 
     <script src="./JS/main.js"></script>
     <script src="./JS/cart.js"></script>

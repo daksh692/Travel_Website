@@ -19,7 +19,7 @@ $$("[data-scroll-to]").forEach((btn) => {
 const io = new IntersectionObserver(
   (entries) =>
     entries.forEach((en) => en.isIntersecting && en.target.classList.add("in")),
-  { threshold: 0.12 }
+  { threshold: 0.12 },
 );
 $$(".reveal").forEach((el) => io.observe(el));
 
@@ -48,7 +48,7 @@ $$(".hero .num").forEach((el) => {
         }
       });
     },
-    { threshold: 0.6 }
+    { threshold: 0.6 },
   );
   obs.observe(el);
 });
@@ -75,7 +75,7 @@ $$(".hero .num").forEach((el) => {
   const update = () => {
     slides.forEach((s, i) => s.classList.toggle("active", i === index));
     $$(".dots button", root).forEach((d, i) =>
-      d.setAttribute("aria-current", i === index)
+      d.setAttribute("aria-current", i === index),
     );
   };
   const go = (i) => {
@@ -93,7 +93,7 @@ $$(".hero .num").forEach((el) => {
   root.addEventListener("pointerenter", () => clearInterval(timer));
   root.addEventListener(
     "pointerleave",
-    () => (timer = setInterval(() => go(index + 1), 4500))
+    () => (timer = setInterval(() => go(index + 1), 4500)),
   );
 })();
 

@@ -2,7 +2,7 @@
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
-const API_HOST = `http://${location.hostname}:3001`;
+const API_HOST = `http://${location.hostname || "localhost"}:3001`;
 const API_BASE = `${API_HOST}/api`;
 
 const fmtINR = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
@@ -31,10 +31,10 @@ function showToast({
       type === "success"
         ? "✓"
         : type === "error"
-        ? "⨯"
-        : type === "warning"
-        ? "!"
-        : "ℹ"
+          ? "⨯"
+          : type === "warning"
+            ? "!"
+            : "ℹ"
     }</div>
     <div class="lp-toast__body">
       <div class="lp-toast__title">${title}</div>
@@ -96,7 +96,12 @@ const apiPassword = (id, body) =>
   api(`/users/${id}/password`, { method: "POST", body: JSON.stringify(body) });
 
 /* ------------ Render helpers ------------ */
-function renderList(host, items, emptyIcon = "📋", empty = "Nothing here yet.") {
+function renderList(
+  host,
+  items,
+  emptyIcon = "📋",
+  empty = "Nothing here yet.",
+) {
   host.innerHTML = "";
   if (!items?.length) {
     host.innerHTML = `<div class="empty-state"><div class="empty-icon">${emptyIcon}</div><div class="muted">${empty}</div></div>`;
@@ -231,7 +236,9 @@ function initTabs() {
 /* ------------ Scroll-Spy Sidebar ------------ */
 function initScrollSpy() {
   const links = $$(".sidebar-link[data-target]");
-  const sections = links.map((l) => document.getElementById(l.dataset.target)).filter(Boolean);
+  const sections = links
+    .map((l) => document.getElementById(l.dataset.target))
+    .filter(Boolean);
 
   if (!sections.length) return;
 
@@ -240,12 +247,14 @@ function initScrollSpy() {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           links.forEach((l) => l.classList.remove("active"));
-          const activeLink = $(`.sidebar-link[data-target="${entry.target.id}"]`);
+          const activeLink = $(
+            `.sidebar-link[data-target="${entry.target.id}"]`,
+          );
           if (activeLink) activeLink.classList.add("active");
         }
       });
     },
-    { rootMargin: "-20% 0px -60% 0px", threshold: 0 }
+    { rootMargin: "-20% 0px -60% 0px", threshold: 0 },
   );
 
   sections.forEach((sec) => observer.observe(sec));
@@ -274,7 +283,7 @@ function initRevealAnimations() {
         }
       });
     },
-    { threshold: 0.1 }
+    { threshold: 0.1 },
   );
   cards.forEach((card) => observer.observe(card));
 }
@@ -404,7 +413,8 @@ async function boot() {
     renderList($("#accSummary"), items, "📋", "No history yet.");
   } catch (e) {
     console.error("summary error", e);
-    $("#accSummary").innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Couldn't load history.</div></div>`;
+    $("#accSummary").innerHTML =
+      `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Couldn't load history.</div></div>`;
   }
 
   // TRIPS
@@ -416,8 +426,10 @@ async function boot() {
     renderList($("#accTripsDone"), done, "🏁", "No completed trips yet.");
   } catch (e) {
     console.error("trips error", e);
-    $("#accTripsUpcoming").innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Failed to load trips.</div></div>`;
-    $("#accTripsDone").innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Failed to load trips.</div></div>`;
+    $("#accTripsUpcoming").innerHTML =
+      `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Failed to load trips.</div></div>`;
+    $("#accTripsDone").innerHTML =
+      `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Failed to load trips.</div></div>`;
   }
 
   // Update hero stats
@@ -449,7 +461,8 @@ async function boot() {
     renderList($("#accPurchases"), items, "🛍️", "No purchases yet.");
   } catch (e) {
     console.error("purchases error", e);
-    $("#accPurchases").innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Failed to load purchases.</div></div>`;
+    $("#accPurchases").innerHTML =
+      `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Failed to load purchases.</div></div>`;
   }
 
   // LOCAL CART
