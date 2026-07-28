@@ -1,16 +1,15 @@
 :root {
-  --ink: #eaf0ff;
-  --muted: #a7b3d2;
-  --ring: #2a3550;
-  --card: #0f172a;
-  --bg: #03060f;
-  --brand: #4f7cff;
-  --g1: #4f7cff;
-  --g2: #22d3ee;
-  --g3: #f472b6;
-  --base1: #0a1122;
-  --base2: #060c1b;
-  --base3: #04060c;
+  /* aliased to the shared Windowseat palette in main.css — --ink/--muted inherit from there */
+  --ring: var(--glass-line-strong);
+  --card: var(--sapphire-2);
+  --bg: var(--sapphire);
+  --brand: var(--royal-2);
+  --g1: var(--royal);
+  --g2: var(--ok);
+  --g3: var(--platinum-deep);
+  --base1: var(--sapphire-3);
+  --base2: var(--sapphire-2);
+  --base3: var(--sapphire);
 }
 body.lp-page {
   color: var(--ink);
@@ -96,12 +95,12 @@ body.lp-page {
   padding: 10px 12px;
   border: 1px solid var(--ring);
   border-radius: 10px;
-  background: #0a1428;
+  background: var(--sapphire-2);
   color: #fff;
 }
 .lp-controls input:focus,
 .lp-controls select:focus {
-  box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(43, 70, 201, 0.3);
 }
 
 .lp-grid {
@@ -140,7 +139,7 @@ body.lp-page {
   position: relative;
   overflow: hidden;
   aspect-ratio: 16/10;
-  background: linear-gradient(180deg, #0b162c, #0b1222);
+  background: linear-gradient(180deg, var(--sapphire-3), var(--sapphire-2));
   -webkit-mask-image: radial-gradient(
     120% 120% at 50% 40%,
     #000 70%,
@@ -151,6 +150,24 @@ body.lp-page {
     #000 70%,
     rgba(0, 0, 0, 0) 100%
   );
+}
+.lp-media::after {
+  content: "\2708";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  color: var(--platinum-2);
+  background: radial-gradient(circle at 35% 30%, var(--seal-2), var(--seal) 70%);
+  border: 1.5px solid rgba(201, 211, 224, 0.55);
+  box-shadow: 0 6px 14px rgba(2, 5, 10, 0.4);
+  transform: rotate(-9deg);
+  z-index: 1;
 }
 .lp-media img {
   width: 100%;
@@ -230,11 +247,11 @@ body.lp-page {
 }
 .price-btn.selected,
 .price-btn:focus-visible {
-  border-color: #9cc1ff;
+  border-color: var(--royal-2);
   background: linear-gradient(
     180deg,
-    rgba(79, 124, 255, 0.35),
-    rgba(59, 130, 246, 0.25)
+    rgba(43, 70, 201, 0.4),
+    rgba(43, 70, 201, 0.22)
   );
   outline: none;
 }
@@ -264,8 +281,8 @@ body.lp-page {
 .btn-add {
   padding: 10px 12px;
   border-radius: 12px;
-  border: 1px solid #9cc1ff;
-  background: linear-gradient(180deg, var(--brand), #3b82f6);
+  border: 1px solid var(--royal-2);
+  background: linear-gradient(180deg, var(--royal-2), var(--royal));
   color: #fff;
   font-weight: 900;
   cursor: pointer;
@@ -323,7 +340,7 @@ body.lp-page {
 /* skeletons & empty state */
 .skeleton {
   border-radius: 14px;
-  background: linear-gradient(90deg, #0b162c 25%, #112247 50%, #0b162c 75%);
+  background: linear-gradient(90deg, var(--sapphire-2) 25%, var(--sapphire-3) 50%, var(--sapphire-2) 75%);
   background-size: 200% 100%;
   animation: shine 1.2s linear infinite;
   height: clamp(220px, 24vw, 260px);
@@ -341,7 +358,7 @@ body.lp-page {
   grid-column: 1 / -1;
   padding: 36px;
   text-align: center;
-  color: #dbeafe;
+  color: var(--platinum-2);
   background: color-mix(in srgb, var(--card) 86%, transparent);
   border: 1px dashed rgba(255, 255, 255, 0.18);
   border-radius: 16px;
@@ -385,10 +402,10 @@ body.lp-page {
 }
 
 .lp-toast {
-  --bg: rgba(17, 24, 39, 0.9);
-  --bd: rgba(255, 255, 255, 0.12);
-  --fg: #eaf0ff;
-  --accent: #60a5fa; /* default (info) */
+  --bg: rgba(13, 28, 56, 0.92);
+  --bd: rgba(200, 220, 245, 0.16);
+  --fg: var(--ink);
+  --accent: var(--royal-2); /* default (info) */
   min-width: 260px;
   max-width: min(92vw, 360px);
   color: var(--fg);
@@ -415,13 +432,13 @@ body.lp-page {
   }
 }
 .lp-toast[data-type="success"] {
-  --accent: #22c55e;
+  --accent: var(--ok);
 }
 .lp-toast[data-type="error"] {
-  --accent: #ef4444;
+  --accent: var(--danger);
 }
 .lp-toast[data-type="warning"] {
-  --accent: #f59e0b;
+  --accent: var(--warn);
 }
 
 .lp-toast .icon {
@@ -468,7 +485,7 @@ body.lp-page {
   display: block;
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, var(--accent), #3b82f6);
+  background: linear-gradient(90deg, var(--accent), var(--royal));
   transform-origin: left center;
   animation: toastBar linear forwards;
 }
