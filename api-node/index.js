@@ -72,7 +72,7 @@ const statesPool = mysql.createPool({
 /* =========================
    Helpers
    ========================= */
-const normalizeBcryptHash = (hash) => hash?.replace(/^\$2y\$/, "$2b$");
+const normalizeBcryptHash = (hash) => hash?.replace(/^\$2y\$/, "$2b$"); // PHP -> Node compat
 
 const pickUser = (row) => ({
   ClientID: row.ClientID,
@@ -379,6 +379,7 @@ app.get("/api/users/:id/points", userActionLimiter, async (req, res, next) => {
 
     const conn = await pool.getConnection();
     try {
+      // Earned: 1 point per ₹100 spent on completed trips (as you had)
       const [rows] = await conn.query(
         `SELECT price, daysNeeded, startdate FROM cart_items WHERE ClientID=?`,
         [id],
@@ -390,6 +391,7 @@ app.get("/api/users/:id/points", userActionLimiter, async (req, res, next) => {
 
       const earned = Math.floor(spent / 100);
 
+      // Redeemed total from point_redemptions
       const [redeemRows] = await conn.query(
         `SELECT COALESCE(SUM(points),0) AS used FROM point_redemptions WHERE ClientID=?`,
         [id],
@@ -425,6 +427,7 @@ app.post("/api/users/:id/points/redeem", userActionLimiter, validate(redeemSchem
     try {
       await conn.beginTransaction();
 
+      // compute latest balance (same as GET)
       const [rows] = await conn.query(
         `SELECT price, daysNeeded, startdate FROM cart_items WHERE ClientID=?`,
         [id],
@@ -475,6 +478,7 @@ app.get("/api/users/:id/purchases", userActionLimiter, async (req, res, next) =>
 
     const conn = await pool.getConnection();
     try {
+      // Prefer a dedicated purchases table if present
       let rows;
       try {
         const q = await conn.query(
@@ -493,8 +497,10 @@ app.get("/api/users/:id/purchases", userActionLimiter, async (req, res, next) =>
         return res.json({ ok: true, items });
       } catch (err) {
         if (err?.code !== "ER_NO_SUCH_TABLE") throw err;
+        // fall through to cart_items fallback
       }
 
+      // Fallback: derive from cart_items
       const [fallback] = await conn.query(
         `SELECT placeName AS item, price AS amount, startdate
          FROM cart_items
