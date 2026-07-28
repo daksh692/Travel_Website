@@ -346,6 +346,26 @@ body.lp-page {
   background: var(--success-gradient);
   border-radius: 999px;
   pointer-events: none;
+  overflow: hidden;
+}
+.slider-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.55) 48%, transparent 60%);
+  background-size: 220% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .slider-fill {
+    transition: width 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .slider-fill::after {
+    animation: sliderShimmer 2.4s linear infinite;
+  }
+}
+@keyframes sliderShimmer {
+  from { background-position: 140% 0; }
+  to { background-position: -40% 0; }
 }
 
 #pointsRange {
@@ -357,7 +377,7 @@ body.lp-page {
 #pointsRange::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px; height: 20px; border-radius: 50%;
-  background: #fff; border: 2px solid #10b981;
+  background: #fff; border: 2px solid var(--royal-2);
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   cursor: grab; transition: transform 0.1s;
 }

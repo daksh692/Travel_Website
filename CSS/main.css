@@ -129,6 +129,7 @@ body {
 /* Settings & Avatar buttons */
 .icon-btn,
 .avatar-btn {
+  position: relative;
   background: var(--glass-fill-hi);
   border: 1px solid var(--glass-line-strong);
   color: #fff;
@@ -139,6 +140,91 @@ body {
   place-items: center;
   transition: filter 0.2s;
   mix-blend-mode: multiply;
+}
+
+/* Tooltip — add data-tip="Label" to any .icon-btn / .avatar-btn */
+.icon-btn[data-tip]::after,
+.avatar-btn[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  background: var(--pearl);
+  color: var(--inkwell);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 9px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 8px 20px rgba(2, 5, 10, 0.4);
+  z-index: 40;
+}
+.icon-btn[data-tip]::before,
+.avatar-btn[data-tip]::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-bottom-color: var(--pearl);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 40;
+}
+.icon-btn[data-tip]:hover::after,
+.icon-btn[data-tip]:focus-visible::after,
+.avatar-btn[data-tip]:hover::after,
+.avatar-btn[data-tip]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.icon-btn[data-tip]:hover::before,
+.icon-btn[data-tip]:focus-visible::before,
+.avatar-btn[data-tip]:hover::before,
+.avatar-btn[data-tip]:focus-visible::before {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .icon-btn[data-tip]::after,
+  .icon-btn[data-tip]::before,
+  .avatar-btn[data-tip]::after,
+  .avatar-btn[data-tip]::before {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+}
+
+/* Ripple + magnetic hover — classes applied by JS/main.js (setupMotion) */
+.ripple-host {
+  position: relative;
+  overflow: hidden;
+}
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(0);
+  pointer-events: none;
+  animation: rippleFx 0.6s ease-out forwards;
+}
+@keyframes rippleFx {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+.btn-add,
+.btn-checkout,
+.primary,
+.btn-outline,
+.btn-ghost,
+.tab,
+.back-btn,
+.price-btn {
+  transition: transform 0.15s ease-out;
 }
 .icon-btn:hover,
 .avatar-btn:hover {
