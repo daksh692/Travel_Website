@@ -3,28 +3,25 @@
    ==================================================== */
 
 :root {
-  --ink: #eaf0ff;
-  --muted: #7b8db5;
-  --ring: #2a3550;
-  --card: rgba(12, 18, 35, 0.75);
-  --card-solid: #0d1528;
-  --card-border: rgba(255, 255, 255, 0.05);
-  --card-border-hover: rgba(99, 102, 241, 0.15);
-  --card-glow: rgba(99, 102, 241, 0.06);
-  --brand: #4f7cff;
-  --g1: #4f7cff;
-  --g2: #22d3ee;
-  --g3: #f472b6;
-  --base1: #0a1122;
-  --base2: #060c1b;
-  --base3: #04060c;
-  --ok: #22c55e;
-  --warn: #f59e0b;
-  --err: #ef4444;
-  --accent: #818cf8;
-  --accent-soft: #a5b4fc;
-  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  --btn-border: rgba(255, 255, 255, 0.1);
+  /* aliased to the shared Windowseat palette in main.css — --ink/--muted inherit from there */
+  --ring: var(--glass-line-strong);
+  --card: color-mix(in srgb, var(--sapphire-2) 80%, transparent);
+  --card-solid: var(--sapphire-2);
+  --card-border: var(--glass-line);
+  --card-border-hover: rgba(43, 70, 201, 0.25);
+  --card-glow: rgba(43, 70, 201, 0.1);
+  --err: var(--danger);
+  --brand: var(--royal-2);
+  --g1: var(--royal);
+  --g2: var(--ok);
+  --g3: var(--platinum-deep);
+  --base1: var(--sapphire-3);
+  --base2: var(--sapphire-2);
+  --base3: var(--sapphire);
+  --accent: var(--royal-2);
+  --accent-soft: var(--platinum);
+  --accent-gradient: linear-gradient(135deg, var(--royal-deep) 0%, var(--royal-2) 100%);
+  --btn-border: var(--glass-line-strong);
   --glass-blur: 20px;
 }
 
@@ -103,7 +100,7 @@ body.lp-page {
   font-weight: 900;
   letter-spacing: -1px;
   line-height: 1.1;
-  background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 40%, #818cf8 80%, #6366f1 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #c9d3e0 40%, #5f7ce8 80%, #6366f1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -989,7 +986,7 @@ body.lp-page {
   --bg: rgba(10, 16, 32, 0.93);
   --bd: rgba(255, 255, 255, 0.06);
   --fg: #eaf0ff;
-  --toast-accent: #818cf8;
+  --toast-accent: #5f7ce8;
   min-width: 280px; max-width: min(92vw, 360px);
   color: var(--fg); background: var(--bg);
   backdrop-filter: blur(20px);

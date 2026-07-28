@@ -2,27 +2,25 @@
    CSS/account.css — Premium Account Dashboard
    ==================================================== */
 
-/* ---------- Tokens ---------- */
+/* ---------- Tokens — aliased to the shared Windowseat palette in main.css ---------- */
 :root {
-  --bg: #070b14;
-  --bg-elevated: #0c1220;
-  --card: rgba(14, 22, 42, 0.7);
-  --card-solid: #0e162a;
-  --card-border: rgba(255, 255, 255, 0.06);
-  --card-glow: rgba(99, 102, 241, 0.08);
-  --line: #1b2440;
-  --line-soft: #223056;
-  --text: #eaf0ff;
-  --muted: #8da2d0;
-  --accent: #60a5fa;
-  --accent-2: #a5b4fc;
-  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --btn-grad: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  --btn-glow: 0 8px 24px rgba(99, 102, 241, 0.25);
-  --btn-border: rgba(255, 255, 255, 0.14);
+  --bg: var(--sapphire);
+  --bg-elevated: var(--sapphire-2);
+  --card: color-mix(in srgb, var(--sapphire-2) 80%, transparent);
+  --card-solid: var(--sapphire-2);
+  --card-border: var(--glass-line);
+  --card-glow: rgba(43, 70, 201, 0.12);
+  --line: var(--sapphire-3);
+  --line-soft: var(--glass-line-strong);
+  --text: var(--ink);
+  --accent: var(--royal-2);
+  --accent-2: var(--platinum);
+  --accent-gradient: linear-gradient(135deg, var(--royal-deep) 0%, var(--royal-2) 100%);
+  --success: var(--ok);
+  --warning: var(--warn);
+  --btn-grad: linear-gradient(135deg, var(--royal-deep) 0%, var(--royal-2) 100%);
+  --btn-glow: 0 8px 24px rgba(43, 70, 201, 0.3);
+  --btn-border: var(--glass-line-strong);
   --sidebar-w: 240px;
   --hero-h: 240px;
 }
