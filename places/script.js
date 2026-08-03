@@ -66,14 +66,94 @@ function ensureVisible(el) {
   }
 }
 
-/* ========== Click navigation (HTML only) ========== */
+/* ========== Click navigation ========== */
 function goToState(stateId) {
   const stateName = prettyName(stateId);
-  // Navigate; tweak to your page name if needed
-  const url = " ../listofplace.html?state=" + encodeURIComponent(stateName);
-  window.location.href = url;
+  window.location.href = "../listofplace.html?state=" + encodeURIComponent(stateName);
 }
-states.forEach((el) => el.addEventListener("click", () => goToState(el.id)));
+
+/* ========== State preview (click a state → preview instead of an
+   immediate full-page jump; search still jumps straight there) ========== */
+const API_HOST = `http://${location.hostname || "localhost"}:3001`;
+const API_BASE = `${API_HOST}/api`;
+const preview = document.getElementById("statePreview");
+const previewTitle = document.getElementById("statePreviewTitle");
+const previewBody = document.getElementById("statePreviewBody");
+const previewLink = document.getElementById("statePreviewLink");
+const previewClose = document.getElementById("statePreviewClose");
+
+async function showPreview(stateId) {
+  const stateName = prettyName(stateId);
+  previewTitle.textContent = stateName;
+  previewBody.innerHTML = '<p class="state-preview-loading">Loading places…</p>';
+  previewLink.href = "../listofplace.html?state=" + encodeURIComponent(stateName);
+  preview.hidden = false;
+
+  try {
+    const res = await fetch(`${API_BASE}/states/${encodeURIComponent(stateName)}/places`);
+    const json = await res.json();
+    const items = (json.items || []).slice(0, 3);
+    if (!items.length) {
+      previewBody.innerHTML = '<p class="state-preview-empty">No places listed yet for this state.</p>';
+      return;
+    }
+    previewBody.innerHTML = items
+      .map((it) => {
+        const prices = (it.prices || []).map(Number).filter((n) => !Number.isNaN(n));
+        const from = prices.length ? `from ₹${Math.min(...prices)}` : "";
+        return `<div class="state-preview-item"><span>${it.place}</span><span class="state-preview-price">${from}</span></div>`;
+      })
+      .join("");
+  } catch {
+    previewBody.innerHTML = '<p class="state-preview-empty">Couldn’t load places right now.</p>';
+  }
+}
+previewClose?.addEventListener("click", () => {
+  preview.hidden = true;
+});
+states.forEach((el) => el.addEventListener("click", () => showPreview(el.id)));
+
+/* ========== Trip-aware badges (states already in the visitor's cart) ========== */
+function getCartStates() {
+  try {
+    const cart = JSON.parse(localStorage.getItem("cartDraft") || "[]");
+    return new Set(cart.map((it) => it.state));
+  } catch {
+    return new Set();
+  }
+}
+function markTripStates() {
+  const cartStates = getCartStates();
+  const svg = document.getElementById("svg-map");
+  svg.querySelectorAll(".trip-badge").forEach((n) => n.remove());
+
+  states.forEach((el) => {
+    const inCart = cartStates.has(prettyName(el.id));
+    el.classList.toggle("has-trip", inCart);
+    if (!inCart) return;
+    const b = el.getBBox();
+    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    dot.setAttribute("cx", b.x + b.width / 2);
+    dot.setAttribute("cy", b.y + b.height / 2);
+    dot.setAttribute("r", 6);
+    dot.setAttribute("class", "trip-badge");
+    dot.setAttribute("pointer-events", "none");
+    svg.appendChild(dot);
+  });
+
+  const callout = document.getElementById("cartCallout");
+  const text = document.getElementById("cartCalloutText");
+  if (callout && text) {
+    if (cartStates.size) {
+      const n = cartStates.size;
+      text.textContent = `You have places saved in ${n} state${n > 1 ? "s" : ""} — continue where you left off.`;
+      callout.hidden = false;
+    } else {
+      callout.hidden = true;
+    }
+  }
+}
+document.addEventListener("DOMContentLoaded", markTripStates);
 
 /* ========== Live search (type-ahead + glow + auto-scroll) ========== */
 const input = document.getElementById("state-search");
@@ -86,15 +166,15 @@ const catalogue = states
 function scoreMatch(q, label) {
   const l = label.toLowerCase(),
     s = q.toLowerCase();
-  if (l.startsWith(s)) return 2;
-  const idx = l.indexOf(s);
-  if (idx >= 0) return 1 - idx / 100;
-  return -1;
+  // Starts-with only — typing "H" should surface Haryana, not Chhattisgarh.
+  return l.startsWith(s) ? 1 : -1;
 }
 
 let lastMatches = [];
 function renderSuggestions(items) {
   suggestions.innerHTML = "";
+  // Safety: a re-render mid-hover removes the <li> without a mouseleave event.
+  states.forEach((el) => el.classList.remove("list-hover"));
   if (!items.length) {
     suggestions.classList.remove("show");
     return;
@@ -104,6 +184,13 @@ function renderSuggestions(items) {
     li.setAttribute("role", "option");
     li.innerHTML = `<span>${label}</span><span class="enter-hint">Enter ↵</span>`;
     li.addEventListener("click", () => goToState(id));
+    // Hovering a suggestion highlights that exact state on the map.
+    li.addEventListener("mouseenter", () => {
+      document.getElementById(id)?.classList.add("list-hover");
+    });
+    li.addEventListener("mouseleave", () => {
+      document.getElementById(id)?.classList.remove("list-hover");
+    });
     suggestions.appendChild(li);
   });
   suggestions.classList.add("show");
@@ -151,3 +238,27 @@ document.addEventListener("click", (e) => {
     suggestions.classList.remove("show");
   }
 });
+
+/* ========== Legend toggle (floating bulb) ========== */
+const legendToggle = document.getElementById("legendToggle");
+const legendPanel = document.getElementById("legendPanel");
+if (legendToggle && legendPanel) {
+  legendToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const opening = legendPanel.hidden;
+    legendPanel.hidden = !opening;
+    legendToggle.setAttribute("aria-expanded", String(opening));
+  });
+  document.addEventListener("click", (e) => {
+    if (!legendPanel.hidden && !legendPanel.contains(e.target) && e.target !== legendToggle) {
+      legendPanel.hidden = true;
+      legendToggle.setAttribute("aria-expanded", "false");
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !legendPanel.hidden) {
+      legendPanel.hidden = true;
+      legendToggle.setAttribute("aria-expanded", "false");
+    }
+  });
+}

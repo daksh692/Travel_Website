@@ -27,6 +27,11 @@
   --warn: #d4a13a;
   --danger: #c0435a;
 
+  /* Gilt — the one warm accent, reserved for moments blue can't carry alone
+     (e.g. hover feedback against a blue base, where blue-on-blue disappears) */
+  --gilt: #d9b35a;
+  --gilt-2: #f0d68a;
+
   --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia,
     serif;
   --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -225,6 +230,46 @@ body {
 .back-btn,
 .price-btn {
   transition: transform 0.15s ease-out;
+}
+
+/* Shared button base — a page-specific stylesheet (listofplace.css, deals.css,
+   etc.) may still override these, but every page now gets a correctly
+   styled button even if it doesn't define its own. */
+.btn-add,
+.btn-checkout {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--royal-2);
+  background: linear-gradient(180deg, var(--royal-2), var(--royal));
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+}
+.btn-add:hover,
+.btn-checkout:hover {
+  filter: brightness(1.08);
+}
+.btn-outline,
+.btn-ghost {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-line-strong);
+  background: var(--glass-fill-hi);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+}
+.btn-outline:hover,
+.btn-ghost:hover {
+  filter: brightness(1.15);
 }
 .icon-btn:hover,
 .avatar-btn:hover {
