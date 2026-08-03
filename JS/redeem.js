@@ -4,7 +4,7 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const fmtINR = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 
 // Reuse same constants as rest of app
-const API_HOST = `http://${location.hostname}:3001`;
+const API_HOST = `http://${location.hostname || "localhost"}:3001`;
 const API_BASE = `${API_HOST}/api`;
 
 const SERVICE_RATE_PCT = 0.5;
@@ -57,7 +57,7 @@ function totals() {
   const cart = loadCart();
   const sub = cart.reduce(
     (s, it) => s + Number(it.price || 0) * Number(it.qty || 1),
-    0
+    0,
   );
   const serv = Math.round(sub * (SERVICE_RATE_PCT / 100));
   const tax = Math.round((sub + serv) * (TAX_RATE_PCT / 100));
@@ -159,7 +159,7 @@ $$(".chip").forEach((c) =>
   c.addEventListener("click", () => {
     $("#code").value = c.dataset.code || "";
     $("#apply").click();
-  })
+  }),
 );
 
 // ===== Points events =====
@@ -172,7 +172,7 @@ $("#pointsRange").addEventListener("input", (e) => {
 $("#pointsInput").addEventListener("input", (e) => {
   const v = Math.max(
     0,
-    Math.min(pointsMaxUsable, Number(e.currentTarget.value || 0))
+    Math.min(pointsMaxUsable, Number(e.currentTarget.value || 0)),
   );
   pointsApplied = v;
   saveAppliedPoints(pointsApplied);

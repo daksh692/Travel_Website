@@ -1,8 +1,8 @@
-// JS/account.js
+// JS/account.js — Premium Account Dashboard
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
-const API_HOST = `http://${location.hostname}:3001`;
+const API_HOST = `http://${location.hostname || "localhost"}:3001`;
 const API_BASE = `${API_HOST}/api`;
 
 const fmtINR = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
@@ -31,10 +31,10 @@ function showToast({
       type === "success"
         ? "✓"
         : type === "error"
-        ? "⨯"
-        : type === "warning"
-        ? "!"
-        : "ℹ"
+          ? "⨯"
+          : type === "warning"
+            ? "!"
+            : "ℹ"
     }</div>
     <div class="lp-toast__body">
       <div class="lp-toast__title">${title}</div>
@@ -44,7 +44,7 @@ function showToast({
   requestAnimationFrame(() => el.classList.add("show"));
   setTimeout(() => {
     el.classList.remove("show");
-    setTimeout(() => el.remove(), 180);
+    setTimeout(() => el.remove(), 250);
   }, timeout);
 }
 
@@ -96,10 +96,15 @@ const apiPassword = (id, body) =>
   api(`/users/${id}/password`, { method: "POST", body: JSON.stringify(body) });
 
 /* ------------ Render helpers ------------ */
-function renderList(host, items, empty = "Nothing here yet.") {
+function renderList(
+  host,
+  items,
+  emptyIcon = "📋",
+  empty = "Nothing here yet.",
+) {
   host.innerHTML = "";
   if (!items?.length) {
-    host.innerHTML = `<div class="muted">${empty}</div>`;
+    host.innerHTML = `<div class="empty-state"><div class="empty-icon">${emptyIcon}</div><div class="muted">${empty}</div></div>`;
     return;
   }
   for (const it of items) {
@@ -171,17 +176,14 @@ function pwHide() {
 
 /* ------------ Password UX helpers ------------ */
 function estimatePasswordStrength(pw = "") {
-  // Simple heuristic: length + char-set variety + penalties for repeats/sequences
   let score = 0;
   if (pw.length >= 8) score++;
   if (pw.length >= 12) score++;
   if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
   if (/\d/.test(pw)) score++;
   if (/[^A-Za-z0-9]/.test(pw)) score++;
-  // Penalize super common patterns
   if (/^(password|qwerty|123456|letmein|admin|welcome)$/i.test(pw)) score = 0;
   if (/([a-zA-Z0-9])\1\1/.test(pw)) score = Math.max(0, score - 1);
-  // Clamp 0..4
   score = Math.max(0, Math.min(score, 4));
   const labels = ["Very weak", "Weak", "Okay", "Good", "Strong"];
   const percents = [10, 30, 55, 80, 100];
@@ -210,6 +212,126 @@ function bindCapsLockDetect() {
   };
   cur.addEventListener("keyup", handler);
   cur.addEventListener("keydown", handler);
+}
+
+/* ------------ Tabs ------------ */
+function initTabs() {
+  const tabs = $$(".tab[data-tab]");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      // Deselect all
+      tabs.forEach((t) => {
+        t.setAttribute("aria-selected", "false");
+        const panel = $(`#${t.dataset.tab}`);
+        if (panel) panel.classList.remove("active");
+      });
+      // Select clicked
+      tab.setAttribute("aria-selected", "true");
+      const panel = $(`#${tab.dataset.tab}`);
+      if (panel) panel.classList.add("active");
+    });
+  });
+}
+
+/* ------------ Scroll-Spy Sidebar ------------ */
+function initScrollSpy() {
+  const links = $$(".sidebar-link[data-target]");
+  const sections = links
+    .map((l) => document.getElementById(l.dataset.target))
+    .filter(Boolean);
+
+  if (!sections.length) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          links.forEach((l) => l.classList.remove("active"));
+          const activeLink = $(
+            `.sidebar-link[data-target="${entry.target.id}"]`,
+          );
+          if (activeLink) activeLink.classList.add("active");
+        }
+      });
+    },
+    { rootMargin: "-20% 0px -60% 0px", threshold: 0 },
+  );
+
+  sections.forEach((sec) => observer.observe(sec));
+
+  // Smooth scroll on click
+  links.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.getElementById(link.dataset.target);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  });
+}
+
+/* ------------ Entrance Reveal Animations ------------ */
+function initRevealAnimations() {
+  const cards = $$(".reveal-card");
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 },
+  );
+  cards.forEach((card) => observer.observe(card));
+}
+
+/* ------------ Animated Counter ------------ */
+function animateCounter(el, target, duration = 1200) {
+  const start = 0;
+  const startTime = performance.now();
+
+  function update(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // Ease out cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.round(start + (target - start) * eased);
+    el.textContent = current.toLocaleString("en-IN");
+    if (progress < 1) requestAnimationFrame(update);
+  }
+
+  requestAnimationFrame(update);
+}
+
+/* ------------ Points Ring ------------ */
+function updatePointsRing(points, maxPoints = 1000) {
+  const ring = $("#pointsRing");
+  if (!ring) return;
+
+  // Add gradient definition if not present
+  const svg = ring.closest("svg");
+  if (svg && !svg.querySelector("defs")) {
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    defs.innerHTML = `
+      <linearGradient id="pointsGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#3b82f6"/>
+        <stop offset="100%" style="stop-color:#8b5cf6"/>
+      </linearGradient>
+    `;
+    svg.prepend(defs);
+  }
+
+  const circumference = 2 * Math.PI * 52; // r=52
+  const pct = Math.min(points / maxPoints, 1);
+  const offset = circumference - pct * circumference;
+
+  // Delay for the entrance animation
+  setTimeout(() => {
+    ring.style.strokeDashoffset = offset;
+  }, 400);
 }
 
 /* ------------ Boot ------------ */
@@ -243,6 +365,10 @@ async function boot() {
     });
   })();
 
+  // Init UI features
+  initTabs();
+  initRevealAnimations();
+
   const s = getSession();
   const avatar = $("#accAvatar"),
     name = $("#accName"),
@@ -251,94 +377,112 @@ async function boot() {
     addr = $("#accAddr");
 
   if (!s) {
-    avatar && (avatar.textContent = "G");
-    name && (name.textContent = "Guest");
-    email && (email.textContent = "Not signed in");
     $("#signedOut")?.classList.remove("hide");
     $("#signedIn")?.classList.add("hide");
     return;
   }
 
-  // identity (view)
-  name.textContent = `${s.FirstName || ""} ${s.LastName || ""}`.trim();
+  // Show dashboard
+  $("#signedOut")?.classList.add("hide");
+  $("#signedIn")?.classList.remove("hide");
+
+  // Identity (view)
+  const fullName = `${s.FirstName || ""} ${s.LastName || ""}`.trim();
+  name.textContent = fullName || "Guest";
   email.textContent = s.Email || "—";
   phone.textContent = maskPhone(s.PhoneNumber);
   addr.textContent = s.Address || "—";
-  avatar.textContent = initials(name.textContent);
+  avatar.textContent = initials(fullName);
 
-  // prefill edit form (full values)
+  // Header avatar
+  const headerAvatar = $("#avatarInitial");
+  if (headerAvatar) headerAvatar.textContent = initials(fullName);
+
+  // Prefill edit form
   $("#firstName").value = s.FirstName || "";
   $("#lastName").value = s.LastName || "";
   $("#phone").value = s.PhoneNumber || "";
   $("#address").value = s.Address || "";
 
+  // Init scroll spy after content is ready
+  initScrollSpy();
+
   // SUMMARY
   try {
     const { items = [] } = await apiSummary(s.ClientID);
-    renderList($("#accSummary"), items, "No history yet.");
+    renderList($("#accSummary"), items, "📋", "No history yet.");
   } catch (e) {
     console.error("summary error", e);
-    $(
-      "#accSummary"
-    ).innerHTML = `<div class="muted">Couldn’t load history.</div>`;
+    $("#accSummary").innerHTML =
+      `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Couldn't load history.</div></div>`;
   }
 
   // TRIPS
+  let totalTrips = 0;
   try {
     const { done = [], upcoming = [] } = await apiTrips(s.ClientID);
-    renderList($("#accTripsUpcoming"), upcoming, "No upcoming trips.");
-    renderList($("#accTripsDone"), done, "No completed trips yet.");
+    totalTrips = done.length + upcoming.length;
+    renderList($("#accTripsUpcoming"), upcoming, "🧳", "No upcoming trips.");
+    renderList($("#accTripsDone"), done, "🏁", "No completed trips yet.");
   } catch (e) {
     console.error("trips error", e);
-    $(
-      "#accTripsUpcoming"
-    ).innerHTML = `<div class="muted">Failed to load trips.</div>`;
-    $(
-      "#accTripsDone"
-    ).innerHTML = `<div class="muted">Failed to load trips.</div>`;
+    $("#accTripsUpcoming").innerHTML =
+      `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Failed to load trips.</div></div>`;
+    $("#accTripsDone").innerHTML =
+      `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Failed to load trips.</div></div>`;
   }
+
+  // Update hero stats
+  const heroTrips = $("#heroTrips");
+  if (heroTrips) heroTrips.textContent = totalTrips;
 
   // POINTS
   try {
     const { points = 0, rule = "" } = await apiPoints(s.ClientID);
-    $("#accPoints").textContent = points;
+    const accPts = $("#accPoints");
+    const heroPts = $("#heroPoints");
+
+    // Animated count-up
+    if (accPts) animateCounter(accPts, points);
+    if (heroPts) animateCounter(heroPts, points);
+
     $("#accPointsRule").textContent = rule;
+    updatePointsRing(points);
   } catch (e) {
     console.error("points error", e);
     $("#accPoints").textContent = "—";
+    const heroPts = $("#heroPoints");
+    if (heroPts) heroPts.textContent = "—";
   }
 
   // PURCHASES
   try {
     const { items = [] } = await apiPurchases(s.ClientID);
-    renderList($("#accPurchases"), items, "No purchases yet.");
+    renderList($("#accPurchases"), items, "🛍️", "No purchases yet.");
   } catch (e) {
     console.error("purchases error", e);
-    $(
-      "#accPurchases"
-    ).innerHTML = `<div class="muted">Failed to load purchases.</div>`;
+    $("#accPurchases").innerHTML =
+      `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="muted">Failed to load purchases.</div></div>`;
   }
 
   // LOCAL CART
   const local = loadCart();
   const host = $("#accCartLocal");
   if (!local.length)
-    host.innerHTML = `<div class="muted">No items in local cart.</div>`;
+    host.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><div class="muted">No items in local cart.</div></div>`;
   else {
     host.innerHTML = "";
     local.forEach((it) => {
       const row = document.createElement("div");
       row.className = "item";
       row.innerHTML = `
-        <div><strong>${it.place}</strong> <span class="badge">${
-        it.state
-      }</span></div>
+        <div><strong>${it.place}</strong> <span class="badge">${it.state}</span></div>
         <div>${fmtINR((it.price || 0) * (it.qty || 1))}</div>`;
       host.appendChild(row);
     });
   }
   $("#clearLocal")?.addEventListener("click", () => {
-    if (confirm("Clear this device’s saved cart?")) {
+    if (confirm("Clear this device's saved cart?")) {
       localStorage.removeItem("cartDraft");
       showToast({ title: "Cleared", type: "warning" });
       location.reload();
@@ -354,11 +498,16 @@ async function boot() {
   function showForm(on) {
     view.classList.toggle("hide", !!on);
     form.classList.toggle("hide", !on);
+    editBtn.textContent = on ? "Cancel" : "Edit";
   }
-  editBtn?.addEventListener("click", () => showForm(true));
+
+  editBtn?.addEventListener("click", () => {
+    const isEditing = !form.classList.contains("hide");
+    showForm(!isEditing);
+  });
+
   $("#editToggleCancel")?.addEventListener("click", () => showForm(false));
 
-  // Basic client validation on profile save
   saveBtn?.addEventListener("click", async () => {
     const first = $("#firstName");
     const last = $("#lastName");
@@ -374,7 +523,6 @@ async function boot() {
       address: addrIn.value.trim(),
     };
 
-    // Optional phone format hint (non-blocking)
     if (body.phone && !/^\+?\d[\d\s\-()]{6,}$/.test(body.phone)) {
       setFieldError(phoneIn, "Use a valid phone format, e.g. +1 555 123 4567");
     }
@@ -386,19 +534,18 @@ async function boot() {
       localStorage.setItem("sessionClient", JSON.stringify(user));
       showToast({ title: "Profile updated", type: "success" });
 
-      // Reflect on page immediately
-      name.textContent = `${user.FirstName || ""} ${
-        user.LastName || ""
-      }`.trim();
+      const newName = `${user.FirstName || ""} ${user.LastName || ""}`.trim();
+      name.textContent = newName;
       phone.textContent = maskPhone(user.PhoneNumber);
       addr.textContent = user.Address || "—";
-      $("#accAvatar").textContent = initials(name.textContent);
+      avatar.textContent = initials(newName);
+      if (headerAvatar) headerAvatar.textContent = initials(newName);
       showForm(false);
     } catch (e) {
       showToast({ title: "Update failed", message: e.message, type: "error" });
     } finally {
       saveBtn.disabled = false;
-      saveBtn.textContent = "Save";
+      saveBtn.textContent = "Save changes";
     }
   });
 
@@ -421,13 +568,11 @@ async function boot() {
 
   newEl.addEventListener("input", () => {
     refreshStrength();
-    // live check for confirm match
     if (conEl.value && newEl.value !== conEl.value) {
       setFieldError(conEl, "Confirm password must match the new password");
     } else {
       clearFieldError(conEl);
     }
-    // clear its own error while typing
     if (newEl.value.length >= 8) clearFieldError(newEl);
   });
 
@@ -456,7 +601,6 @@ async function boot() {
     clearGroupErrors([curEl, newEl, conEl]);
     pwHide();
 
-    // client-side checks (collect messages for the popover)
     const msgs = [];
     if (!current_password) {
       setFieldError(curEl, "Current password is required");
@@ -498,7 +642,6 @@ async function boot() {
       clearGroupErrors([curEl, newEl, conEl]);
     } catch (err) {
       const msg = String(err.message || "Password change failed");
-      // map server message to specific fields + show popover
       const serverMsgs = [];
       if (/Current password is incorrect/i.test(msg)) {
         setFieldError(curEl, "Current password is incorrect");

@@ -7,7 +7,7 @@ const CFG_KEY = "transportCfgV1";
 function loadCfg() {
   try {
     return JSON.parse(
-      localStorage.getItem(CFG_KEY) || '{"servicePct":0.5,"taxPct":12}'
+      localStorage.getItem(CFG_KEY) || '{"servicePct":0.5,"taxPct":12}',
     );
   } catch {
     return { servicePct: 0.5, taxPct: 12 };
@@ -22,7 +22,7 @@ function loadT() {
   try {
     return JSON.parse(
       localStorage.getItem("transportDraftV5") ||
-        '{"trips":[{"id":"t1","name":"Trip 1","legs":[]}],"manual":[]}'
+        '{"trips":[{"id":"t1","name":"Trip 1","legs":[]}],"manual":[]}',
     );
   } catch {
     return { trips: [{ id: "t1", name: "Trip 1", legs: [] }], manual: [] };
@@ -35,49 +35,60 @@ function toast(t) {
   alert(t);
 }
 
-/* ===== tabs ===== */
-$$(".tab").forEach((tab) => {
-  tab.onclick = () => {
-    $$(".tab").forEach((x) => x.classList.remove("active"));
-    tab.classList.add("active");
-    const k = tab.dataset.tab;
-    $$("main section").forEach((sec) => {
-      const show = sec.getAttribute("data-panel") === k;
-      sec.hidden = !show;
-      tab.setAttribute("aria-selected", show ? "true" : "false");
-    });
-  };
-});
-
 /* ===== helpers ===== */
 function fillTripSelects(model) {
   const sel = $("#tripSel"),
-    msel = $("#mTripSel"),
     moveSel = $("#moveToTripSel");
   if (sel) sel.innerHTML = "";
-  if (msel) msel.innerHTML = "";
   if (moveSel) moveSel.innerHTML = "";
   model.trips.forEach((t) => {
     sel?.add(new Option(t.name, t.id));
-    msel?.add(new Option(t.name, t.id));
     moveSel?.add(new Option(t.name, t.id));
   });
 }
 function calcTripTotals(trip) {
-  const { servicePct, taxPct } = loadCfg();
+  const globalRates = loadCfg();
+  // Prefer per-trip settings if they exist, otherwise fallback to global
+  const servicePct =
+    trip.servicePct !== undefined ? trip.servicePct : globalRates.servicePct;
+  const taxPct = trip.taxPct !== undefined ? trip.taxPct : globalRates.taxPct;
+
   const sub = trip.legs.reduce((s, l) => s + Number(l.price || 0), 0);
   const serv = Math.round(sub * (servicePct / 100));
   const tax = Math.round((sub + serv) * (taxPct / 100));
-  return { sub, serv, tax, total: sub + serv + tax };
+  return { sub, serv, tax, total: sub + serv + tax, servicePct, taxPct };
 }
 function icon(mode) {
   return mode === "flight"
     ? "✈️"
     : mode === "train"
-    ? "🚆"
-    : mode === "bus"
-    ? "🚌"
-    : "🚗";
+      ? "🚆"
+      : mode === "bus"
+        ? "🚌"
+        : "🚗";
+}
+
+/* ===== Internal vs External Widget Toggle ===== */
+$$(".mini-tab").forEach((tab) => {
+  tab.onclick = () => {
+    $$(".mini-tab").forEach((x) => x.classList.remove("active"));
+    tab.classList.add("active");
+
+    // Hide all booking flows internally
+    $$(".booking-flow").forEach((sec) => sec.classList.add("panel-hidden"));
+
+    // Show the active one
+    const flowId = `booking-${tab.dataset.btype}`;
+    const target = $(`#${flowId}`);
+    if (target) target.classList.remove("panel-hidden");
+  };
+});
+
+function initForm() {
+  // Set default mode
+  $("#mode").value = "flight";
+  // Set default date to today
+  $("#date").valueAsDate = new Date();
 }
 
 /* ===== selection ===== */
@@ -115,24 +126,76 @@ function render() {
     wrap.className = "trip";
     wrap.innerHTML = `
       <div class="trip-h">
-        <button class="btn-ghost small" data-collapse>Toggle</button>
         <div class="trip-name">${t.name}</div>
         <span class="pill">${t.legs.length} leg${
-      t.legs.length === 1 ? "" : "s"
-    }</span>
-        <span class="pill">Total ${fmtINR(totals.total)}</span>
-        <span class="small" style="margin-left:auto">Svc ${
-          loadCfg().servicePct
-        }% · Tax ${loadCfg().taxPct}%</span>
+          t.legs.length === 1 ? "" : "s"
+        }</span>
+        <span class="pill">Due ${fmtINR(totals.total)}</span>
+        <div class="grow"></div>
+        <span class="small muted">Svc ${totals.servicePct}% · Tax ${totals.taxPct}%</span>
+        
+        <button class="btn-ghost small" data-edit-trip aria-label="Edit Trip Details">Edit Trip</button>
+        <button class="btn-ghost small" data-collapse style="margin-left:8px;" aria-label="Toggle Trip">↕</button>
       </div>
-      <div class="list" data-ti="${ti}"></div>
+
+      <div class="edit-wrap trip-edit-wrap">
+          <div class="row">
+              <label>Rename Trip <input type="text" data-trip-name="${ti}" value="${t.name}" /></label>
+          </div>
+          <div class="btns" style="margin-top: 16px; justify-content: flex-end;">
+              <button class="btn-ghost danger small" data-trip-del="${ti}">Delete Trip</button>
+              <button class="btn small" data-trip-save="${ti}">Save Changes</button>
+          </div>
+      </div>
+
+      <div class="timeline-container list" data-ti="${ti}"></div>
     `;
+
+    // Hook trip edit controls
+    const tripEditWrap = wrap.querySelector(".trip-edit-wrap");
+    wrap.querySelector("[data-edit-trip]").onclick = () => {
+      tripEditWrap.classList.toggle("open");
+    };
+
+    wrap.querySelector(`[data-trip-save="${ti}"]`).onclick = () => {
+      const m = loadT();
+      const tripNode = wrap.querySelector(`.trip-edit-wrap`);
+
+      const newName = tripNode
+        .querySelector(`[data-trip-name="${ti}"]`)
+        .value.trim();
+
+      if (newName) m.trips[ti].name = newName;
+
+      saveT(m);
+      render();
+      toast("Trip updated");
+    };
+
+    wrap.querySelector(`[data-trip-del="${ti}"]`).onclick = () => {
+      if (
+        confirm(
+          `Are you sure you want to permanently delete "${t.name}" and all its legs?`,
+        )
+      ) {
+        const m = loadT();
+        m.trips.splice(ti, 1);
+        saveT(m);
+        // Re-select first trip if none active
+        if (m.trips.length === 0) {
+          addTripIfNeeded();
+        }
+        render();
+        toast("Trip deleted");
+      }
+    };
 
     const list = wrap.querySelector(".list");
     if (!t.legs.length) {
       const emp = document.createElement("div");
       emp.className = "muted small";
-      emp.textContent = "No legs yet.";
+      emp.style.marginLeft = "80px";
+      emp.textContent = "No legs scheduled yet.";
       list.appendChild(emp);
     }
 
@@ -145,22 +208,31 @@ function render() {
       row.className = "item";
       if (selection.has(key)) row.classList.add("selected");
       row.innerHTML = `
-        <label class="tick">
-          <input type="checkbox" data-sel />
-          <span class="fake"></span>
-        </label>
-        <div class="ico">${icon(l.mode)}</div>
-        <div>
+        <div class="item-left">
+          <div class="timeline-node">${icon(l.mode)}</div>
+        </div>
+        
+        <div class="item-center">
+          <label class="tick">
+            <input type="checkbox" data-sel />
+            <span class="fake"></span>
+          </label>
           <div class="item-top">
-            <strong>${l.from || "—"} → ${l.to || "—"}</strong>
-            <span class="pill pill-muted">${l.label}</span>
+            <div class="route-text">${l.from || "—"} <span>${icon(l.mode)}</span> ${l.to || "—"}</div>
+            <span class="meta-tag">${l.label}</span>
           </div>
-          <div class="muted">${l.date || "—"} · <span class="pill">${
-        l.mode
-      }</span></div>
-
-          <details class="edit">
-            <summary>Edit</summary>
+          <div class="item-meta-row">
+              <div>${l.date || "—"}</div>
+              <div><strong>${l.mode.toUpperCase()}</strong></div>
+          </div>
+        </div>
+        
+        <div class="item-right">
+          <div class="item-price">${fmtINR(l.price || 0)}</div>
+          <button class="btn-ghost small" data-open>Details</button>
+        </div>
+        <div class="edit-wrap">
+          <div class="edit">
             <div class="row2" style="margin-top:6px">
               <label>Label <input data-ed="label" value="${
                 l.label || ""
@@ -196,18 +268,14 @@ function render() {
                 l.price || 0
               }"/></label>
             </div>
-            <div class="btns" style="margin-top:6px; align-items:end; display:flex">
-              <button class="btn-ghost" data-up>⬆️</button>
-              <button class="btn-ghost" data-down>⬇️</button>
+            <div class="btns" style="margin-top:16px; align-items:end; display:flex">
+              <button class="btn-ghost" data-up>⬆️ Move</button>
+              <button class="btn-ghost" data-down>⬇️ Move</button>
               <div class="grow"></div>
               <button class="btn-ghost danger" data-del>Remove</button>
               <button class="btn" data-save>Save</button>
             </div>
-          </details>
-        </div>
-        <div style="text-align:right">
-          <div>${fmtINR(l.price || 0)}</div>
-          <button class="btn-ghost small" data-open>Edit</button>
+          </div>
         </div>
       `;
 
@@ -227,9 +295,11 @@ function render() {
 
       // quick open
       row.querySelector("[data-open]").onclick = () => {
-        const det = row.querySelector("details.edit");
-        det.open = true;
-        det.scrollIntoView({ behavior: "smooth", block: "center" });
+        const wrap = row.querySelector(".edit-wrap");
+        wrap.classList.toggle("open");
+        if (wrap.classList.contains("open")) {
+          wrap.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
       };
 
       // move up/down
@@ -369,21 +439,52 @@ $("#add").onclick = () => {
   $("#date").value = "";
 };
 
-/* ===== manual records (unchanged) ===== */
+$("#newTripExternal")?.addEventListener("click", () => {
+  $("#newTrip").click(); // Trigger same core logic
+  setTimeout(() => {
+    $(`[data-btype="external"]`)?.click(); // Keep external mode active
+  }, 10);
+});
+
+/* ===== manual records ===== */
 $("#mAdd")?.addEventListener("click", () => {
   const m = loadT();
+  const rawProvider = $("#mProv").value.trim();
+  const rawFrom = $("#mFrom").value.trim();
+  const rawTo = $("#mTo").value.trim();
+  const rawDate = $("#mDate").value;
+  const rawRef = $("#mRef").value.trim();
+  const rawAmt = Number($("#mAmt").value || 0);
+
+  if (!rawProvider || !rawFrom || !rawTo) {
+    toast("Provider, From, and To are required.");
+    return;
+  }
+
+  // Use the main tripSel since we are now unified in one widget!
+  const selTId = $("#tripSel").value || m.trips[0]?.id;
+
   m.manual.push({
-    tripId: $("#mTripSel").value,
-    provider: $("#mProv").value.trim(),
-    from: $("#mFrom").value.trim(),
-    to: $("#mTo").value.trim(),
-    date: $("#mDate").value,
-    ref: $("#mRef").value.trim(),
-    amount: Number($("#mAmt").value || 0),
+    provider: rawProvider,
+    from: rawFrom,
+    to: rawTo,
+    date: rawDate,
+    ref: rawRef,
+    amount: rawAmt,
+    tripId: selTId,
   });
   saveT(m);
+
   renderManual();
-  toast("Saved record");
+  toast("External record saved.");
+
+  // Reset external inputs
+  $("#mProv").value = "";
+  $("#mFrom").value = "";
+  $("#mTo").value = "";
+  $("#mDate").value = "";
+  $("#mRef").value = "";
+  $("#mAmt").value = "";
 });
 function renderManual() {
   const host = $("#manualList");
@@ -391,24 +492,25 @@ function renderManual() {
   host.innerHTML = "";
   const m = loadT();
   if (!m.manual.length) {
-    host.innerHTML = `<div class="muted">No records yet.</div>`;
-    return;
+    return; // Handled by CSS empty pseudo
   }
   m.manual.forEach((r, i) => {
     const div = document.createElement("div");
     div.className = "item";
     div.innerHTML = `
-      <label class="tick"><span class="fake"></span></label>
-      <div class="ico">🧾</div>
-      <div>
-        <div><strong>${r.provider || "—"}</strong> — ${r.from || "—"} → ${
-      r.to || "—"
-    }</div>
-        <div class="muted">${r.date || "—"} · Ref: ${r.ref || "—"}</div>
+      <div class="item-left">
+        <div class="timeline-node">🧾</div>
       </div>
-      <div style="text-align:right">
-        <div>${fmtINR(r.amount || 0)}</div>
-        <button class="btn-ghost danger" data-del="${i}" style="margin-top:6px">Remove</button>
+      <div class="item-center">
+        <div class="route-text">${r.provider || "—"} <span>▶</span> ${r.from || "—"} to ${r.to || "—"}</div>
+        <div class="item-meta-row">
+            <div>${r.date || "—"}</div>
+            <div>Ref: <strong>${r.ref || "—"}</strong></div>
+        </div>
+      </div>
+      <div class="item-right">
+        <div class="item-price">${fmtINR(r.amount || 0)}</div>
+        <button class="btn-ghost danger small" data-del="${i}">Remove</button>
       </div>`;
     div.querySelector("[data-del]").onclick = () => {
       const m2 = loadT();
@@ -444,9 +546,9 @@ $("#bulkEdit")?.addEventListener("click", () => {
     toast("Select exactly one leg to edit.");
     return;
   }
-  const det = $$(`.item.selected details.edit`)[0];
+  const det = $$(`.item.selected .edit-wrap`)[0];
   if (det) {
-    det.open = true;
+    det.classList.add("open");
     det.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 });

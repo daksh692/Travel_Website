@@ -1,19 +1,16 @@
-/* theme & background (same as before) */
+/* theme & background — aliased to the shared Windowseat palette in main.css */
 :root {
-  --ink: #eaf0ff;
-  --muted: #a7b3d2;
-  --ring: #2a3550;
-  --card: #0f172a;
-  --brand: #4f7cff;
-  --g1: #4f7cff;
-  --g2: #22d3ee;
-  --g3: #f472b6;
-  --base1: #0a1122;
-  --base2: #060c1b;
-  --base3: #04060c;
-  --good: #22c55e;
-  --bad: #ef4444;
-  --warn: #f59e0b;
+  --ring: var(--glass-line-strong);
+  --card: var(--sapphire-2);
+  --brand: var(--royal-2);
+  --g1: var(--royal);
+  --g2: var(--ok);
+  --g3: var(--platinum-deep);
+  --base1: var(--sapphire-3);
+  --base2: var(--sapphire-2);
+  --base3: var(--sapphire);
+  --good: var(--ok);
+  --bad: var(--danger);
 }
 body.lp-page {
   color: var(--ink);
@@ -97,7 +94,7 @@ body.lp-page {
 .btn-outline {
   padding: 10px 12px;
   border-radius: 12px;
-  border: 1px solid #9cc1ff;
+  border: 1px solid var(--royal-2);
   background: transparent;
   color: #eaf0ff;
   cursor: pointer;
@@ -157,17 +154,36 @@ body.lp-page {
 
 .c-item {
   display: grid;
-  grid-template-columns: 80px 1fr auto;
-  gap: 12px;
-  background: color-mix(in srgb, var(--card) 86%, transparent);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
-  padding: 10px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  grid-template-columns: 100px 1fr auto;
+  gap: 16px;
+  align-items: stretch;
+  background: rgba(15, 23, 42, 0.4);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s, background 0.2s, border-color 0.2s;
+}
+.c-item:hover {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: translateY(-2px);
 }
 @media (max-width: 640px) {
   .c-item {
-    grid-template-columns: 64px 1fr;
+    grid-template-columns: 80px 1fr;
+    gap: 12px;
+  }
+  .c-actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 12px;
+    margin-top: 4px;
   }
 }
 
@@ -214,6 +230,7 @@ body.lp-page {
 .c-actions {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: end;
   gap: 8px;
 }
@@ -288,8 +305,8 @@ body.lp-page {
   padding: 12px;
   margin-top: 8px;
   border-radius: 12px;
-  border: 1px solid #9cc1ff;
-  background: linear-gradient(180deg, var(--brand), #3b82f6);
+  border: 1px solid var(--royal-2);
+  background: linear-gradient(180deg, var(--brand), var(--royal));
   color: #fff;
   font-weight: 900;
   cursor: pointer;
@@ -453,7 +470,7 @@ body.lp-page {
   display: block;
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, var(--accent), #3b82f6);
+  background: linear-gradient(90deg, var(--accent), var(--royal));
   transform-origin: left center;
   animation: toastBar linear forwards;
 }

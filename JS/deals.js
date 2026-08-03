@@ -1,7 +1,7 @@
 /* ========= tiny utils ========= */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-const API_HOST = `http://${location.hostname}:3001`;
+const API_HOST = `http://${location.hostname || "localhost"}:3001`;
 const API_BASE = `${API_HOST}/api`;
 const fmtINR = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 const PKG = ["Basic", "Plus", "Premium"];
@@ -35,7 +35,7 @@ function saveCart(c) {
 /* ========= API ========= */
 async function getStatePlaces(state) {
   const r = await fetch(
-    `${API_BASE}/states/${encodeURIComponent(state)}/places`
+    `${API_BASE}/states/${encodeURIComponent(state)}/places`,
   );
   const j = await r.json();
   if (!r.ok || j.ok === false) throw new Error("Failed to load " + state);
@@ -123,7 +123,7 @@ async function buildBundles({ learned = false } = {}) {
       const normalized = items
         .map((it) => {
           const plus = Array.isArray(it.prices)
-            ? it.prices[1] ?? it.prices[0]
+            ? (it.prices[1] ?? it.prices[0])
             : null;
           const price = Number(plus);
           if (!Number.isFinite(price) || price <= 0) return null;
@@ -250,7 +250,7 @@ function attachTilt(el) {
     el.style.transform = `rotateX(${clamp(-dy * 6, -6, 6)}deg) rotateY(${clamp(
       dx * 8,
       -8,
-      8
+      8,
     )}deg) translateY(-2px)`;
   });
   el.addEventListener("mouseleave", () => {
@@ -271,7 +271,7 @@ function ripple(e) {
 }
 function bindRipples(scope = document) {
   $$(".btn", scope).forEach((b) =>
-    b.addEventListener("click", ripple, { passive: true })
+    b.addEventListener("click", ripple, { passive: true }),
   );
 }
 
@@ -292,7 +292,7 @@ function confetti(root, n = 8) {
 function setActiveTab(which) {
   // which is: "auto-bundles" or "auto-individual"
   $$(".tab-btn").forEach((b) =>
-    b.classList.toggle("active", b.dataset.tab === which)
+    b.classList.toggle("active", b.dataset.tab === which),
   );
   $$(".tab-panel").forEach((p) => (p.hidden = p.id !== which));
 }
@@ -321,9 +321,9 @@ function renderBundles(list, hostId = "bundleList") {
       .map(
         (m) => `
       <div class="stacked-thumb"><img src="${m.img || ""}" alt="${
-          m.place
-        }" loading="lazy"/></div>
-    `
+        m.place
+      }" loading="lazy"/></div>
+    `,
       )
       .join("");
 
@@ -351,7 +351,7 @@ function renderBundles(list, hostId = "bundleList") {
           <div class="btn-row">
             <button class="btn btn-primary" data-add>Add bundle</button>
             <a class="btn btn-ghost" href="./listofplace.html?state=${encodeURIComponent(
-              b.state
+              b.state,
             )}">View state</a>
           </div>
         </div>
@@ -376,8 +376,8 @@ function renderSingles(list) {
     el.className = "card single tilt";
     el.innerHTML = `
       <div class="thumb"><img src="${d.img || ""}" alt="${
-      d.place
-    }" loading="lazy"/></div>
+        d.place
+      }" loading="lazy"/></div>
       <div class="meta">
         <h4>${d.place}</h4>
         <div class="badge-row">
@@ -392,7 +392,7 @@ function renderSingles(list) {
         <div class="btn-row">
           <button class="btn btn-primary" data-add>Add</button>
           <a class="btn btn-ghost" href="./listofplace.html?state=${encodeURIComponent(
-            d.state
+            d.state,
           )}">View</a>
         </div>
       </div>`;
@@ -421,10 +421,10 @@ function hideHandpicked() {
 (async function boot() {
   // Tabs for REGULAR deals (top)
   $("#tabBtnBundles")?.addEventListener("click", () =>
-    setActiveTab("auto-bundles")
+    setActiveTab("auto-bundles"),
   );
   $("#tabBtnSingles")?.addEventListener("click", () =>
-    setActiveTab("auto-individual")
+    setActiveTab("auto-individual"),
   );
   setActiveTab("auto-bundles");
 
@@ -444,7 +444,9 @@ function hideHandpicked() {
     renderBundles(bundles, "bundleList");
     renderSingles(singles);
 
-    // HAND-PICKED (bottom) — only if we’re in learned phase (day >=2)
+    // HAND-PICKED (bottom) — DISABLED PER USER REQUEST
+    hideHandpicked();
+    /*
     if (getLearningPhaseDays() >= 2) {
       const learnedBundles = await buildBundles({ learned: true });
       const host = $("#handpickList");
@@ -455,6 +457,7 @@ function hideHandpicked() {
     } else {
       hideHandpicked();
     }
+    */
   } catch (e) {
     console.error(e);
     hideHandpicked();

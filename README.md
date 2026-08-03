@@ -22,7 +22,7 @@ root/
 ├─ .env                     # Local env (sample vars below)
 ├─ package.json / package-lock.json
 │
-├─ main.html                # Landing page (loader + hero)
+├─ index.html               # Landing page (loader + hero)
 ├─ about.html               # About/Story/Values/Roadmap
 ├─ auth.html                # Login/Register
 ├─ account.html             # Profile/Security/Trips/Points
@@ -109,7 +109,7 @@ node index.js
 Server will listen on `http://localhost:3001` by default.
 
 ### 4) Run the frontend
-These are static files. Open `main.html` (or any page) with a static server (e.g., VS Code Live Server), and ensure the origin is added to `CORS_ORIGIN` above.
+These are static files. Open `index.html` (or any page) with a static server (e.g., VS Code Live Server), and ensure the origin is added to `CORS_ORIGIN` above.
 
 ---
 
@@ -145,7 +145,7 @@ These are static files. Open `main.html` (or any page) with a static server (e.g
 
 ## 🖥 Frontend: Pages & Behavior
 
-### Landing (`main.html` + `main.js`)
+### Landing (`index.html` + `main.js`)
 - Loader with progress bar → sets body to “loaded”
 - Fixed header with guest/user menus (gear vs avatar)
 - Quick links: Explore (India map), Transportation, Deals, About
@@ -268,7 +268,7 @@ Check `package.json` for exact scripts. Typical:
    - Or document why cart/trip are fixed.
 
 4) **Stray character**  
-   `main.html` has a lone `c` at the end of the file. Delete it.
+   `index.html` has a lone `c` at the end of the file. Delete it.
 
 ---
 

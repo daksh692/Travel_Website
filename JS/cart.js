@@ -1,5 +1,5 @@
 // Build API base (kept for future server POSTs)
-const API_HOST = `http://${location.hostname}:3001`;
+const API_HOST = `http://${location.hostname || "localhost"}:3001`;
 const API_BASE = `${API_HOST}/api`;
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -33,7 +33,7 @@ function showToast({
   const icons = { success: "✓", error: "✕", warning: "!", info: "ℹ" };
   el.innerHTML = `
     <div class="icon">${icons[type] || icons.info}</div>
-    <div class="content"><p class="title">${title}</p><p class="msg">${message}</p></div>
+    <div class="content"><p class="lp-toast-title">${title}</p><p class="lp-toast-msg">${message}</p></div>
     <button class="close" aria-label="Close">×</button>
     <div class="bar"><span style="animation-duration:${timeout}ms"></span></div>`;
   const remove = () => {
@@ -102,7 +102,7 @@ const exploreBtnTop = $("#exploreBtnTop");
 backBtnTop?.addEventListener("click", goBackSmart);
 exploreBtnTop?.addEventListener(
   "click",
-  () => (location.href = preferredExploreTarget())
+  () => (location.href = preferredExploreTarget()),
 );
 
 // Show skeletons first
@@ -113,7 +113,7 @@ function showSkeleton(n = 3) {
     sk.className = "c-skel";
     sk.innerHTML = `
       <div class="s1 shine"></div>
-      <div>
+      <div style="flex:1;">
         <div class="s2 shine"></div>
         <div class="s3 shine"></div>
         <div class="s4 shine"></div>
@@ -129,15 +129,26 @@ function render() {
 
   // Login banner
   loginNotice.classList.toggle("hidden", isLoggedIn());
-  loginNow.onclick = (e) => {
-    e.preventDefault();
-    const next = encodeURIComponent(location.href);
-    location.href = `auth.html?tab=login&next=${next}`;
-  };
+  if (loginNow) {
+    loginNow.onclick = (e) => {
+      e.preventDefault();
+      const next = encodeURIComponent(location.href);
+      location.href = `auth.html?tab=login&next=${next}`;
+    };
+  }
 
   // Empty cart UI
   if (!cart.length) {
-    itemsHost.innerHTML = `<div class="c-empty">Your cart is empty. Go to <a href="${preferredExploreTarget()}">Explore</a> to add places.</div>`;
+    let target = preferredExploreTarget();
+    if (target === "places/INDmap.html") target = "../places/INDmap.html"; // relative fix if needed
+    itemsHost.innerHTML = `<div class="c-empty">
+      <div style="display:inline-flex; width:64px; height:64px; background:rgba(255,255,255,0.05); border-radius:50%; align-items:center; justify-content:center; margin-bottom:16px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" class="stroke-current" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+      </div>
+      <h3 style="margin:0 0 8px; color:#fff;">Your cart is empty</h3>
+      <p style="margin:0 0 16px;">Looks like you haven't added any trips yet.</p>
+      <a href="${preferredExploreTarget()}" class="btn-outline" style="display:inline-flex; width:auto; text-decoration:none;">Explore Places</a>
+    </div>`;
     sumSubtotal.textContent = fmtINR(0);
     sumService.textContent = fmtINR(0);
     sumTotal.textContent = fmtINR(0);
@@ -166,48 +177,46 @@ function render() {
     const card = document.createElement("article");
     card.className = "c-item";
     card.innerHTML = `
-  <div class="c-thumb">
-    ${
-      hasImg
-        ? `<img alt="${it.place}" loading="lazy" decoding="async" />`
-        : `<span>${initials}</span>`
-    }
-  </div>
-  <div class="c-body">
-    <h3>${it.place || "(Unknown place)"}</h3>
-    <div class="c-meta">
-      <span class="badge">State: ${it.state || "—"}</span>
-      <span class="badge">Package: ${it.package || "—"}</span>
-      <span class="badge days">${
-        it.days ? `${it.days} day${it.days > 1 ? "s" : ""}` : "—"
-      }</span>
-    </div>
-  </div>
-  <div class="c-actions">
-    <div class="price">${fmtINR(price)}</div>
-    <div class="qty" role="group" aria-label="Quantity">
-      <button class="q-dec" aria-label="Decrease">−</button>
-      <input class="q-val" type="number" min="1" value="${qty}" inputmode="numeric" />
-      <button class="q-inc" aria-label="Increase">+</button>
-    </div>
-    <span class="remove">Remove</span>
-  </div>
-`;
+      <div class="c-thumb">
+        ${
+          hasImg
+            ? `<img src="${it.img}" alt="${it.place}" loading="lazy" decoding="async" referrerpolicy="no-referrer" />`
+            : `<span class="c-initials">${initials}</span>`
+        }
+      </div>
+      <div class="c-body">
+        <h3>${it.place || "(Unknown place)"}</h3>
+        <div class="c-meta">
+          <span style="display:flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${it.state || "—"}</span>
+          <span style="display:flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${
+            it.days ? `${it.days} day${it.days > 1 ? "s" : ""}` : "—"
+          }</span>
+          <span class="badge" style="color:var(--brand); border-color:var(--brand);">Pkg: ${it.package || "—"}</span>
+        </div>
+      </div>
+      <div class="c-actions">
+        <div class="price" style="font-size:20px; color:#fff; font-weight:900; line-height:1;">${fmtINR(price)}</div>
+        <div class="qty" role="group" aria-label="Quantity" style="display:flex; border:1px solid rgba(255,255,255,0.15); border-radius:10px; overflow:hidden; background:rgba(255,255,255,0.04);">
+          <button class="q-dec" style="padding:4px 12px; background:transparent; color:#fff; cursor:pointer; border:none;" aria-label="Decrease">−</button>
+          <input class="q-val" style="width:36px; text-align:center; background:transparent; border:none; color:#fff; font-weight:700;" type="number" min="1" value="${qty}" inputmode="numeric" />
+          <button class="q-inc" style="padding:4px 12px; background:transparent; color:#fff; cursor:pointer; border:none;" aria-label="Increase">+</button>
+        </div>
+        <div class="remove" style="color:#fca5a5; cursor:pointer; font-size:13px; font-weight:600; padding:4px;">Remove</div>
+      </div>
+    `;
 
-    // If there is an <img>, set the src; if missing, fetch and backfill
+    // backfill image if missing
     const imgEl = card.querySelector(".c-thumb img");
-    if (imgEl) {
-      if (it.img) {
-        imgEl.src = it.img;
-      } else {
-        // backfill (legacy items)
-        ensureItemImage(it).then((url) => {
-          if (url && imgEl.isConnected) imgEl.src = url;
-        });
-      }
+    if (!imgEl && !it.img) {
+      ensureItemImage(it).then((url) => {
+        if (url && card.isConnected) {
+          const thumb = card.querySelector(".c-thumb");
+          thumb.innerHTML = `<img src="${url}" alt="${it.place}" loading="lazy" decoding="async" referrerpolicy="no-referrer" />`;
+        }
+      });
     }
-    // Totals (match currenttrip)
 
+    // Controls
     const inc = card.querySelector(".q-inc");
     const dec = card.querySelector(".q-dec");
     const val = card.querySelector(".q-val");
@@ -226,10 +235,10 @@ function render() {
     };
 
     inc.addEventListener("click", () =>
-      commitQty((Number(val.value) || 1) + 1)
+      commitQty((Number(val.value) || 1) + 1),
     );
     dec.addEventListener("click", () =>
-      commitQty((Number(val.value) || 1) - 1)
+      commitQty((Number(val.value) || 1) - 1),
     );
     val.addEventListener("change", () => commitQty(val.value));
 
@@ -254,39 +263,45 @@ function render() {
 
   sumSubtotal.textContent = fmtINR(subtotal);
   sumService.textContent = fmtINR(service);
-  (document.getElementById("sumTax") || { textContent: null }).textContent =
-    fmtINR(tax);
+  if (document.getElementById("sumTax"))
+    document.getElementById("sumTax").textContent = fmtINR(tax);
   sumTotal.textContent = fmtINR(total);
 
   // Clear & checkout
-  clearBtn.onclick = () => {
-    if (confirm("Clear all items?")) {
-      saveCart([]);
-      render();
-    }
-  };
+  if (clearBtn) {
+    clearBtn.onclick = () => {
+      // Custom confirmation using window.confirm
+      if (confirm("Clear all items from your cart?")) {
+        saveCart([]);
+        render();
+      }
+    };
+  }
 
-  checkoutBtn.onclick = () => {
-    if (!isLoggedIn()) {
+  if (checkoutBtn) {
+    checkoutBtn.onclick = () => {
+      if (!isLoggedIn()) {
+        showToast({
+          title: "Login required",
+          message: "Log in to proceed to checkout.",
+          type: "warning",
+        });
+        const next = encodeURIComponent(location.href);
+        setTimeout(
+          () => (location.href = `auth.html?tab=login&next=${next}`),
+          900,
+        );
+        return;
+      }
       showToast({
-        title: "Login required",
-        message: "Log in to proceed to checkout.",
-        type: "warning",
+        title: "Checkout Secure",
+        message: "Proceeding to secure payment portal...",
+        type: "success",
       });
-      const next = encodeURIComponent(location.href);
-      setTimeout(
-        () => (location.href = `auth.html?tab=login&next=${next}`),
-        900
-      );
-      return;
-    }
-    showToast({
-      title: "Checkout",
-      message: "Proceeding to payment…",
-      type: "success",
-    });
-    // TODO: location.href = "checkout.html";
-  };
+      // TODO: real checkout route
+      // location.href = "checkout.html";
+    };
+  }
 }
 
 // Cache of state data so we can find images for legacy items without img
@@ -295,7 +310,7 @@ async function getStateData(stateName) {
   const key = String(stateName || "").trim();
   if (stateCache.has(key)) return stateCache.get(key);
   const res = await fetch(
-    `${API_HOST}/api/states/${encodeURIComponent(key)}/places`
+    `${API_HOST}/api/states/${encodeURIComponent(key)}/places`,
   );
   const json = await res.json();
   if (!res.ok || json.ok === false)
@@ -318,7 +333,7 @@ async function ensureItemImage(item) {
           p.state === item.state &&
           p.place === item.place &&
           p.package === item.package &&
-          p.price === item.price
+          p.price === item.price,
       );
       if (idx >= 0) {
         list[idx].img = row.img;

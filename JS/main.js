@@ -17,14 +17,14 @@ function firstInitial(name) {
 
 /* Declare hero images once so loader + slideshow share them */
 const HERO_IMAGES = [
-  "../assets/1.jpeg",
-  "../assets/2.jpeg",
-  "../assets/3.jpeg",
-  "../assets/4.jpeg",
-  "../assets/5.jpeg",
-  "../assets/6.jpeg",
-  "../assets/7.jpeg",
-  "../assets/8.jpeg",
+  "./assets/1.jpeg",
+  "./assets/2.jpeg",
+  "./assets/3.jpeg",
+  "./assets/4.jpeg",
+  "./assets/5.jpeg",
+  "./assets/6.jpeg",
+  "./assets/7.jpeg",
+  "./assets/8.jpeg",
 ];
 
 /* ================= Loader ================= */
@@ -63,7 +63,7 @@ const HERO_IMAGES = [
 
     // Kick off all image loads
     const imagePromises = toLoad.map((item) =>
-      loadImage(item.src).then(report)
+      loadImage(item.src).then(report),
     );
 
     // Wait for fonts (where supported)
@@ -158,10 +158,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const avatarBtn = document.getElementById("avatarBtn");
 
   settingsBtn?.addEventListener("click", (ev) =>
-    toggleMenu(settingsBtn, "settingsMenu", ev)
+    toggleMenu(settingsBtn, "settingsMenu", ev),
   );
   avatarBtn?.addEventListener("click", (ev) =>
-    toggleMenu(avatarBtn, "userMenu", ev)
+    toggleMenu(avatarBtn, "userMenu", ev),
   );
 
   document.getElementById("logoutBtn")?.addEventListener("click", () => {
@@ -190,13 +190,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("SearchCountry");
   const btn = document.getElementById("searchButton");
   function go() {
-    const q = (input?.value || "").trim().toLowerCase();
-    if (!q) return;
-    if (q === "india") window.location.href = "places/INDmap.html";
-    else {
-      alert(`${q} not added yet.`);
-      input.value = "";
-    }
+    // Input is locked to INDIA in index.html
+    window.location.href = "places/INDmap.html";
   }
   btn?.addEventListener("click", go);
   input?.addEventListener("keypress", (e) => {
@@ -228,3 +223,50 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(next, DURATION);
   }
 });
+
+/* ================= Motion: ripple + magnetic hover =================
+   Delegated so it works for buttons rendered dynamically (cards, dialogs).
+   Skips anything with class "btn" — deals.html already binds its own
+   ripple via JS/deals.js (bindRipples), this avoids double-firing there. */
+(function setupMotion() {
+  const RIPPLE_SELECTOR =
+    ".btn-add, .btn-checkout, .primary, .btn-outline, .btn-ghost, .tab, .back-btn, .price-btn";
+  const MAGNETIC_SELECTOR = ".btn-add, .btn-checkout, .primary";
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  document.addEventListener("click", (e) => {
+    if (reduceMotion) return;
+    const el = e.target.closest(RIPPLE_SELECTOR);
+    if (!el || el.classList.contains("btn")) return;
+
+    el.classList.add("ripple-host");
+    const rect = el.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const span = document.createElement("span");
+    span.className = "ripple";
+    span.style.width = span.style.height = size + "px";
+    span.style.left = e.clientX - rect.left - size / 2 + "px";
+    span.style.top = e.clientY - rect.top - size / 2 + "px";
+    el.appendChild(span);
+    span.addEventListener("animationend", () => span.remove());
+  });
+
+  if (!reduceMotion) {
+    let active = null;
+    document.addEventListener("mousemove", (e) => {
+      const el = e.target.closest(MAGNETIC_SELECTOR);
+      if (el && !el.classList.contains("btn")) {
+        active = el;
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width / 2) * 0.2;
+        const y = (e.clientY - r.top - r.height / 2) * 0.2;
+        el.style.transform = `translate(${x}px,${y}px)`;
+      } else if (active) {
+        active.style.transform = "";
+        active = null;
+      }
+    });
+  }
+})();

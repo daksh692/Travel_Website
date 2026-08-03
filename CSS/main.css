@@ -1,12 +1,50 @@
 :root {
-  --ink: #eaf0ff;
-  --muted: #d2daee;
-  --brand: #ffffff;
-  --band: rgba(0, 0, 0, 0.35);
-  --band-strong: rgba(0, 0, 0, 0.45);
-  --ring: rgba(255, 255, 255, 0.35);
-  --menu-bg: #0f172a;
-  --menu-br: rgba(255, 255, 255, 0.08);
+  /* Windowseat Rev.3 — Sapphire / Royal / Platinum */
+  --sapphire: #050b16;
+  --sapphire-2: #0d1c38;
+  --sapphire-3: #16305c;
+
+  --glass-line: rgba(200, 220, 245, 0.16);
+  --glass-line-strong: rgba(200, 220, 245, 0.3);
+  --glass-fill-hi: rgba(255, 255, 255, 0.08);
+  --glass-fill-lo: rgba(255, 255, 255, 0.02);
+
+  --royal: #2b46c9;
+  --royal-2: #5f7ce8;
+  --royal-deep: #1c2f8f;
+  --platinum: #c9d3e0;
+  --platinum-2: #eef2f8;
+  --platinum-deep: #98a5b8;
+
+  --pearl: #eef1f6;
+  --pearl-2: #d7deea;
+  --inkwell: #10182a;
+  --ink-soft: #3a4a68;
+
+  --seal: #173a68;
+  --seal-2: #2b5490;
+  --ok: #3fb6e0;
+  --warn: #d4a13a;
+  --danger: #c0435a;
+
+  /* Gilt — the one warm accent, reserved for moments blue can't carry alone
+     (e.g. hover feedback against a blue base, where blue-on-blue disappears) */
+  --gilt: #d9b35a;
+  --gilt-2: #f0d68a;
+
+  --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia,
+    serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "SF Mono", Consolas, "Roboto Mono", monospace;
+
+  /* legacy names used throughout this file — remapped to the palette above */
+  --ink: #f2f5fb;
+  --muted: #c3ccdb;
+  --band: rgba(5, 11, 22, 0.45);
+  --band-strong: rgba(5, 11, 22, 0.6);
+  --ring: rgba(200, 220, 245, 0.35);
+  --menu-bg: #0d1c38;
+  --menu-br: rgba(200, 220, 245, 0.14);
 }
 
 * {
@@ -18,10 +56,9 @@ body {
 }
 body {
   margin: 0;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial,
-    sans-serif;
+  font-family: var(--font-body);
   color: var(--ink);
-  background: #000;
+  background: var(--sapphire);
 }
 
 /* Header */
@@ -35,7 +72,10 @@ body {
   align-items: center;
   padding: 10px 16px;
   z-index: 20;
-  background: transparent;
+  background: linear-gradient(160deg, var(--glass-fill-hi), var(--glass-fill-lo));
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid var(--glass-line);
 }
 .header-left {
   display: flex;
@@ -94,8 +134,9 @@ body {
 /* Settings & Avatar buttons */
 .icon-btn,
 .avatar-btn {
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  background: var(--glass-fill-hi);
+  border: 1px solid var(--glass-line-strong);
   color: #fff;
   border-radius: 10px;
   padding: 8px 10px;
@@ -104,6 +145,131 @@ body {
   place-items: center;
   transition: filter 0.2s;
   mix-blend-mode: multiply;
+}
+
+/* Tooltip — add data-tip="Label" to any .icon-btn / .avatar-btn */
+.icon-btn[data-tip]::after,
+.avatar-btn[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  background: var(--pearl);
+  color: var(--inkwell);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 9px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 8px 20px rgba(2, 5, 10, 0.4);
+  z-index: 40;
+}
+.icon-btn[data-tip]::before,
+.avatar-btn[data-tip]::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-bottom-color: var(--pearl);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 40;
+}
+.icon-btn[data-tip]:hover::after,
+.icon-btn[data-tip]:focus-visible::after,
+.avatar-btn[data-tip]:hover::after,
+.avatar-btn[data-tip]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.icon-btn[data-tip]:hover::before,
+.icon-btn[data-tip]:focus-visible::before,
+.avatar-btn[data-tip]:hover::before,
+.avatar-btn[data-tip]:focus-visible::before {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .icon-btn[data-tip]::after,
+  .icon-btn[data-tip]::before,
+  .avatar-btn[data-tip]::after,
+  .avatar-btn[data-tip]::before {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+}
+
+/* Ripple + magnetic hover — classes applied by JS/main.js (setupMotion) */
+.ripple-host {
+  position: relative;
+  overflow: hidden;
+}
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(0);
+  pointer-events: none;
+  animation: rippleFx 0.6s ease-out forwards;
+}
+@keyframes rippleFx {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+.btn-add,
+.btn-checkout,
+.primary,
+.btn-outline,
+.btn-ghost,
+.tab,
+.back-btn,
+.price-btn {
+  transition: transform 0.15s ease-out;
+}
+
+/* Shared button base — a page-specific stylesheet (listofplace.css, deals.css,
+   etc.) may still override these, but every page now gets a correctly
+   styled button even if it doesn't define its own. */
+.btn-add,
+.btn-checkout {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--royal-2);
+  background: linear-gradient(180deg, var(--royal-2), var(--royal));
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+}
+.btn-add:hover,
+.btn-checkout:hover {
+  filter: brightness(1.08);
+}
+.btn-outline,
+.btn-ghost {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-line-strong);
+  background: var(--glass-fill-hi);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+}
+.btn-outline:hover,
+.btn-ghost:hover {
+  filter: brightness(1.15);
 }
 .icon-btn:hover,
 .avatar-btn:hover {
@@ -169,10 +335,10 @@ body[data-auth="true"] .auth-only {
   font-weight: 600;
 }
 .menu-item:hover {
-  background: #111b33;
+  background: var(--glass-fill-hi);
 }
 .menu-item.danger {
-  color: #fca5a5;
+  color: #f2a3b0;
 }
 
 /* Hero */
@@ -180,7 +346,7 @@ body[data-auth="true"] .auth-only {
   height: 100vh;
   position: relative;
   overflow: hidden;
-  background: #000 url("../assets/") center/cover no-repeat;
+  background: var(--sapphire);
 }
 .hero::after {
   content: "";
@@ -188,9 +354,9 @@ body[data-auth="true"] .auth-only {
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.25),
-    rgba(0, 0, 0, 0.35) 40%,
-    rgba(0, 0, 0, 0.25)
+    rgba(5, 11, 22, 0.3),
+    rgba(5, 11, 22, 0.4) 40%,
+    rgba(5, 11, 22, 0.3)
   );
   z-index: 0;
 }
@@ -437,9 +603,9 @@ body.loading {
   place-items: center;
   background: radial-gradient(
     120% 120% at 20% 0%,
-    #0b1222 0%,
-    #060a14 60%,
-    #04060c 100%
+    var(--sapphire-2) 0%,
+    var(--sapphire) 60%,
+    #030710 100%
   );
   animation: loaderFadeIn 0.2s ease both;
 }
@@ -454,12 +620,14 @@ body.loading {
 
 .loader-card {
   width: min(92vw, 420px);
-  background: #0f172a;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(160deg, var(--glass-fill-hi), var(--glass-fill-lo));
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--glass-line);
   border-radius: 16px;
   padding: 22px;
-  color: #e5e7eb;
-  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.6);
+  color: var(--ink);
+  box-shadow: 0 16px 60px rgba(2, 5, 10, 0.55);
   display: grid;
   gap: 12px;
   justify-items: center;
@@ -481,8 +649,8 @@ body.loading {
   height: 56px;
   border-radius: 12px;
   overflow: hidden;
-  background: #0b1222;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--sapphire-2);
+  border: 1px solid var(--glass-line-strong);
 }
 .loader-logo img {
   width: 100%;
@@ -499,15 +667,15 @@ body.loading {
 .loader-progress {
   width: 100%;
   height: 10px;
-  background: #0b1222;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--sapphire-2);
+  border: 1px solid var(--glass-line);
   border-radius: 999px;
   overflow: hidden;
 }
 .loader-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  background: linear-gradient(90deg, var(--royal-deep), var(--royal), var(--royal-2));
   transition: width 0.25s ease;
 }
 .loader-meta {
@@ -517,28 +685,43 @@ body.loading {
   justify-content: space-between;
   font-weight: 700;
   opacity: 0.9;
+  font-family: var(--font-mono);
 }
-.loader-spinner {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg, #ffffff 0 25%, #ffffff00 25% 100%),
-    radial-gradient(#ffffff 40%, #ffffff00 41%);
-  -webkit-mask: radial-gradient(
-    farthest-side,
-    #0000 calc(99% - 3px),
-    #000 calc(100% - 3px)
-  );
-  mask: radial-gradient(
-    farthest-side,
-    #0000 calc(99% - 3px),
-    #000 calc(100% - 3px)
-  );
-  animation: spin 1s linear infinite;
+.loader-flap {
+  width: 20px;
+  height: 26px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--sapphire-3), var(--sapphire-2));
+  border: 1px solid var(--glass-line);
+  color: var(--platinum-2);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  position: relative;
 }
-@keyframes spin {
-  to {
-    transform: rotate(1turn);
+.loader-flap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.4);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .loader-flap {
+    animation: flick 1.4s ease-in-out infinite;
+  }
+}
+@keyframes flick {
+  0%,
+  88%,
+  100% {
+    transform: rotateX(0);
+  }
+  92% {
+    transform: rotateX(35deg);
   }
 }
 

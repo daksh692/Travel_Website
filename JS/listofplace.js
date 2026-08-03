@@ -1,4 +1,4 @@
-const API_HOST = `http://${location.hostname}:3001`;
+const API_HOST = `http://${location.hostname || "localhost"}:3001`;
 const API_BASE = `${API_HOST}/api`;
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -110,7 +110,7 @@ function showToastAt(
     type = "success",
     timeout = 1400,
     onClose = null,
-  } = {}
+  } = {},
 ) {
   if (!anchorEl) return showToast({ title, message, type, timeout, onClose });
 
@@ -251,7 +251,7 @@ function render() {
       !q ||
       it.place.toLowerCase().includes(q) ||
       it.description.toLowerCase().includes(q) ||
-      it.things.toLowerCase().includes(q)
+      it.things.toLowerCase().includes(q),
   );
 
   const mode = sortSel.value;
@@ -305,7 +305,7 @@ function render() {
         btn.textContent = `${btn.dataset.pkg} · ₹${p}`;
         btn.addEventListener("click", () => {
           $$(".price-btn", pricesWrap).forEach((b) =>
-            b.classList.remove("selected")
+            b.classList.remove("selected"),
           );
           btn.classList.add("selected");
         });
@@ -332,7 +332,7 @@ function render() {
           selected.dataset.price,
           selected.dataset.pkg,
           lastAddAnchor,
-          pricesWrap
+          pricesWrap,
         );
       } else {
         openPriceDialog(it, pricesWrap); // choose package; toast still anchored
@@ -357,7 +357,7 @@ async function load() {
   showSkeleton();
   try {
     const res = await fetch(
-      `${API_BASE}/states/${encodeURIComponent(stateName)}/places`
+      `${API_BASE}/states/${encodeURIComponent(stateName)}/places`,
     );
     const json = await res.json();
     if (!res.ok || json.ok === false) throw new Error(json.error || "Failed");
