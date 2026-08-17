@@ -91,6 +91,27 @@ function initForm() {
   $("#date").valueAsDate = new Date();
 }
 
+/* ===== Center command tabs ===== */
+function moveUnderline() {
+  const active = $(".center-tab.active");
+  const bar = $(".tab-underline");
+  if (!active || !bar) return;
+  bar.style.width = active.offsetWidth + "px";
+  bar.style.transform = `translateX(${active.offsetLeft}px)`;
+}
+$$(".center-tab").forEach((tab) => {
+  tab.onclick = () => {
+    $$(".center-tab").forEach((x) => x.classList.remove("active"));
+    tab.classList.add("active");
+    const name = tab.dataset.tab;
+    $$(".tab-panel").forEach((p) =>
+      p.classList.toggle("active", p.dataset.panel === name),
+    );
+    moveUnderline();
+  };
+});
+window.addEventListener("resize", moveUnderline);
+
 /* ===== selection ===== */
 const selection = new Set(); // `${ti}:${li}`
 function updateBulkBar() {
@@ -114,12 +135,20 @@ function render() {
   if (tripsHost) tripsHost.innerHTML = "";
 
   let grand = 0;
+  let totalLegs = 0;
+  let onTimeCount = 0;
+  let delayedCount = 0;
   const parts = [];
   const modeTotals = { flight: 0, train: 0, bus: 0, car: 0 };
+  const chartData = [];
+  const breakdownRows = [];
 
   model.trips.forEach((t, ti) => {
     const totals = calcTripTotals(t);
     grand += totals.total;
+    totalLegs += t.legs.length;
+    chartData.push(totals.total);
+    breakdownRows.push({ name: t.name, legs: t.legs.length, ...totals });
     parts.push(`${t.name} ${fmtINR(totals.total)}`);
 
     const wrap = document.createElement("div");
@@ -201,17 +230,22 @@ function render() {
 
     t.legs.forEach((l, li) => {
       if (!l.label) l.label = `Leg ${li + 1}`;
+      const st = l.status === "delayed" ? "delayed" : "ontime";
+      const stText = st === "delayed" ? "DELAYED" : "ON TIME";
       const key = `${ti}:${li}`;
       modeTotals[l.mode] = (modeTotals[l.mode] || 0) + Number(l.price || 0);
+      if (st === "delayed") delayedCount++;
+      else onTimeCount++;
 
       const row = document.createElement("div");
-      row.className = "item";
+      row.className = "item " + st;
+      row.style.setProperty("--d", `${li * 70}ms`);
       if (selection.has(key)) row.classList.add("selected");
       row.innerHTML = `
         <div class="item-left">
           <div class="timeline-node">${icon(l.mode)}</div>
         </div>
-        
+
         <div class="item-center">
           <label class="tick">
             <input type="checkbox" data-sel />
@@ -219,7 +253,15 @@ function render() {
           </label>
           <div class="item-top">
             <div class="route-text">${l.from || "—"} <span>${icon(l.mode)}</span> ${l.to || "—"}</div>
-            <span class="meta-tag">${l.label}</span>
+            <div class="item-top-right">
+              <span class="status-pill ${st}">${stText}</span>
+              <span class="meta-tag">${l.label}</span>
+            </div>
+          </div>
+          <div class="item-journey">
+            <span class="j-dot"></span>
+            <span class="j-track"><span class="j-mode ${st}">${icon(l.mode)}</span></span>
+            <span class="j-dot j-end"></span>
           </div>
           <div class="item-meta-row">
               <div>${l.date || "—"}</div>
@@ -260,13 +302,19 @@ function render() {
               }"/></label>
               <label>To <input data-ed="to" value="${l.to || ""}"/></label>
             </div>
-            <div class="row2" style="margin-top:6px">
+            <div class="row" style="margin-top:6px">
               <label>Date <input data-ed="date" type="date" value="${
                 l.date || ""
               }"/></label>
               <label>Price (₹) <input data-ed="price" type="number" min="0" value="${
                 l.price || 0
               }"/></label>
+              <label>Status
+                <select data-ed="status">
+                  <option ${st === "ontime" ? "selected" : ""} value="ontime">On Time</option>
+                  <option ${st === "delayed" ? "selected" : ""} value="delayed">Delayed</option>
+                </select>
+              </label>
             </div>
             <div class="btns" style="margin-top:16px; align-items:end; display:flex">
               <button class="btn-ghost" data-up>⬆️ Move</button>
@@ -342,6 +390,7 @@ function render() {
           to: ed("to").trim(),
           date: ed("date"),
           price: Number(ed("price") || 0),
+          status: ed("status") === "delayed" ? "delayed" : "ontime",
         };
         saveT(m);
         render();
@@ -376,12 +425,179 @@ function render() {
       const chip = document.createElement("span");
       chip.className = "chip";
       const label = k[0].toUpperCase() + k.slice(1);
-      chip.textContent = `${label}: ${fmtINR(v)}`;
+      chip.textContent = `${label} ${fmtINR(v)}`;
       chipsHost.appendChild(chip);
     });
   }
 
+  renderProfile(model, { grand, totalLegs });
+  renderOverview({ grand, tripCount: model.trips.length, totalLegs, onTimeCount, delayedCount });
+  renderBookingHub(model);
+  renderPayments(breakdownRows, grand, model);
+  renderChart(chartData);
+
   updateBulkBar();
+}
+
+/* ===== profile + tab panels ===== */
+function renderProfile(model, { grand, totalLegs }) {
+  let user = null;
+  try {
+    user = JSON.parse(localStorage.getItem("sessionClient"));
+  } catch {}
+  const name = user
+    ? `${user.FirstName || ""} ${user.LastName || ""}`.trim() || "Traveller"
+    : "Guest Traveller";
+  const initial = (user?.FirstName || "U").trim().charAt(0).toUpperCase() || "U";
+  const set = (id, v) => {
+    const el = $("#" + id);
+    if (el) el.textContent = v;
+  };
+  set("pfName", name);
+  set("pfInitial", initial);
+  set("pfTrips", model.trips.length);
+  set("pfLegs", totalLegs);
+  set("pfDue", fmtINR(grand));
+  set("pfLogged", model.manual.length);
+}
+
+function renderOverview({ grand, tripCount, totalLegs, onTimeCount, delayedCount }) {
+  const host = $("#overviewStats");
+  if (!host) return;
+  const onTimePct = totalLegs ? Math.round((onTimeCount / totalLegs) * 100) : 100;
+  const tiles = [
+    { label: "Total Due", value: fmtINR(grand), grad: true, icon: "💳" },
+    { label: "Trips", value: tripCount, icon: "🧳" },
+    { label: "Legs", value: totalLegs, icon: "🧭" },
+    { label: "On-Time", value: onTimePct + "%", icon: "✅" },
+    { label: "Delayed", value: delayedCount, warn: delayedCount > 0, icon: "⚠️" },
+    { label: "Logged", value: (loadT().manual || []).length, icon: "🧾" },
+  ];
+  host.innerHTML = tiles
+    .map(
+      (t) => `
+      <div class="stat-tile">
+        <span class="stat-ic">${t.icon}</span>
+        <div class="stat-meta">
+          <span class="stat-label">${t.label}</span>
+          <strong class="stat-value ${t.grad ? "gradient-text" : ""} ${
+            t.warn ? "warn" : ""
+          }">${t.value}</strong>
+        </div>
+      </div>`,
+    )
+    .join("");
+}
+
+function renderBookingHub(model) {
+  const host = $("#bookingHub");
+  if (!host) return;
+  host.innerHTML = "";
+  model.trips.forEach((t) => {
+    if (!t.legs.length) return;
+    const strip = document.createElement("div");
+    strip.className = "hub-card";
+    const stops = t.legs
+      .map(
+        (l, i) => `
+        <span class="hub-stop">${l.from || "—"}</span>
+        <span class="hub-mode ${l.status === "delayed" ? "delayed" : ""}">${icon(l.mode)}</span>
+        ${i === t.legs.length - 1 ? `<span class="hub-stop">${l.to || "—"}</span>` : ""}`,
+      )
+      .join("");
+    const totals = calcTripTotals(t);
+    strip.innerHTML = `
+      <div class="hub-head">
+        <strong>${t.name}</strong>
+        <span class="pill">${fmtINR(totals.total)}</span>
+      </div>
+      <div class="hub-route">${stops}</div>`;
+    host.appendChild(strip);
+  });
+}
+
+function renderPayments(rows, grand, model) {
+  // LEFT = itinerary dues (unpaid), one row per trip
+  const left = $("#payLeft");
+  if (left) {
+    left.innerHTML = rows.length
+      ? rows
+          .map(
+            (r) => `
+        <div class="pay-row">
+          <span class="pay-row-name">${r.name}
+            <em class="muted small">· ${r.legs} leg${r.legs === 1 ? "" : "s"}</em></span>
+          <span class="pay-row-amt">${fmtINR(r.total)}</span>
+        </div>`,
+          )
+          .join("")
+      : `<div class="pay-empty">Nothing left to pay.</div>`;
+  }
+  const leftTot = $("#payLeftTotal");
+  if (leftTot) leftTot.textContent = fmtINR(grand);
+
+  // DONE = logged/paid tickets, one row per manual record
+  const manual = model.manual || [];
+  const paid = manual.reduce((s, r) => s + Number(r.amount || 0), 0);
+  const done = $("#payDone");
+  if (done) {
+    done.innerHTML = manual.length
+      ? manual
+          .map(
+            (r) => `
+        <div class="pay-row">
+          <span class="pay-row-name">${r.provider || "—"}
+            <em class="muted small">· ${r.from || "—"} → ${r.to || "—"}</em></span>
+          <span class="pay-row-amt">${fmtINR(r.amount || 0)}</span>
+        </div>`,
+          )
+          .join("")
+      : `<div class="pay-empty">No payments logged yet.</div>`;
+  }
+  const doneTot = $("#payDoneTotal");
+  if (doneTot) doneTot.textContent = fmtINR(paid);
+}
+
+function renderChart(data) {
+  const svg = $("#spendChart");
+  if (!svg) return;
+  const W = 300,
+    H = 90,
+    pad = 6;
+  if (!data.length) {
+    svg.innerHTML = "";
+    return;
+  }
+  // cumulative spend line
+  const cum = [];
+  data.reduce((s, v, i) => (cum[i] = s + v), 0);
+  const max = Math.max(...cum, 1);
+  const n = cum.length;
+  const x = (i) => (n === 1 ? W / 2 : pad + (i * (W - 2 * pad)) / (n - 1));
+  const y = (v) => H - pad - (v / max) * (H - 2 * pad);
+  const pts = cum.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+  const line = pts.join(" ");
+  const area = `${pad},${H - pad} ${line} ${x(n - 1).toFixed(1)},${H - pad}`;
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(14,165,233,0.35)"/>
+        <stop offset="100%" stop-color="rgba(14,165,233,0)"/>
+      </linearGradient>
+    </defs>
+    <polygon points="${area}" fill="url(#cg)"/>
+    <polyline points="${line}" fill="none" stroke="#0ea5e9" stroke-width="2"
+      stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${x(n - 1).toFixed(1)}" cy="${y(cum[n - 1]).toFixed(1)}" r="3.5" fill="#fff"/>`;
+}
+
+/* small confirmation ping on the Total Due */
+function pingTotal() {
+  const el = $("#grand");
+  if (!el) return;
+  el.classList.remove("ping");
+  void el.offsetWidth; // restart animation
+  el.classList.add("ping");
 }
 
 /* ===== add leg & trips ===== */
@@ -425,6 +641,7 @@ $("#add").onclick = () => {
     to: $("#to").value.trim(),
     date: $("#date").value,
     price: Number($("#price").value || 0),
+    status: "ontime",
   };
   if (!leg.from || !leg.to || !leg.date) {
     toast("Please fill From, To, Date.");
@@ -433,6 +650,7 @@ $("#add").onclick = () => {
   t.legs.push(leg);
   saveT(m);
   render();
+  pingTotal();
   $("#price").value = "";
   $("#from").value = "";
   $("#to").value = "";
@@ -476,6 +694,8 @@ $("#mAdd")?.addEventListener("click", () => {
   saveT(m);
 
   renderManual();
+  render();
+  pingTotal();
   toast("External record saved.");
 
   // Reset external inputs
@@ -491,36 +711,32 @@ function renderManual() {
   if (!host) return;
   host.innerHTML = "";
   const m = loadT();
-  if (!m.manual.length) {
-    return; // Handled by CSS empty pseudo
-  }
+  const tripName = (id) => m.trips.find((t) => t.id === id)?.name || "—";
+  const filter = $("#recFilter")?.value || "";
+
   m.manual.forEach((r, i) => {
-    const div = document.createElement("div");
-    div.className = "item";
-    div.innerHTML = `
-      <div class="item-left">
-        <div class="timeline-node">🧾</div>
-      </div>
-      <div class="item-center">
-        <div class="route-text">${r.provider || "—"} <span>▶</span> ${r.from || "—"} to ${r.to || "—"}</div>
-        <div class="item-meta-row">
-            <div>${r.date || "—"}</div>
-            <div>Ref: <strong>${r.ref || "—"}</strong></div>
-        </div>
-      </div>
-      <div class="item-right">
-        <div class="item-price">${fmtINR(r.amount || 0)}</div>
-        <button class="btn-ghost danger small" data-del="${i}">Remove</button>
-      </div>`;
-    div.querySelector("[data-del]").onclick = () => {
+    if (filter && r.date !== filter) return; // keep original index for splice
+    const row = document.createElement("div");
+    row.className = "records-row";
+    row.title = `${r.provider || ""} · Ref ${r.ref || "—"}`;
+    row.innerHTML = `
+      <span>${r.date || "—"}</span>
+      <span class="rec-route">${r.from || "—"} <em>→</em> ${r.to || "—"}</span>
+      <span class="rec-trip">${tripName(r.tripId)}</span>
+      <span class="ta-r rec-amt">${fmtINR(r.amount || 0)}
+        <button class="rec-del" data-del="${i}" title="Remove">✕</button>
+      </span>`;
+    row.querySelector("[data-del]").onclick = () => {
       const m2 = loadT();
       m2.manual.splice(i, 1);
       saveT(m2);
       renderManual();
+      render();
     };
-    host.appendChild(div);
+    host.appendChild(row);
   });
 }
+$("#recFilter")?.addEventListener("change", renderManual);
 
 /* ===== bulk actions ===== */
 $("#bulkClear")?.addEventListener("click", clearSelection);
@@ -634,4 +850,5 @@ $("#resetRates")?.addEventListener("click", () => {
   syncRateInputs();
   render();
   renderManual();
+  requestAnimationFrame(moveUnderline);
 })();

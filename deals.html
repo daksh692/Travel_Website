@@ -75,54 +75,115 @@
       </div>
     </header>
 
-    <main class="page">
-      <!-- REGULAR DEALS (TOP) -->
-      <section id="autoDeals" class="shell">
-        <div class="hero">
-          <h1>Deals</h1>
-          <p class="muted">
-            Fresh bundles & individual picks. We’ll learn your taste in the
-            first 1–2 days, then personalize from day 3.
-          </p>
+    <div class="dh-spacer"></div>
 
-          <!-- Tabs are now ONLY for regular deals -->
-          <div class="tabs" style="margin-top: 10px">
-            <button
-              id="tabBtnBundles"
-              class="tab-btn active"
-              data-tab="auto-bundles"
-            >
-              Bundles
-            </button>
-            <button
-              id="tabBtnSingles"
-              class="tab-btn"
-              data-tab="auto-individual"
-            >
-              Individual
-            </button>
-             <div id="auto-bundles" class="tab-panel">
-          <div id="bundleList" class="grid"></div>
+    <main class="dh-shell">
+      <!-- LEFT: category rail -->
+      <aside class="dh-rail">
+        <div class="dh-explorer-head">
+          <span class="dh-explorer-badge">%</span>
+          <span>Deals<br />Explorer</span>
         </div>
-        <div id="auto-individual" class="tab-panel" hidden>
-          <div id="individualList" class="grid"></div>
+
+        <div class="dh-toptabs">
+          <button class="rail-btn" data-view="flash">
+            <span class="rail-ic">⚡</span><span>Flash Deals</span>
+          </button>
+          <button class="rail-btn active" data-view="bundles">
+            <span class="rail-ic">🎁</span><span>Bundle Deals</span>
+          </button>
+        </div>
+
+        <div class="dh-rail-sep"></div>
+
+        <button class="rail-btn" data-view="exclusive">
+          <span class="rail-ic">💎</span><span>Exclusive</span>
+        </button>
+      </aside>
+
+      <!-- CENTER: views -->
+      <section class="dh-main">
+        <div class="hub-floaters" aria-hidden="true">
+          <span class="floater f1">✈️</span>
+          <span class="floater f2">🧭</span>
+          <span class="floater f3">📍</span>
+          <span class="floater f4">🌍</span>
+          <span class="floater f5">🏖️</span>
+          <span class="floater f6">⛰️</span>
+        </div>
+
+        <!-- BUNDLE DEALS HUB (image-match landing view) -->
+        <div class="deal-view active" data-view="bundles">
+          <h1 class="hub-title">Deals Hub: Bundle Deals</h1>
+          <p class="hub-sub"><span>All your bundle savings in one place.</span></p>
+
+          <div class="hub-toolbar">
+            <span class="hub-toolbar-label" id="bundleCount"></span>
+            <label class="hub-sort">
+              Sort by
+              <select id="bundleSort">
+                <option value="discount">Biggest discount</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="hub-bundle-grid-full" id="hubBundleGrid"></div>
+        </div>
+
+        <!-- FLASH DEALS -->
+        <div class="deal-view" data-view="flash">
+          <h1 class="hub-title">Flash Deals</h1>
+          <p class="hub-sub"><span>Limited-time offers — grab them before the clock runs out.</span></p>
+
+          <div class="hub-bundle-grid" id="flashHubGrid"></div>
+
+          <div class="hub-toolbar hub-toolbar-2">
+            <h2 class="hub-section-title">Individual Deals: Custom Trip Items</h2>
+            <label class="hub-sort">
+              Sort by
+              <select id="itemSort">
+                <option value="discount">Biggest discount</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+              </select>
+            </label>
+          </div>
+          <div class="hub-individual-grid" id="flashIndividualGrid"></div>
+        </div>
+
+        <!-- EXCLUSIVE (hand-picked, unlocks after day 3) -->
+        <div class="deal-view" data-view="exclusive">
+          <h1 class="hub-title">Exclusive Picks</h1>
+          <p class="hub-sub"><span id="exclusiveNote">We learn your taste from what you view and add. Hand-picked bundles unlock from day 3.</span></p>
+
+          <div class="hub-bundle-grid-full" id="handpickList"></div>
         </div>
       </section>
 
+      <!-- RIGHT: personalized · trending · live feed -->
+      <aside class="dh-aside">
+        <div class="dh-card personalized">
+          <div class="ph-head">
+            <div class="ph-avatar" id="phAvatar">?</div>
+            <div>
+              <div class="ph-label">Personalized Picks</div>
+              <div class="ph-msg" id="phMsg">Sign in for tailored deals.</div>
+            </div>
           </div>
         </div>
 
-       
-      <!-- HAND-PICKED (BOTTOM) — hidden until we have learned results -->
-      <section id="dealsSection" class="shell deals-bottom" hidden style="display:none !important">
-        <div class="hero">
-          <h2>Hand-picked deals</h2>
-          <p class="muted">
-            Curated from what you view and add most. Appears from day 3.
-          </p>
+        <div class="dh-card trending">
+          <div class="dh-card-head">Top Trending Destinations</div>
+          <div class="trend-map" id="trendMap"></div>
         </div>
-        <div id="handpickList" class="grid"></div>
-      </section>
+
+        <div class="dh-card live">
+          <div class="dh-card-head">Live Feed</div>
+          <ul class="live-list" id="liveFeed"></ul>
+        </div>
+      </aside>
     </main>
 
     <div id="toasts"></div>

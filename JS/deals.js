@@ -194,7 +194,7 @@ async function buildIndividuals() {
       }
     } catch {}
   }
-  return shuffle(all).slice(0, 5);
+  return shuffle(all).slice(0, 12);
 }
 
 /* ========= cart ========= */
@@ -239,24 +239,6 @@ function addSingleToCart(deal) {
 }
 
 /* ========= effects ========= */
-function attachTilt(el) {
-  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  el.addEventListener("mousemove", (e) => {
-    const r = el.getBoundingClientRect();
-    const cx = r.left + r.width / 2,
-      cy = r.top + r.height / 2;
-    const dx = (e.clientX - cx) / (r.width / 2);
-    const dy = (e.clientY - cy) / (r.height / 2);
-    el.style.transform = `rotateX(${clamp(-dy * 6, -6, 6)}deg) rotateY(${clamp(
-      dx * 8,
-      -8,
-      8,
-    )}deg) translateY(-2px)`;
-  });
-  el.addEventListener("mouseleave", () => {
-    el.style.transform = "";
-  });
-}
 function ripple(e) {
   const btn = e.currentTarget;
   const circle = document.createElement("span");
@@ -289,14 +271,6 @@ function confetti(root, n = 8) {
 }
 
 /* ========= rendering ========= */
-function setActiveTab(which) {
-  // which is: "auto-bundles" or "auto-individual"
-  $$(".tab-btn").forEach((b) =>
-    b.classList.toggle("active", b.dataset.tab === which),
-  );
-  $$(".tab-panel").forEach((p) => (p.hidden = p.id !== which));
-}
-
 function skelRows(host, rows = 3) {
   host.innerHTML = "";
   for (let i = 0; i < rows; i++) {
@@ -307,159 +281,256 @@ function skelRows(host, rows = 3) {
   }
 }
 
-function renderBundles(list, hostId = "bundleList") {
-  const host = $(`#${hostId}`);
-  host.innerHTML = "";
-  if (!list.length) {
-    host.innerHTML = `<div class="muted">No bundles right now.</div>`;
+/* ========= Deals Hub: rail views ========= */
+function switchView(name) {
+  $$(".rail-btn[data-view]").forEach((b) =>
+    b.classList.toggle("active", b.dataset.view === name),
+  );
+  $$(".deal-view").forEach((v) =>
+    v.classList.toggle("active", v.dataset.view === name),
+  );
+}
+$$(".rail-btn[data-view]").forEach((b) => {
+  b.addEventListener("click", () => switchView(b.dataset.view));
+});
+
+/* ========= Bundle Deals hub (image-match landing view) ========= */
+function buildHubBundleCard(b, featured = false) {
+  const places = b.members.map((m) => `<li>${m.place}</li>`).join("");
+  const thumbs = b.members
+    .slice(0, 3)
+    .map(
+      (m) =>
+        `<div class="stacked-thumb"><img src="${m.img || ""}" alt="${m.place}" loading="lazy"/></div>`,
+    )
+    .join("");
+  const el = document.createElement("div");
+  el.className = "hub-bundle-card" + (featured ? " featured" : "");
+  el.innerHTML = `
+    ${featured ? `<span class="featured-ribbon">⏱️</span>` : ""}
+    <div class="hub-bundle-thumbs">${thumbs}</div>
+    <h3>${featured ? "Featured Bundle of the Day – " : ""}${b.state} ${
+      featured ? "Experience" : "Adventure Bundle"
+    }</h3>
+    <ul class="mini-list">${places}</ul>
+    ${
+      featured
+        ? `<div class="countdown" id="hubCountdown">
+             <div class="cd-box"><span class="hcd-h">00</span><label>h</label></div>
+             <div class="cd-box"><span class="hcd-m">00</span><label>m</label></div>
+             <div class="cd-box"><span class="hcd-s">00</span><label>s</label></div>
+           </div>`
+        : ""
+    }
+    <div class="hub-price">
+      <span class="strike">${fmtINR(b.priceOriginal)}</span>
+      <span class="final">${fmtINR(b.priceFinal)}</span>
+    </div>
+    <div class="btn-row" style="justify-content:stretch">
+      <button class="btn btn-primary" data-add style="flex:1">Add Bundle</button>
+    </div>`;
+  el.querySelector("[data-add]").onclick = () => addBundleToCart(b);
+  bindRipples(el);
+  return el;
+}
+
+function buildHubItemCard(d) {
+  const tags = { Basic: "Ticket only", Plus: "Experience only", Premium: "Pass only" };
+  const el = document.createElement("div");
+  el.className = "hub-item-card";
+  el.innerHTML = `
+    <h4>${d.place}</h4>
+    <div class="hub-item-body">
+      <div class="hub-item-thumb"><img src="${d.img || ""}" alt="${d.place}" loading="lazy"/></div>
+      <div class="hub-item-price">${fmtINR(d.priceFinal)}</div>
+    </div>
+    <div class="hub-item-foot">
+      <span class="hub-item-tag">${tags[d.package] || "Deal item"}</span>
+      <button class="btn btn-primary" data-add>Add to Cart</button>
+    </div>`;
+  el.querySelector("[data-add]").onclick = () => addSingleToCart(d);
+  bindRipples(el);
+  return el;
+}
+
+/* ========= sort helpers (shared by Bundle Deals + Flash individual items) ========= */
+function sortByMode(list, mode) {
+  const arr = [...list];
+  if (mode === "price-asc") arr.sort((a, b) => a.priceFinal - b.priceFinal);
+  else if (mode === "price-desc") arr.sort((a, b) => b.priceFinal - a.priceFinal);
+  else arr.sort((a, b) => b.discountPct - a.discountPct);
+  return arr;
+}
+
+/* Generic full grid of bundle cards — used by Bundle Deals + Exclusive */
+function renderBundleGrid(hostId, bundles) {
+  const grid = $(`#${hostId}`);
+  if (!grid) return;
+  grid.innerHTML = "";
+  if (!bundles.length) {
+    grid.innerHTML = `<div class="muted">No bundles right now.</div>`;
     return;
   }
-
-  list.forEach((b) => {
-    const thumbs = b.members
-      .slice(0, 3)
-      .map(
-        (m) => `
-      <div class="stacked-thumb"><img src="${m.img || ""}" alt="${
-        m.place
-      }" loading="lazy"/></div>
-    `,
-      )
-      .join("");
-
-    const places = b.members
-      .map((m) => `<li><span>${m.place}</span></li>`)
-      .join("");
-
-    const el = document.createElement("div");
-    el.className = "card bundle tilt";
-    el.innerHTML = `
-      <div class="card-head">
-        <span class="badge state">${b.state}</span>
-        <span class="badge pill">Bundle · ${b.package}</span>
-        <span class="badge deal">-${b.discountPct}%</span>
-      </div>
-      <div class="bundle-body">
-        <div class="stack">${thumbs}</div>
-        <div class="bundle-main">
-          <h3>${b.state} Explorer</h3>
-          <ul class="mini-list">${places}</ul>
-        </div>
-        <div class="price-col">
-          <div class="strike">${fmtINR(b.priceOriginal)}</div>
-          <div class="final">${fmtINR(b.priceFinal)}</div>
-          <div class="btn-row">
-            <button class="btn btn-primary" data-add>Add bundle</button>
-            <a class="btn btn-ghost" href="./listofplace.html?state=${encodeURIComponent(
-              b.state,
-            )}">View state</a>
-          </div>
-        </div>
-      </div>`;
-    el.querySelector("[data-add]").onclick = () => addBundleToCart(b);
-    attachTilt(el);
-    bindRipples(el);
-    host.appendChild(el);
-  });
+  bundles.forEach((b) => grid.appendChild(buildHubBundleCard(b)));
 }
 
-function renderSingles(list) {
-  const host = $("#individualList");
-  host.innerHTML = "";
-  if (!list.length) {
-    host.innerHTML = `<div class="muted">No deals found.</div>`;
+/* Bundle Deals view: all bundles, sortable */
+let cacheBundles = [];
+function renderBundleDealsView() {
+  const mode = $("#bundleSort")?.value || "discount";
+  renderBundleGrid("hubBundleGrid", sortByMode(cacheBundles, mode));
+  const count = $("#bundleCount");
+  if (count) count.textContent = `${cacheBundles.length} bundle${cacheBundles.length === 1 ? "" : "s"}`;
+}
+
+/* Flash Deals view: top-3 discount bundles (curated, not sortable) + featured card */
+function renderFlashHub(bundles) {
+  const grid = $("#flashHubGrid");
+  if (!grid || !bundles.length) return;
+  grid.innerHTML = "";
+  const top3 = [...bundles].sort((a, b) => b.discountPct - a.discountPct).slice(0, 3);
+  const [featured, ...rest] = top3;
+  if (rest[0]) grid.appendChild(buildHubBundleCard(rest[0]));
+  grid.appendChild(buildHubBundleCard(featured, true));
+  if (rest[1]) grid.appendChild(buildHubBundleCard(rest[1]));
+}
+
+/* Flash Deals view: individual items, sortable */
+let cacheSingles = [];
+function renderFlashIndividuals() {
+  const iGrid = $("#flashIndividualGrid");
+  if (!iGrid) return;
+  const mode = $("#itemSort")?.value || "discount";
+  iGrid.innerHTML = "";
+  if (!cacheSingles.length) {
+    iGrid.innerHTML = `<div class="muted">No deals found.</div>`;
     return;
   }
-
-  list.forEach((d) => {
-    const el = document.createElement("div");
-    el.className = "card single tilt";
-    el.innerHTML = `
-      <div class="thumb"><img src="${d.img || ""}" alt="${
-        d.place
-      }" loading="lazy"/></div>
-      <div class="meta">
-        <h4>${d.place}</h4>
-        <div class="badge-row">
-          <span class="badge state">${d.state}</span>
-          <span class="badge pill">${d.package}</span>
-          <span class="badge deal">-${d.discountPct}%</span>
-        </div>
-      </div>
-      <div class="price-col">
-        <div class="strike">${fmtINR(d.priceOriginal)}</div>
-        <div class="final">${fmtINR(d.priceFinal)}</div>
-        <div class="btn-row">
-          <button class="btn btn-primary" data-add>Add</button>
-          <a class="btn btn-ghost" href="./listofplace.html?state=${encodeURIComponent(
-            d.state,
-          )}">View</a>
-        </div>
-      </div>`;
-    el.querySelector("[data-add]").onclick = () => addSingleToCart(d);
-    attachTilt(el);
-    bindRipples(el);
-    host.appendChild(el);
-  });
+  sortByMode(cacheSingles, mode)
+    .slice(0, 8)
+    .forEach((d) => iGrid.appendChild(buildHubItemCard(d)));
 }
 
-/* show/hide bottom section (hand-picked) */
-function showHandpicked() {
-  const sec = $("#dealsSection");
-  if (!sec) return;
-  sec.hidden = false;
-  sec.classList.add("reveal");
+/* countdown reused for the featured hub card */
+function startHubCountdown() {
+  const tick = () => {
+    const now = new Date();
+    const next = new Date(now);
+    next.setHours(24, 0, 0, 0);
+    const diff = Math.max(0, next - now);
+    const hh = String(Math.floor(diff / 3600000)).padStart(2, "0");
+    const mm = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
+    const ss = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+    $$(".hcd-h").forEach((e) => (e.textContent = hh));
+    $$(".hcd-m").forEach((e) => (e.textContent = mm));
+    $$(".hcd-s").forEach((e) => (e.textContent = ss));
+  };
+  tick();
+  setInterval(tick, 1000);
 }
-function hideHandpicked() {
-  const sec = $("#dealsSection");
-  if (!sec) return;
-  sec.hidden = true;
-  sec.classList.remove("reveal");
+
+/* ========= Personalized picks ========= */
+function renderPersonalized() {
+  const u = sessionUser();
+  const av = $("#phAvatar"),
+    msg = $("#phMsg");
+  if (!av || !msg) return;
+  if (u) {
+    av.textContent = (u.FirstName || "U").charAt(0).toUpperCase();
+    msg.textContent = `Welcome back, ${u.FirstName || "traveller"} — picks tuned to you.`;
+  } else {
+    av.textContent = "?";
+    msg.innerHTML = `Sign in for tailored deals. <a href="auth.html?tab=login">Log in</a>`;
+  }
+}
+
+/* ========= Trending destinations (decorative — not a literal map) ========= */
+function renderTrending(states) {
+  const host = $("#trendMap");
+  if (!host) return;
+  const picks = (states.length ? states : POPULAR_STATES).slice(0, 3);
+  const spots = [
+    { top: "28%", left: "22%" },
+    { top: "55%", left: "62%" },
+    { top: "72%", left: "34%" },
+  ];
+  host.innerHTML = picks
+    .map(
+      (s, i) => `
+      <span class="trend-pin" style="top:${spots[i].top}; left:${spots[i].left}">
+        <span class="pin-dot"></span><span class="pin-label">${s}</span>
+      </span>`,
+    )
+    .join("");
+}
+
+/* ========= Live feed (synthetic timestamps over real deal data) ========= */
+function renderLiveFeed(bundles, singles) {
+  const host = $("#liveFeed");
+  if (!host) return;
+  const ago = () => {
+    const m = 2 + Math.floor(Math.random() * 58);
+    return m < 60 ? `${m}m ago` : `${Math.floor(m / 60)}h ago`;
+  };
+  const items = [
+    { dot: "coral", text: "New limited-time deals just dropped" },
+    ...bundles.slice(0, 2).map((b) => ({
+      dot: "azure",
+      text: `${b.state} Explorer · updated`,
+    })),
+    ...singles.slice(0, 1).map((d) => ({
+      dot: "ivory",
+      text: `New ${d.place} deal added`,
+    })),
+  ];
+  host.innerHTML = items
+    .map(
+      (it) => `
+      <li><span class="live-dot ${it.dot}"></span>
+        <div><div class="live-text">${it.text}</div>
+        <div class="live-time">${ago()}</div></div>
+      </li>`,
+    )
+    .join("");
 }
 
 /* ========= boot ========= */
 (async function boot() {
-  // Tabs for REGULAR deals (top)
-  $("#tabBtnBundles")?.addEventListener("click", () =>
-    setActiveTab("auto-bundles"),
-  );
-  $("#tabBtnSingles")?.addEventListener("click", () =>
-    setActiveTab("auto-individual"),
-  );
-  setActiveTab("auto-bundles");
+  startHubCountdown();
+  renderPersonalized();
 
-  // Start with bottom section hidden
-  hideHandpicked();
+  $("#bundleSort")?.addEventListener("change", renderBundleDealsView);
+  $("#itemSort")?.addEventListener("change", renderFlashIndividuals);
 
   // Skeletons
-  skelRows($("#bundleList"), 3);
-  skelRows($("#individualList"), 3);
+  skelRows($("#hubBundleGrid"), 3);
+  skelRows($("#flashHubGrid"), 3);
+  skelRows($("#flashIndividualGrid"), 4);
 
   try {
-    // REGULAR (top)
     const [bundles, singles] = await Promise.all([
       buildBundles({ learned: false }),
       buildIndividuals(),
     ]);
-    renderBundles(bundles, "bundleList");
-    renderSingles(singles);
+    cacheBundles = bundles;
+    cacheSingles = singles;
 
-    // HAND-PICKED (bottom) — DISABLED PER USER REQUEST
-    hideHandpicked();
-    /*
+    renderFlashHub(bundles);
+    renderFlashIndividuals();
+    renderBundleDealsView();
+    renderTrending(bundles.map((b) => b.state));
+    renderLiveFeed(bundles, singles);
+
+    // Exclusive (hand-picked) — unlocks once we've learned from day 3
     if (getLearningPhaseDays() >= 2) {
       const learnedBundles = await buildBundles({ learned: true });
-      const host = $("#handpickList");
-      skelRows(host, 2);
-      renderBundles(learnedBundles, "handpickList");
-      if (learnedBundles.length) showHandpicked();
-      else hideHandpicked();
-    } else {
-      hideHandpicked();
+      skelRows($("#handpickList"), 2);
+      renderBundleGrid("handpickList", learnedBundles);
+      $("#exclusiveNote").textContent = learnedBundles.length
+        ? "Curated from what you view and add most."
+        : "No hand-picked bundles yet — browse a bit more.";
     }
-    */
   } catch (e) {
     console.error(e);
-    hideHandpicked();
   }
 })();

@@ -3,7 +3,7 @@ const API_BASE = `${API_HOST}/api`;
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-const todayISO = () => new Date().toISOString().slice(0, 10);
+const todayISO = () => "2026-08-17"; // Context: August 17, 2026
 
 const fmtINR = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 const PKG_LABELS = ["Basic", "Plus", "Premium"];
@@ -103,9 +103,6 @@ editToggle.addEventListener("click", () => setEditMode(!EDIT_MODE));
 
 /* ===== Controls ===== */
 const tripStart = $("#tripStart");
-const summaryDate = $("#summaryDate");
-const serviceRateVal = $("#serviceRateVal");
-const taxRateVal = $("#taxRateVal");
 const sumHint = $("#sumHint");
 const sumSubtotal = $("#sumSubtotal");
 const sumService = $("#sumService");
@@ -121,24 +118,43 @@ const itemsHost = $("#items");
 const groupsHost = $("#groupsHost");
 const selectionCount = $("#selectionCount");
 
-serviceRateVal.textContent = `${SERVICE_RATE_PCT}%`;
-taxRateVal.textContent = `${TAX_RATE_PCT}%`;
 sumServiceRate.textContent = `${SERVICE_RATE_PCT}%`;
 sumTaxRate.textContent = `${TAX_RATE_PCT}%`;
 
-/* defaults */
-(function initStart() {
-  const gs = localStorage.getItem("tripStart") || todayISO();
-  tripStart.value = gs;
-  summaryDate.value = gs;
-  tripStart.addEventListener("change", () => {
-    localStorage.setItem("tripStart", tripStart.value);
-    if (!EDIT_MODE) {
-      summaryDate.value = tripStart.value;
-    }
+/* View Mode & Timeline */
+let VIEW_MODE = "list";
+const viewList = $("#viewList");
+const viewTimeline = $("#viewTimeline");
+if(viewList && viewTimeline) {
+  viewList.addEventListener("click", () => {
+    VIEW_MODE = "list";
+    viewList.classList.add("active");
+    viewTimeline.classList.remove("active");
     render();
   });
-  summaryDate.addEventListener("change", render);
+  viewTimeline.addEventListener("click", () => {
+    VIEW_MODE = "timeline";
+    viewTimeline.classList.add("active");
+    viewList.classList.remove("active");
+    render();
+  });
+}
+
+/* Checkout CTA */
+const checkoutBtn = $("#checkoutBtn");
+checkoutBtn?.addEventListener("click", () => {
+  showToast({ title: "Booking", message: "Proceeding to booking...", type: "info" });
+});
+
+/* defaults */
+(function initStart() {
+  const gs = localStorage.getItem("tripStart") || "2026-08-14";
+  tripStart.value = gs;
+  tripStart.addEventListener("change", () => {
+    localStorage.setItem("tripStart", tripStart.value);
+    resequenceDates(); // Shift all dates based on new Global Start
+    render();
+  });
 })();
 
 /* ===== State cache + images ===== */
@@ -334,40 +350,36 @@ function effectiveStart(it, groups) {
   return tripStart.value;
 }
 
-/* ===== Auto sequential dates inside a group ===== */
-function autoAssignSequentialDates(groupId) {
-  const groups = loadGroups();
-  const g = groups.find((x) => x.id === groupId);
-  if (!g || !g.start) return;
-
+/* ===== Auto sequential dates (Global Re-sequence) ===== */
+function resequenceDates() {
   const cart = loadCart();
-  const members = cart
-    .map((it, i) => ({ it, i }))
-    .filter((x) => x.it.groupId === groupId);
+  const groups = loadGroups();
 
-  // only assign to those without a start date
-  let cursor = g.start;
-  for (const { it, i } of members) {
-    if (!it.start) {
-      cart[i].start = cursor;
-      const span = durationDays(it);
-      cursor = addDays(cursor, Math.max(1, span)); // next start = prev start + prev duration
-    } else if (it.start < g.start) {
-      // enforce min
-      cart[i].start = g.start;
-      showToast({
-        title: "Adjusted",
-        message: `${it.place} date moved to group start`,
-        type: "warning",
-      });
-      const span = durationDays(it);
-      cursor = addDays(cart[i].start, Math.max(1, span));
-    } else {
-      const span = durationDays(it);
-      // keep cursor in case later members need it
-      cursor = addDays(it.start, Math.max(1, span));
-    }
-  }
+  const byGroup = new Map();
+  byGroup.set(null, []);
+  groups.forEach(g => byGroup.set(g.id, []));
+
+  cart.forEach((it, i) => {
+    if (it.groupId && byGroup.has(it.groupId)) byGroup.get(it.groupId).push({ it, i });
+    else byGroup.get(null).push({ it, i });
+  });
+
+  // Re-sequence ungrouped
+  let cursor = tripStart.value;
+  byGroup.get(null).forEach(({ it, i }) => {
+    cart[i].start = cursor;
+    cursor = addDays(cursor, Math.max(1, durationDays(it)));
+  });
+
+  // Re-sequence grouped
+  groups.forEach(g => {
+    let gCursor = g.start || tripStart.value;
+    byGroup.get(g.id).forEach(({ it, i }) => {
+      cart[i].start = gCursor;
+      gCursor = addDays(gCursor, Math.max(1, durationDays(it)));
+    });
+  });
+
   saveCart(cart);
 }
 
@@ -451,9 +463,11 @@ function render() {
   if (!cart.length) {
     $("#groupsHost").innerHTML = "";
     itemsHost.innerHTML = `<div class="ct-empty">No items in your trip yet. <a href="places/INDmap.html">Explore places</a>.</div>`;
+    itemsHost.className = "ct-items";
     renderSummary([]);
     return;
   }
+  itemsHost.className = "ct-items" + (VIEW_MODE === "timeline" ? " view-timeline" : "");
 
   /* render groups */
   groupsHost.innerHTML = "";
@@ -468,8 +482,8 @@ function render() {
   groups.forEach((g) => {
     const rows = (byGroup.get(g.id) || []).slice();
 
-    // auto-assign dates when needed
-    autoAssignSequentialDates(g.id);
+    // update class and auto-assign dates if needed
+    resequenceDates();
 
     // compute group window for filtering bucket
     const members = loadCart().filter((x) => x.groupId === g.id);
@@ -504,7 +518,7 @@ function render() {
               <span class="label small" style="color:var(--muted); text-transform:uppercase; font-weight:700;">Start Date</span>
               <input type="date" value="${
                 g.start || tripStart.value
-              }" class="group-start input-faded edit-only-input" style="padding: 6px 10px;" ${
+              }" class="group-start input-pill edit-only-input" ${
                 EDIT_MODE ? "" : "disabled"
               } />
             </label>
@@ -515,7 +529,7 @@ function render() {
           </div>
         </div>
       </div>
-      <div class="group-items"></div>`;
+      <div class="group-items ct-items ${VIEW_MODE === 'timeline' ? 'view-timeline' : ''}"></div>`;
     const list = groupWrap.querySelector(".group-items");
 
     rows.forEach(({ it, idx }) =>
@@ -529,7 +543,7 @@ function render() {
       if (gg) {
         gg.start = e.target.value;
         saveGroups(groupsNow);
-        autoAssignSequentialDates(g.id);
+        resequenceDates();
         showToast({
           title: "Saved",
           message: "Group date updated.",
@@ -537,6 +551,13 @@ function render() {
         });
         render();
       }
+    });
+
+    // accordion toggle
+    const headEl = groupWrap.querySelector(".group-head");
+    headEl.addEventListener("click", (ev) => {
+      if (ev.target.closest("button, input, [contenteditable]")) return;
+      groupWrap.classList.toggle("group-collapsed");
     });
 
     // rename
@@ -598,6 +619,17 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
     .join("")
     .toUpperCase();
 
+  const effStart = effectiveStart(it, loadGroups());
+  let statusBadge = '';
+  if (effStart) {
+    const d = durationDays(it);
+    const e = addDays(effStart, Math.max(1, d) - 1);
+    const t = todayISO();
+    if (e < t) statusBadge = '<span class="badge completed">COMPLETED</span>';
+    else if (effStart <= t && t <= e) statusBadge = '<span class="badge ongoing">ONGOING</span>';
+    else statusBadge = '<span class="badge upcoming">UPCOMING</span>';
+  }
+
   const card = document.createElement("article");
   card.className = "ct-item";
   card.dataset.idx = idx;
@@ -621,6 +653,7 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
     <div class="ct-body">
       <h3 style="font-size:16.5px; margin-bottom: 6px;">${it.place || "(Unknown place)"}</h3>
       <div class="ct-meta-row" style="color:var(--muted); font-size:13px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        ${statusBadge}
         <span style="display:flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${it.state || "—"}</span>
         <span style="display:flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${
           it.days ? `${it.days} day${it.days > 1 ? "s" : ""}` : "—"
@@ -628,7 +661,7 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
         <span class="badge" style="background:rgba(99,102,241,0.1); color:var(--accent-soft); border-color:rgba(99,102,241,0.2);">Pkg: ${it.package || "—"}</span>
         <label class="inline" style="display:flex; gap:6px; align-items:center; margin-left: auto;">
           <span class="label small" style="text-transform:uppercase; font-weight:700;">Start</span>
-          <input type="date" class="item-start input-faded edit-only-input" style="padding:4px 8px; font-size:12.5px;" value="${
+          <input type="date" class="item-start input-pill edit-only-input" value="${
             it.start || ""
           }" ${EDIT_MODE ? "" : "disabled"} ${
             inGroup && group?.start ? `min="${group.start}"` : ""
@@ -638,7 +671,7 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
     </div>
     <div class="ct-actions-col" style="align-items:flex-end;">
       <div class="price" style="font-size:18px; color:#fff; font-weight:800; margin-bottom: 2px;">${fmtINR(price)}</div>
-      <div class="qty" role="group" aria-label="Quantity" style="display:flex; border:1px solid var(--btn-border); border-radius:10px; overflow:hidden; background:rgba(255,255,255,0.03);">
+      <div class="qty qty-wrap ${EDIT_MODE ? '' : 'hidden'}" role="group" aria-label="Quantity" style="display:flex; border:1px solid var(--btn-border); border-radius:10px; overflow:hidden; background:rgba(255,255,255,0.03);">
         <button class="q-dec" style="padding:4px 10px; background:transparent; color:#fff; cursor:pointer; border:none;" ${
           EDIT_MODE ? "" : "disabled"
         } aria-label="Decrease">−</button>
@@ -664,6 +697,45 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
         }
       </div>
     </div>`;
+
+  // HTML5 Drag and Drop
+  card.draggable = EDIT_MODE;
+  card.addEventListener("dragstart", (e) => {
+    if (!EDIT_MODE) { e.preventDefault(); return; }
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", idx);
+    card.classList.add("dragging");
+  });
+  card.addEventListener("dragend", () => {
+    card.classList.remove("dragging");
+    $$(".ct-item").forEach(el => el.classList.remove("drag-over"));
+  });
+  card.addEventListener("dragover", (e) => {
+    if (!EDIT_MODE) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    card.classList.add("drag-over");
+  });
+  card.addEventListener("dragleave", () => {
+    card.classList.remove("drag-over");
+  });
+  card.addEventListener("drop", (e) => {
+    if (!EDIT_MODE) return;
+    e.preventDefault();
+    card.classList.remove("drag-over");
+    const dragIdx = parseInt(e.dataTransfer.getData("text/plain"), 10);
+    if (dragIdx === idx || isNaN(dragIdx)) return;
+
+    const cart = loadCart();
+    const draggedItem = cart.splice(dragIdx, 1)[0];
+    const insertIdx = (dragIdx < idx) ? idx - 1 : idx;
+    if (inGroup && group) draggedItem.groupId = group.id;
+    else draggedItem.groupId = null;
+    cart.splice(insertIdx, 0, draggedItem);
+    saveCart(cart);
+    resequenceDates();
+    render();
+  });
 
   // image
   const imgEl = card.querySelector(".ct-thumb img");
@@ -723,6 +795,7 @@ function renderItemRow(it, idx, { inGroup = false, group = null } = {}) {
     }
     arr[idx].start = startEl.value || null;
     saveCart(arr);
+    resequenceDates();
     renderSummary();
     render();
   });
@@ -783,13 +856,10 @@ function renderSummary(forceItems) {
     $("#sumHint").textContent = arr.length
       ? "Summary of selected items"
       : "Nothing selected — summary is empty.";
-  } else {
-    const d = summaryDate.value;
-    set = cart.filter((it) => effectiveStart(it, groups) === d);
-    $("#sumHint").textContent = set.length
-      ? `Summary for ${d}`
-      : `No items starting on ${d}.`;
-  }
+    } else {
+      set = cart; // calculate for all items across the trip
+      $("#sumHint").textContent = `Summary for ${todayISO()}`;
+    }
 
   set = set.map((it) => ({ ...it, _effStart: effectiveStart(it, groups) }));
 

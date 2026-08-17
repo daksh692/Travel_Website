@@ -5,11 +5,11 @@
 :root {
   /* aliased to the shared Windowseat palette in main.css — --ink/--muted inherit from there */
   --ring: var(--glass-line-strong);
-  --card: color-mix(in srgb, var(--sapphire-2) 80%, transparent);
+  --card: rgba(10, 20, 35, 0.7);
   --card-solid: var(--sapphire-2);
-  --card-border: var(--glass-line);
-  --card-border-hover: rgba(43, 70, 201, 0.25);
-  --card-glow: rgba(43, 70, 201, 0.1);
+  --card-border: rgba(100, 150, 250, 0.2);
+  --card-border-hover: rgba(100, 150, 250, 0.4);
+  --card-glow: rgba(100, 150, 250, 0.15);
   --err: var(--danger);
   --brand: var(--royal-2);
   --g1: var(--royal);
@@ -22,7 +22,7 @@
   --accent-soft: var(--platinum);
   --accent-gradient: linear-gradient(135deg, var(--royal-deep) 0%, var(--royal-2) 100%);
   --btn-border: var(--glass-line-strong);
-  --glass-blur: 20px;
+  --glass-blur: 10px;
 }
 
 body.lp-page {
@@ -32,26 +32,26 @@ body.lp-page {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+body.lp-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(4, 10, 25, 0.1);
+  pointer-events: none;
+}
+
 /* =============================================
-   AURORA BACKGROUND (Enhanced)
+   AURORA BACKGROUND (Enhanced) -> IMMERSIVE LANDSCAPE
    ============================================= */
 .lp-aurora {
   position: fixed;
-  inset: -45vmax;
-  z-index: -1;
+  inset: -5vmax;
+  z-index: -2;
   pointer-events: none;
-  transform: translateZ(0);
-  background:
-    radial-gradient(65vmax 45vmax at 12% 8%, color-mix(in srgb, var(--g1) 32%, transparent), transparent 60%),
-    radial-gradient(68vmax 48vmax at 84% 12%, color-mix(in srgb, var(--g2) 26%, transparent), transparent 62%),
-    radial-gradient(82vmax 64vmax at 52% 110%, color-mix(in srgb, var(--g3) 22%, transparent), transparent 70%),
-    linear-gradient(180deg, var(--base1) 0%, var(--base2) 55%, var(--base3) 100%);
-  animation: auroraFloat 26s ease-in-out infinite alternate;
-}
-
-@keyframes auroraFloat {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-2%, 2%, 0) scale(1.02); }
+  background: url('../assets/stars-bg.png') center/cover no-repeat;
+  filter: blur(12px) brightness(0.5);
+  transform: scale(1.05);
 }
 
 /* =============================================
@@ -616,6 +616,28 @@ body.lp-page {
 
 .badge.days::before { content: "🗓️ "; }
 
+.badge.completed {
+  border-color: rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+.badge.ongoing {
+  border-color: rgba(6, 182, 212, 0.5);
+  background: rgba(6, 182, 212, 0.2);
+  color: #22d3ee;
+  animation: pulseCyan 2s infinite;
+}
+@keyframes pulseCyan {
+  0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(6, 182, 212, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+}
+.badge.upcoming {
+  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
 .ct-actions-col { display: flex; flex-direction: column; align-items: end; gap: 6px; }
 
 .price {
@@ -721,10 +743,11 @@ body.lp-page {
   position: relative;
   z-index: 1;
   background: var(--card);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-radius: 19px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
   padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .summary-header {
@@ -796,11 +819,12 @@ body.lp-page {
 }
 
 .sum-row.total strong {
-  background: var(--accent-gradient);
+  background: linear-gradient(135deg, #22d3ee 0%, #10b981 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-size: 20px;
+  font-size: 22px;
+  text-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
 }
 
 /* Stats grid */
@@ -1056,4 +1080,114 @@ body.lp-page {
   .ct-item { padding: 10px; border-radius: 12px; }
   .summary-inner { padding: 18px; border-radius: 16px; }
   .ct-dialog { padding: 18px; border-radius: 16px; margin: 12px; }
+}
+
+/* =============================================
+   NEW: MODERNIZATION UPDATES
+   ============================================= */
+
+/* Fee Breakdown Accordion */
+.sum-breakdown-details {
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding-top: 12px;
+}
+.sum-breakdown-details summary {
+  outline: none;
+  font-weight: 700;
+  color: var(--muted);
+}
+.sum-breakdown-details summary::-webkit-details-marker {
+  display: none;
+}
+.sum-breakdown-details[open] summary svg {
+  transform: rotate(180deg);
+}
+.sum-breakdown-details summary svg {
+  transition: transform 0.2s ease;
+}
+
+/* Accordion States for Groups */
+.group-collapsed .group-items {
+  display: none;
+}
+.group-head {
+  cursor: pointer;
+}
+.group-head .card-icon-halo {
+  transition: transform 0.3s ease;
+}
+.group-collapsed .group-head .card-icon-halo {
+  transform: rotate(-90deg);
+}
+
+/* Timeline View */
+.ct-items.view-timeline {
+  position: relative;
+  padding-left: 24px;
+}
+.ct-items.view-timeline::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  left: 11px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.ct-items.view-timeline .ct-item {
+  position: relative;
+}
+.ct-items.view-timeline .ct-item::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  border: 2px solid #080e1c;
+  z-index: 1;
+}
+
+/* Drag and Drop Visuals */
+.ct-item[draggable="true"] {
+  cursor: grab;
+}
+.ct-item.dragging {
+  opacity: 0.5;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  cursor: grabbing;
+}
+.ct-item.drag-over {
+  border-top: 2px solid var(--accent);
+}
+
+/* Hover-based Actions & Pills */
+.ct-actions-col .ct-row-btns {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.ct-item:hover .ct-actions-col .ct-row-btns {
+  opacity: 1;
+}
+.qty-wrap.hidden {
+  display: none !important;
+}
+
+/* Date Pill Button Style */
+.input-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--accent-soft);
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.input-pill::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.5;
+  cursor: pointer;
 }
