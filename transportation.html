@@ -77,143 +77,248 @@
     </header>
 
     <!-- Ambient Background -->
-    <div class="ambient-bg">
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
-      <div class="orb orb-3"></div>
-      <div class="orb orb-4"></div>
-      <div class="mesh-overlay"></div>
-    </div>
+    <div class="ambient-bg"></div>
 
     <!-- Space below header -->
     <div class="page-spacer"></div>
 
     <main class="dashboard-shell">
-      <!-- LEFT SIDEBAR: Controls & Booking -->
+      <!-- ============ LEFT: Brand · Profile ============ -->
       <aside class="dashboard-sidebar">
         <div class="glass-panel sidebar-header">
           <h1>Transit Hub</h1>
           <p>Design your journey</p>
         </div>
 
-        <section class="panel-section">
-          <div class="glass-card widget-card">
-            <div class="widget-header">
-              <h2>Add Booking</h2>
-              <div class="trip-controls" style="margin-top: 16px">
-                <!-- Internal vs External Segmented Toggle -->
-                <div class="mini-tabs" role="tablist">
-                  <button class="mini-tab active" data-btype="internal">
-                    Leg
-                  </button>
-                  <button class="mini-tab" data-btype="external">Log</button>
-                </div>
-              </div>
+        <!-- Profile Overview -->
+        <div class="glass-card profile-card">
+          <div class="profile-top">
+            <div class="profile-avatar"><span id="pfInitial">U</span></div>
+            <div>
+              <div class="profile-name" id="pfName">Guest Traveller</div>
+              <div class="profile-sub">Profile Overview</div>
+            </div>
+          </div>
+          <div class="profile-stats">
+            <div class="pf-stat">
+              <span class="pf-label">Trips</span>
+              <strong id="pfTrips">0</strong>
+            </div>
+            <div class="pf-stat">
+              <span class="pf-label">Legs</span>
+              <strong id="pfLegs">0</strong>
+            </div>
+            <div class="pf-stat">
+              <span class="pf-label">Total Due</span>
+              <strong id="pfDue" class="gradient-text">₹0</strong>
+            </div>
+            <div class="pf-stat">
+              <span class="pf-label">Logged</span>
+              <strong id="pfLogged">0</strong>
+            </div>
+          </div>
+        </div>
+      </aside>
 
-              <div class="trip-controls" style="margin-top: 8px">
-                <select id="tripSel" aria-label="Select trip"></select>
-                <input id="tripName" placeholder="Rename Trip..." />
+      <!-- ============ CENTER: Tabbed command panel ============ -->
+      <section class="dashboard-main">
+        <div class="center-tabs" role="tablist">
+          <button class="center-tab" data-tab="overview" role="tab">Overview</button>
+          <button class="center-tab active" data-tab="manage" role="tab">
+            Manage Trips
+          </button>
+          <button class="center-tab" data-tab="booking" role="tab">Booking Hub</button>
+          <button class="center-tab" data-tab="payment" role="tab">Payment</button>
+          <div class="tab-underline" aria-hidden="true"></div>
+        </div>
+
+        <div class="tab-panels">
+          <!-- OVERVIEW -->
+          <div class="tab-panel" data-panel="overview">
+            <div class="overview-grid" id="overviewStats"></div>
+            <div class="overview-block">
+              <h3>Spend by mode</h3>
+              <div id="modeTotals" class="chips-row"></div>
+            </div>
+          </div>
+
+          <!-- MANAGE TRIPS -->
+          <div class="tab-panel active" data-panel="manage">
+            <div class="timeline-header">
+              <h2>Your Itineraries</h2>
+              <div class="bulk" id="bulkBar" hidden>
+                <span id="selCount" class="badge">0</span> selected
+                <div class="spacer"></div>
+                <label class="inline muted small" style="margin-right: 10px">
+                  Move to
+                  <select id="moveToTripSel" style="min-width: 120px"></select>
+                </label>
+                <button class="btn-ghost small" id="moveToTrip">Move</button>
+                <button class="btn-ghost small" id="bulkEdit">Edit</button>
+                <button class="btn-ghost danger small" id="bulkDelete">
+                  Remove
+                </button>
+                <button class="btn-ghost small" id="bulkClear">Clear</button>
               </div>
             </div>
+            <div id="trips" class="timeline-container empty-state-container"></div>
+          </div>
 
-            <!-- TYPE: INTERNAL LEG -->
-            <div id="booking-internal" class="booking-flow">
-              <div class="route-inputs" style="margin-top: 20px">
-                <div class="transport-mode">
-                  <select id="mode">
-                    <option value="flight">✈️ Flight</option>
-                    <option value="train">🚆 Train</option>
-                    <option value="bus">🚌 Bus</option>
-                    <option value="car">🚗 Car</option>
-                  </select>
+          <!-- BOOKING HUB (holds the Quick Book & Log form + live routes) -->
+          <div class="tab-panel" data-panel="booking">
+            <div class="timeline-header">
+              <h2>Booking Hub</h2>
+              <span class="muted small">Add legs &amp; log tickets</span>
+            </div>
+            <div class="booking-layout">
+              <div class="glass-card widget-card">
+                <div class="widget-header">
+                  <h2>Quick Book &amp; Log</h2>
+                  <div class="trip-controls" style="margin-top: 16px">
+                    <div class="mini-tabs" role="tablist">
+                      <button class="mini-tab active" data-btype="internal">
+                        Leg
+                      </button>
+                      <button class="mini-tab" data-btype="external">Log</button>
+                    </div>
+                  </div>
+                  <div class="trip-controls" style="margin-top: 8px">
+                    <select id="tripSel" aria-label="Select trip"></select>
+                    <input id="tripName" placeholder="Rename Trip..." />
+                  </div>
                 </div>
-                <div class="location-input">
-                  <input id="from" placeholder="Origin" />
-                </div>
-                <div class="route-divider">
-                  <div class="divider-line"></div>
-                  <div class="divider-icon">▶</div>
-                </div>
-                <div class="location-input">
-                  <input id="to" placeholder="Destination" />
-                </div>
-              </div>
 
-              <div class="details-inputs" style="margin-top: 16px">
-                <div class="input-group">
-                  <input id="date" type="date" placeholder="yyyy-mm-dd" />
+                <!-- TYPE: INTERNAL LEG -->
+                <div id="booking-internal" class="booking-flow">
+                  <div class="route-inputs" style="margin-top: 20px">
+                    <div class="transport-mode">
+                      <select id="mode">
+                        <option value="flight">✈️ Flight</option>
+                        <option value="train">🚆 Train</option>
+                        <option value="bus">🚌 Bus</option>
+                        <option value="car">🚗 Car</option>
+                      </select>
+                    </div>
+                    <div class="location-input">
+                      <input id="from" placeholder="Origin" />
+                    </div>
+                    <div class="route-divider">
+                      <div class="divider-line"></div>
+                      <div class="divider-icon">▶</div>
+                    </div>
+                    <div class="location-input">
+                      <input id="to" placeholder="Destination" />
+                    </div>
+                  </div>
+
+                  <div class="details-inputs" style="margin-top: 16px">
+                    <div class="input-group">
+                      <input id="date" type="date" placeholder="yyyy-mm-dd" />
+                    </div>
+                    <div class="input-group">
+                      <div class="currency-input">
+                        <span class="currency-symbol">₹</span>
+                        <input
+                          id="price"
+                          type="number"
+                          min="0"
+                          inputmode="numeric"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="btns widget-actions" style="margin-top: 20px">
+                    <button class="btn primary-action" id="add">
+                      <span class="btn-text">Add Leg</span>
+                      <span class="btn-glow"></span>
+                    </button>
+                    <button class="btn-ghost" id="newTrip">New Trip</button>
+                  </div>
                 </div>
-                <div class="input-group">
-                  <div class="currency-input">
+
+                <!-- TYPE: EXTERNAL LOG -->
+                <div id="booking-external" class="booking-flow panel-hidden">
+                  <p
+                    class="muted small"
+                    style="margin-top: 20px; margin-bottom: 16px"
+                  >
+                    Record tickets booked elsewhere.
+                  </p>
+                  <div class="input-group">
+                    <input id="mProv" placeholder="Provider / Airline" />
+                  </div>
+                  <div class="details-inputs" style="margin-top: 16px">
+                    <div class="input-group">
+                      <input id="mFrom" placeholder="From" />
+                    </div>
+                    <div class="input-group">
+                      <input id="mTo" placeholder="To" />
+                    </div>
+                  </div>
+                  <div class="details-inputs" style="margin-top: 16px">
+                    <div class="input-group"><input id="mDate" type="date" /></div>
+                    <div class="input-group">
+                      <input id="mRef" placeholder="PNR / Ref #" />
+                    </div>
+                  </div>
+                  <div class="currency-input" style="margin-top: 16px">
                     <span class="currency-symbol">₹</span>
                     <input
-                      id="price"
+                      class="payment-full-input"
+                      id="mAmt"
                       type="number"
                       min="0"
-                      inputmode="numeric"
-                      placeholder="0"
+                      placeholder="Amount Paid"
                     />
+                  </div>
+
+                  <div class="btns widget-actions" style="margin-top: 20px">
+                    <button class="btn primary-action" id="mAdd">
+                      <span class="btn-text">Save Record</span>
+                      <span class="btn-glow"></span>
+                    </button>
+                    <button class="btn-ghost" id="newTripExternal">New Trip</button>
                   </div>
                 </div>
               </div>
 
-              <div class="btns widget-actions" style="margin-top: 20px">
-                <button class="btn primary-action" id="add">
-                  <span class="btn-text">Add Leg</span>
-                  <span class="btn-glow"></span>
-                </button>
-                <button class="btn-ghost" id="newTrip">New Trip</button>
-              </div>
-            </div>
-
-            <!-- TYPE: EXTERNAL LOG -->
-            <div id="booking-external" class="booking-flow panel-hidden">
-              <p
-                class="muted small"
-                style="margin-top: 20px; margin-bottom: 16px"
-              >
-                Record tickets booked elsewhere.
-              </p>
-              <div class="input-group">
-                <input id="mProv" placeholder="Provider / Airline" />
-              </div>
-              <div class="details-inputs" style="margin-top: 16px">
-                <div class="input-group">
-                  <input id="mFrom" placeholder="From" />
-                </div>
-                <div class="input-group">
-                  <input id="mTo" placeholder="To" />
-                </div>
-              </div>
-              <div class="details-inputs" style="margin-top: 16px">
-                <div class="input-group"><input id="mDate" type="date" /></div>
-                <div class="input-group">
-                  <input id="mRef" placeholder="PNR / Ref #" />
-                </div>
-              </div>
-              <div class="currency-input" style="margin-top: 16px">
-                <span class="currency-symbol">₹</span>
-                <input
-                  class="payment-full-input"
-                  id="mAmt"
-                  type="number"
-                  min="0"
-                  placeholder="Amount Paid"
-                />
-              </div>
-
-              <div class="btns widget-actions" style="margin-top: 20px">
-                <button class="btn primary-action" id="mAdd">
-                  <span class="btn-text">Save Record</span>
-                  <span class="btn-glow"></span>
-                </button>
-                <button class="btn-ghost" id="newTripExternal">New Trip</button>
+              <div class="booking-routes">
+                <h3 class="bh-sub">Your routes</h3>
+                <div id="bookingHub" class="hub-grid empty-state-container"></div>
               </div>
             </div>
           </div>
-        </section>
 
-        <!-- Totals Panel always visible in sidebar -->
+          <!-- PAYMENT (split: done vs left) -->
+          <div class="tab-panel" data-panel="payment">
+            <div class="timeline-header">
+              <h2>Payment</h2>
+              <span class="muted small">What's paid vs. what's left</span>
+            </div>
+            <div class="pay-split">
+              <div class="glass-card pay-col">
+                <div class="pay-col-head">
+                  <h3>Payment Done</h3>
+                  <strong id="payDoneTotal" class="ok-text">₹0</strong>
+                </div>
+                <div id="payDone" class="pay-list"></div>
+              </div>
+              <div class="glass-card pay-col">
+                <div class="pay-col-head">
+                  <h3>Payment Left</h3>
+                  <strong id="payLeftTotal" class="gradient-text">₹0</strong>
+                </div>
+                <div id="payLeft" class="pay-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RIGHT: Payment Summary ============ -->
+      <aside class="dashboard-aside">
         <div class="glass-card receipt-card">
           <div class="receipt-header">
             <h2>Payment Summary</h2>
@@ -236,8 +341,16 @@
             <div class="muted small" id="breakdown">—</div>
           </div>
 
+          <svg
+            id="spendChart"
+            class="spend-chart"
+            viewBox="0 0 300 90"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          ></svg>
+
           <details class="tax-details">
-            <summary>Tax & Fee Breakdown</summary>
+            <summary>Tax &amp; Fee Breakdown</summary>
             <div class="tax-content">
               <div class="row2">
                 <label
@@ -256,44 +369,23 @@
             </div>
           </details>
         </div>
-      </aside>
 
-      <section class="dashboard-main">
-        <div>
-          <div class="timeline-header">
-            <h2>Your Itineraries</h2>
-            <div class="bulk" id="bulkBar" hidden>
-              <span id="selCount" class="badge">0</span> selected
-              <div class="spacer"></div>
-              <label class="inline muted small" style="margin-right: 10px">
-                Move to
-                <select id="moveToTripSel" style="min-width: 120px"></select>
-              </label>
-              <button class="btn-ghost small" id="moveToTrip">Move</button>
-              <button class="btn-ghost small" id="bulkEdit">Edit</button>
-              <button class="btn-ghost danger small" id="bulkDelete">
-                Remove
-              </button>
-              <button class="btn-ghost small" id="bulkClear">Clear</button>
-            </div>
-          </div>
-
-          <div
-            id="trips"
-            class="timeline-container empty-state-container"
-          ></div>
-        </div>
-
-        <div style="margin-top: 40px">
-          <div class="timeline-header">
+        <!-- Logged Records hidden for now (kept for easy restore).
+        <div class="glass-card records-card">
+          <div class="receipt-header">
             <h2>Logged Records</h2>
+            <input id="recFilter" type="date" title="Filter by date" />
           </div>
-          <div
-            id="manualList"
-            class="timeline-container empty-state-container list"
-          ></div>
+          <div class="records-table">
+            <div class="records-head">
+              <span>Date</span><span>From → To</span><span>Trip</span
+              ><span class="ta-r">Amount</span>
+            </div>
+            <div id="manualList" class="records-body empty-state-container"></div>
+          </div>
         </div>
-      </section>
+        -->
+      </aside>
     </main>
 
     <div id="toasts"></div>
