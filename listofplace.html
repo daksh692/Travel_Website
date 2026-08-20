@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="./CSS/listofplace.css" />
   </head>
   <body class="lp-page" data-auth="false">
-    <div class="lp-aurora" aria-hidden="true"></div>
+    <div class="lp-aurora modern" aria-hidden="true"></div>
 
     <header class="site-header">
       <div class="header-left">
@@ -80,8 +80,8 @@
       <section class="lp-head">
         <h1 id="lpTitle">Places in …</h1>
         <div class="lp-controls">
-          <input id="lpSearch" type="search" placeholder="Search places…" />
-          <select id="lpSort">
+          <input id="lpSearch" type="search" class="input-premium" placeholder="Search places…" />
+          <select id="lpSort" class="input-premium">
             <option value="alpha">Alphabetical</option>
             <option value="days">Shortest trip first</option>
             <option value="price">Lowest price first</option>
@@ -112,7 +112,15 @@
               aria-label="Select a package"
             ></div>
             <div class="lp-actions">
-              <span class="lp-daysbadge"></span>
+              <span class="lp-daysbadge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg> 
+                <span></span>
+              </span>
               <button class="btn-add">Add to cart</button>
             </div>
           </div>

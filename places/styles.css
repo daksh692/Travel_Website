@@ -1,18 +1,78 @@
-html,
-body {
-  height: 100%;
-  overflow: hidden; /* the map fills the viewport exactly — no page scroll needed */
-}
-body {
-  margin: 0;
-  color: var(--ink);
-  font: 15px/1.5 var(--font-body);
-  background: var(--sapphire);
-  position: relative;
+/* ====================================================
+   places/styles.css — Explore India Dashboard
+   ==================================================== */
+
+:root {
+  /* Core variables */
+  --ring: var(--glass-line-strong);
+  --card: rgba(13, 23, 42, 0.45);
+  --card-solid: #0b1324;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-border-hover: rgba(99, 102, 241, 0.25);
+  --card-glow: rgba(99, 102, 241, 0.15);
+  --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  
+  --base1: #030712;
+  --accent: #6366f1; /* Indigo 500 */
+  --accent-soft: #a5b4fc; /* Indigo 300 */
+  --glass-blur: 24px;
 }
 
-/* Fills everything below the fixed 64px .site-header. A flex column so the
-   map (#svj-cover) can absorb whatever space search/intro/legend don't use. */
+html, body {
+  height: 100%;
+  overflow: hidden; /* map fills the viewport exactly */
+  margin: 0;
+  color: #f1f5f9;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body.lp-page {
+  background: var(--base1);
+}
+
+/* ====================================================
+   MODERN AURORA BACKGROUND
+   ==================================================== */
+#starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #030712 60%);
+}
+
+.lp-aurora.modern {
+  position: fixed;
+  inset: -10vmax;
+  z-index: -2;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 12% -10%, rgba(99, 102, 241, 0.15), transparent 55%),
+              radial-gradient(90% 70% at 100% 0%, rgba(165, 180, 252, 0.1), transparent 50%);
+  filter: blur(40px);
+}
+
+.lp-aurora.modern::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(3, 7, 18, 0.2) 0%, rgba(3, 7, 18, 0.95) 100%);
+  opacity: 1;
+}
+
+/* =============================================
+   HEADER OVERRIDES (Premium Feel)
+   ============================================= */
+.site-header {
+  background: rgba(3, 7, 18, 0.65) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* =============================================
+   LAYOUT SHELL
+   ============================================= */
 .map-page {
   position: fixed;
   top: 64px;
@@ -24,427 +84,317 @@ body {
   overflow: hidden;
 }
 
-/* Ambient sapphire ground — a gold glow (echoing the hover accent) top-right,
-   a soft vignette to keep focus on the map, and a slow starfield instead of
-   the old fixed photo overlay that used to fight the map's own colors. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background: radial-gradient(120% 90% at 12% -10%, rgba(95, 124, 232, 0.22), transparent 55%),
-    radial-gradient(90% 70% at 100% 0%, rgba(240, 214, 138, 0.16), transparent 50%),
-    radial-gradient(80% 65% at 50% 55%, rgba(43, 70, 201, 0.14), transparent 72%),
-    linear-gradient(180deg, var(--sapphire) 0%, var(--sapphire-2) 55%, var(--sapphire-3) 100%);
-}
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0.8;
-  background-repeat: no-repeat;
-  background-image: radial-gradient(2px 2px at 8% 22%, rgba(238, 242, 248, 0.8), transparent 60%),
-    radial-gradient(1.5px 1.5px at 18% 68%, rgba(238, 242, 248, 0.6), transparent 60%),
-    radial-gradient(2px 2px at 28% 40%, rgba(240, 214, 138, 0.75), transparent 60%),
-    radial-gradient(1.5px 1.5px at 35% 12%, rgba(240, 214, 138, 0.7), transparent 60%),
-    radial-gradient(2px 2px at 48% 82%, rgba(238, 242, 248, 0.6), transparent 60%),
-    radial-gradient(1.5px 1.5px at 55% 25%, rgba(238, 242, 248, 0.65), transparent 60%),
-    radial-gradient(2px 2px at 62% 55%, rgba(238, 242, 248, 0.7), transparent 60%),
-    radial-gradient(1.5px 1.5px at 74% 62%, rgba(240, 214, 138, 0.6), transparent 60%),
-    radial-gradient(2px 2px at 80% 10%, rgba(238, 242, 248, 0.75), transparent 60%),
-    radial-gradient(1.5px 1.5px at 85% 45%, rgba(238, 242, 248, 0.55), transparent 60%),
-    radial-gradient(2px 2px at 92% 75%, rgba(240, 214, 138, 0.65), transparent 60%),
-    radial-gradient(1.5px 1.5px at 96% 30%, rgba(238, 242, 248, 0.6), transparent 60%);
-}
-@media (prefers-reduced-motion: no-preference) {
-  body::after {
-    animation: starDrift 40s linear infinite alternate;
-  }
-}
-@keyframes starDrift {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-14px);
-  }
-}
-
 .map-intro {
   flex: 0 0 auto;
-  padding: 10px 16px 8px;
+  padding: 16px 24px 8px;
+  text-align: center;
+  animation: heroReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Row below the heading: a fixed-width sidebar (search + cart callout) and
-   the map, which takes every pixel that's left. */
+@keyframes heroReveal {
+  from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.map-intro h1 {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 3vw, 36px);
+  font-weight: 900;
+  letter-spacing: -1px;
+  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.map-intro p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
 .map-body {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   overflow: hidden;
+  animation: heroReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
+
 .map-sidebar {
-  flex: 0 0 300px;
-  padding: 4px 14px 16px 16px;
+  flex: 0 0 320px;
+  padding: 16px 24px 24px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   overflow-y: auto;
 }
+
+/* =============================================
+   SEARCH INPUT & SUGGESTIONS
+   ============================================= */
 .search-wrap {
   position: relative;
   width: 100%;
 }
-#state-search {
+
+.input-premium {
   width: 100%;
-  padding: 14px 16px;
+  padding: 14px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
-  border: 1px solid var(--glass-line-strong);
-  background: var(--sapphire-2);
+  background: rgba(15, 23, 42, 0.6);
   color: #fff;
+  font-size: 15px;
   outline: none;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  backdrop-filter: blur(12px);
+  box-sizing: border-box;
 }
-#state-search:focus {
-  border-color: var(--royal-2);
-  box-shadow: 0 0 0 3px rgba(43, 70, 201, 0.3);
+
+.input-premium::placeholder { color: #64748b; }
+
+.input-premium:focus {
+  border-color: var(--accent);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 0 0 4px rgba(99, 102, 241, 0.15);
+  background: rgba(15, 23, 42, 0.85);
 }
-#state-search::placeholder {
-  color: var(--mist-dim, rgba(255, 255, 255, 0.6));
-}
+
 .suggestions {
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(100% + 6px);
-  z-index: 45; /* .cart-callout's backdrop-filter creates its own stacking
-                  context right below this in the DOM — without an explicit
-                  z-index here it was painting over the first few results */
+  top: calc(100% + 8px);
+  z-index: 45;
   list-style: none;
   margin: 0;
-  padding: 6px;
-  background: linear-gradient(160deg, var(--glass-fill-hi), var(--glass-fill-lo));
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid var(--glass-line);
-  border-radius: 12px;
+  padding: 8px;
+  background: var(--card);
+  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
   display: none;
   max-height: 40vh;
   overflow: auto;
-  box-shadow: 0 16px 48px rgba(2, 5, 10, 0.45);
+  box-shadow: var(--card-shadow);
 }
-.suggestions.show {
-  display: block;
-}
+
+.suggestions.show { display: block; }
+
 .suggestions li {
-  padding: 10px;
+  padding: 12px 16px;
   border-radius: 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: var(--ink);
+  color: #f8fafc;
+  font-weight: 500;
+  transition: background 0.2s ease;
 }
+
 .suggestions li:hover {
-  background: var(--glass-fill-hi);
+  background: rgba(255, 255, 255, 0.05);
 }
+
 .suggestions .enter-hint {
   font-size: 12px;
-  color: var(--mist);
+  color: #94a3b8;
 }
 
-/* Intro heading — makes the interaction model obvious without hovering first */
-.map-intro {
-  text-align: center;
-}
-.map-intro h1 {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: clamp(20px, 2.6vw, 28px);
-  margin: 0 0 4px;
-}
-.map-intro p {
-  margin: 0;
-  color: var(--mist);
-  font-size: 13.5px;
-}
-
-/* "Continue where you left off" callout — only shown when cartDraft has items.
-   Lives in the sidebar now, so it stacks instead of sitting in one wide row. */
-.cart-callout[hidden] {
-  display: none;
-}
+/* =============================================
+   GLASS PANELS (Cart Callout, Legend, Preview)
+   ============================================= */
 .cart-callout {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
-  padding: 12px 14px;
-  background: linear-gradient(160deg, var(--glass-fill-hi), var(--glass-fill-lo));
-  backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid var(--glass-line-strong);
-  border-radius: 14px;
-  font-size: 13px;
-  line-height: 1.4;
+  gap: 12px;
+  padding: 16px;
+  background: var(--card);
+  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  box-shadow: var(--card-shadow);
 }
-.cart-callout .btn-ghost {
-  align-self: stretch;
-  text-align: center;
-}
+.cart-callout[hidden] { display: none; }
+.cart-callout .btn-ghost { align-self: stretch; text-align: center; color: var(--accent-soft); }
 
-/* Legend — collapsed into a floating bulb instead of sitting in the layout,
-   since it's only useful the first couple of visits. */
 .legend-toggle {
   position: fixed;
-  left: 20px;
-  bottom: 20px;
+  left: 24px;
+  bottom: 24px;
   z-index: 40;
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  border: 1px solid var(--glass-line-strong);
-  background: linear-gradient(160deg, var(--glass-fill-hi), var(--glass-fill-lo));
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  color: var(--gilt-2);
+  border: 1px solid var(--card-border);
+  background: var(--card);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  color: var(--accent-soft);
   font-size: 20px;
-  line-height: 1;
   cursor: pointer;
   display: grid;
   place-items: center;
-  box-shadow: 0 10px 30px rgba(2, 5, 10, 0.5);
+  box-shadow: var(--card-shadow);
+  transition: all 0.2s ease;
 }
 .legend-toggle:hover {
-  filter: brightness(1.15);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
 }
-.legend-toggle[data-tip]::after {
-  content: attr(data-tip);
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--pearl);
-  color: var(--inkwell);
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 5px 9px;
-  border-radius: 8px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease;
-}
-.legend-toggle:hover[data-tip]::after {
-  opacity: 1;
-}
+
 .legend-panel {
   position: fixed;
-  left: 20px;
-  bottom: 76px;
+  left: 24px;
+  bottom: 84px;
   z-index: 40;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px 14px;
-  background: linear-gradient(160deg, var(--glass-fill-hi), var(--glass-fill-lo));
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid var(--glass-line-strong);
-  border-radius: 14px;
-  font-size: 12.5px;
-  color: var(--mist);
-  box-shadow: 0 16px 48px rgba(2, 5, 10, 0.45);
-  animation: legendIn 0.15s ease-out both;
+  gap: 10px;
+  padding: 16px;
+  background: var(--card);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  font-size: 13.5px;
+  color: #cbd5e1;
+  box-shadow: var(--card-shadow);
+  animation: legendIn 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
-.legend-panel[hidden] {
-  display: none;
-}
+.legend-panel[hidden] { display: none; }
 @keyframes legendIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-.swatch {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  display: inline-block;
-  border: 1px solid var(--glass-line-strong);
-}
-.swatch-default {
-  background: var(--sapphire-3);
-}
-.swatch-hover {
-  background: var(--gilt);
-}
-.swatch-match {
-  background: var(--royal);
-}
-.swatch-trip {
-  background: var(--danger);
+  from { opacity: 0; transform: translateY(8px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Map wrapper — absorbs all remaining vertical space (flex:1) and the SVG
-   scales to fit inside it on both axes, like object-fit:contain, so the
-   whole map is always visible with no page scroll required. */
+.legend-item { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.swatch {
+  width: 14px; height: 14px; border-radius: 4px; display: inline-block;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.swatch-default { background: rgba(13, 23, 42, 0.6); }
+.swatch-hover { background: rgba(99, 102, 241, 0.4); border-color: rgba(99, 102, 241, 0.8); }
+.swatch-match { background: rgba(99, 102, 241, 0.7); border-color: #a5b4fc; }
+.swatch-trip { background: #ef4444; }
+
+/* =============================================
+   MAP & SVG STYLING
+   ============================================= */
 #svj-cover {
   flex: 1 1 auto;
-  min-width: 0;
-  min-height: 0; /* required for a flex child to actually shrink to fit */
-  display: grid;
-  place-items: center;
-  padding: 4px 16px 16px 0;
+  min-width: 0; min-height: 0;
+  display: grid; place-items: center;
+  padding: 0 24px 24px 0;
   overflow: hidden;
 }
+
 #svg-map {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 10px 40px rgba(2, 5, 10, 0.5));
+  max-width: 100%; max-height: 100%;
+  width: auto; height: auto; display: block;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
 }
 
-@media (max-width: 760px) {
-  .map-body {
-    flex-direction: column;
-  }
-  .map-sidebar {
-    flex: 0 0 auto;
-    width: 100%;
-  }
-}
-
-/* State styling */
 .state {
-  /* Deliberately NOT --sapphire-3 — that's the same color the background
-     gradient ends on, which is exactly why the map used to disappear into
-     it. This is a distinct, lighter slate so the landmass reads as its own
-     layer above the sky, not a continuation of it. */
-  fill: color-mix(in srgb, var(--platinum-deep) 30%, var(--sapphire-2));
-  stroke: var(--platinum-deep);
-  stroke-width: 1;
+  fill: #0f172a;
+  stroke: rgba(165, 180, 252, 0.35);
+  stroke-width: 1.2;
   vector-effect: non-scaling-stroke;
-  transition: fill 0.15s ease, filter 0.15s ease, stroke 0.15s ease;
+  transition: all 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
   cursor: pointer;
 }
-.state:hover {
-  fill: color-mix(in srgb, var(--gilt) 32%, var(--sapphire-2));
-  stroke: var(--gilt-2);
-  filter: drop-shadow(0 0 12px rgba(217, 179, 90, 0.45));
+
+.state:hover, .state.list-hover {
+  fill: rgba(99, 102, 241, 0.3);
+  stroke: rgba(165, 180, 252, 0.8);
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 16px rgba(99, 102, 241, 0.6));
 }
+
 .state.match {
-  fill: var(--royal-deep);
-  stroke: var(--royal-2);
-  filter: drop-shadow(0 0 16px rgba(43, 70, 201, 0.55));
+  fill: rgba(99, 102, 241, 0.6);
+  stroke: #c7d2fe;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 24px rgba(99, 102, 241, 0.8));
 }
-/* Declared after .match so hovering a specific search result always wins,
-   even though every result is already glowing blue as a match. */
-.state.list-hover {
-  fill: color-mix(in srgb, var(--gilt) 32%, var(--sapphire-2));
-  stroke: var(--gilt-2);
-  filter: drop-shadow(0 0 12px rgba(217, 179, 90, 0.45));
-}
+
 .state.has-trip {
-  stroke: var(--danger);
-  stroke-width: 1.6;
+  stroke: #ef4444;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.5));
 }
 .trip-badge {
-  fill: var(--danger);
-  stroke: var(--pearl);
-  stroke-width: 1.5;
-  filter: drop-shadow(0 0 7px rgba(192, 67, 90, 0.65));
+  fill: #ef4444; stroke: #fff; stroke-width: 1.5;
+  filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.8));
 }
 
 /* Hover label */
 .hover-label {
-  position: fixed;
-  z-index: 35;
-  display: none;
-  pointer-events: none;
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: var(--pearl);
-  border: 1px solid var(--glass-line);
-  box-shadow: 0 6px 22px rgba(2, 5, 10, 0.4);
-  color: var(--inkwell);
-  font-weight: 700;
-  font-size: 13px;
+  position: fixed; z-index: 35; display: none; pointer-events: none;
+  padding: 8px 14px; border-radius: 12px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  color: #fff; font-weight: 600; font-size: 14px;
 }
 
-/* State preview card (Option B) — appears on click instead of an immediate
-   full-page jump, so browsing the map doesn't mean a dead-end round trip. */
+/* =============================================
+   STATE PREVIEW (Option B)
+   ============================================= */
 .state-preview {
-  position: fixed;
-  left: 50%;
-  bottom: 24px;
-  transform: translateX(-50%);
-  z-index: 36;
-  width: min(420px, 92vw);
-  padding: 18px;
-  display: grid;
-  gap: 10px;
-  background: linear-gradient(160deg, var(--glass-fill-hi), var(--glass-fill-lo));
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid var(--glass-line-strong);
-  border-radius: 18px;
-  box-shadow: 0 24px 60px rgba(2, 5, 10, 0.55);
+  position: fixed; left: 50%; bottom: 32px;
+  transform: translateX(-50%); z-index: 36;
+  width: min(440px, 92vw); padding: 24px; display: grid; gap: 16px;
+  background: var(--card);
+  backdrop-filter: blur(32px) saturate(140%);
+  -webkit-backdrop-filter: blur(32px) saturate(140%);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  animation: legendIn 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
-.state-preview[hidden] {
-  display: none;
-}
+.state-preview[hidden] { display: none; }
+
 .state-preview h3 {
-  margin: 0;
-  padding-right: 24px;
-  font-family: var(--font-display);
-  font-size: 19px;
+  margin: 0; padding-right: 32px; font-weight: 800; font-size: 22px; color: #fff;
 }
 .state-preview-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 1px solid var(--glass-line-strong);
-  background: var(--glass-fill-hi);
-  color: #fff;
-  cursor: pointer;
-  line-height: 1;
+  position: absolute; top: 16px; right: 16px; width: 32px; height: 32px;
+  border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05); color: #94a3b8; cursor: pointer;
+  display: grid; place-items: center; transition: all 0.2s ease;
 }
-.state-preview-body {
-  display: grid;
-  gap: 6px;
+.state-preview-close:hover {
+  background: rgba(255,255,255,0.1); color: #fff;
 }
+
+.state-preview-body { display: grid; gap: 8px; }
 .state-preview-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 13.5px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--glass-line);
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  font-size: 14.5px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: #f1f5f9; font-weight: 500;
 }
 .state-preview-price {
-  color: var(--gilt-2);
-  font-family: var(--font-mono);
+  color: var(--accent-soft); font-weight: 700;
 }
-.state-preview-loading,
-.state-preview-empty {
-  margin: 0;
-  font-size: 13px;
-  color: var(--mist);
+.state-preview-loading, .state-preview-empty {
+  margin: 0; font-size: 14px; color: #94a3b8; text-align: center; padding: 16px 0;
+}
+
+@media (max-width: 760px) {
+  .map-body { flex-direction: column; }
+  .map-sidebar { flex: 0 0 auto; width: 100%; padding: 16px; box-sizing: border-box; }
+  #svj-cover { padding: 0 16px 16px; }
 }
