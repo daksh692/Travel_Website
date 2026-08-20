@@ -111,7 +111,7 @@ async function showPreview(stateId) {
 previewClose?.addEventListener("click", () => {
   preview.hidden = true;
 });
-states.forEach((el) => el.addEventListener("click", () => showPreview(el.id)));
+states.forEach((el) => el.addEventListener("click", () => goToState(el.id)));
 
 /* ========== Trip-aware badges (states already in the visitor's cart) ========== */
 function getCartStates() {
