@@ -187,21 +187,24 @@ function render() {
       <div class="c-body">
         <h3>${it.place || "(Unknown place)"}</h3>
         <div class="c-meta">
-          <span style="display:flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${it.state || "—"}</span>
-          <span style="display:flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${it.state || "—"}</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${
             it.days ? `${it.days} day${it.days > 1 ? "s" : ""}` : "—"
           }</span>
-          <span class="badge" style="color:var(--brand); border-color:var(--brand);">Pkg: ${it.package || "—"}</span>
+          <span class="badge">Pkg: ${it.package || "—"}</span>
         </div>
       </div>
       <div class="c-actions">
-        <div class="price" style="font-size:20px; color:#fff; font-weight:900; line-height:1;">${fmtINR(price)}</div>
-        <div class="qty" role="group" aria-label="Quantity" style="display:flex; border:1px solid rgba(255,255,255,0.15); border-radius:10px; overflow:hidden; background:rgba(255,255,255,0.04);">
-          <button class="q-dec" style="padding:4px 12px; background:transparent; color:#fff; cursor:pointer; border:none;" aria-label="Decrease">−</button>
-          <input class="q-val" style="width:36px; text-align:center; background:transparent; border:none; color:#fff; font-weight:700;" type="number" min="1" value="${qty}" inputmode="numeric" />
-          <button class="q-inc" style="padding:4px 12px; background:transparent; color:#fff; cursor:pointer; border:none;" aria-label="Increase">+</button>
+        <div class="price">${fmtINR(price)}</div>
+        <div class="qty" role="group" aria-label="Quantity">
+          <button class="q-dec" aria-label="Decrease">−</button>
+          <input class="q-val" type="number" min="1" value="${qty}" inputmode="numeric" />
+          <button class="q-inc" aria-label="Increase">+</button>
         </div>
-        <div class="remove" style="color:#fca5a5; cursor:pointer; font-size:13px; font-weight:600; padding:4px;">Remove</div>
+        <div class="remove">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+          Remove
+        </div>
       </div>
     `;
 

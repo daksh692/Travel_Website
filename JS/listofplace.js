@@ -289,9 +289,8 @@ function render() {
 
     // Days label
     const days = it.daysNeeded;
-    $(".lp-daysbadge", node).textContent = days
-      ? `Duration: ${days} day${days > 1 ? "s" : ""}`
-      : "Duration: —";
+    const daysText = days ? `${days} day${days > 1 ? "s" : ""}` : "—";
+    $(".lp-daysbadge span", node).textContent = daysText;
 
     // Price buttons
     const pricesWrap = $(".lp-prices", node);

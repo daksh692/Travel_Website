@@ -12,7 +12,7 @@
     />
   </head>
   <body class="lp-page" data-auth="false">
-    <div class="lp-aurora" aria-hidden="true"></div>
+    <div class="lp-aurora modern" aria-hidden="true"></div>
 
     <header class="site-header">
       <div class="header-left">
@@ -87,7 +87,10 @@
 
     <main class="cart-shell">
       <div class="cart-actions">
-        <button id="backBtnTop" class="btn-ghost">Back</button>
+        <button id="backBtnTop" class="btn-ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: text-bottom;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back
+        </button>
         <button id="exploreBtnTop" class="btn-outline">Keep Exploring</button>
       </div>
 
@@ -106,34 +109,58 @@
         </div>
 
         <aside class="cart-summary" aria-label="Order summary">
-          <h2>Order Summary</h2>
-          <div class="sum-row">
-            <span>Subtotal</span><strong id="sumSubtotal">₹0</strong>
-          </div>
-          <div class="sum-row">
-            <span>Service Fee (0.5%)</span><strong id="sumService">₹0</strong>
-          </div>
-          <div class="sum-row">
-            <span>Tax (12%)</span><strong id="sumTax">₹0</strong>
-          </div>
-          <hr
-            style="
-              border: 0;
-              border-top: 1px solid rgba(255, 255, 255, 0.1);
-              margin: 12px 0;
-            "
-          />
-          <div class="sum-row total">
-            <span>Final total</span><strong id="sumTotal">₹0</strong>
-          </div>
-          <p class="sum-note small muted" style="margin-top: 4px">
-            Does not yet include promo codes.
-          </p>
+          <div class="summary-glow"></div>
+          <div class="summary-inner">
+            <div class="summary-header">
+              <div class="summary-title-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
+              <h2>Order Summary</h2>
+            </div>
+            
+            <div class="summary-divider"></div>
 
-          <button id="checkoutBtn" class="btn-checkout">
-            Proceed to Checkout
-          </button>
-          <button id="clearBtn" class="btn-clear">Clear Cart</button>
+            <div class="sum-breakdown">
+              <div class="sum-row">
+                <span class="sum-label">Subtotal</span>
+                <strong class="sum-val" id="sumSubtotal">₹0</strong>
+              </div>
+              <div class="sum-row">
+                <span class="sum-label">Service Fee (0.5%)</span>
+                <strong class="sum-val" id="sumService">₹0</strong>
+              </div>
+              <div class="sum-row">
+                <span class="sum-label">Tax (12%)</span>
+                <strong class="sum-val" id="sumTax">₹0</strong>
+              </div>
+            </div>
+
+            <div class="sum-total-wrap">
+              <div class="sum-row total">
+                <span>Final total</span>
+                <strong id="sumTotal">₹0</strong>
+              </div>
+            </div>
+            <p class="sum-note small muted" style="margin-top: -12px; margin-bottom: 24px; padding-left: 4px;">
+              Does not yet include promo codes.
+            </p>
+
+            <div class="sum-actions">
+              <button id="checkoutBtn" class="btn-primary btn-checkout-lg">
+                <span>Proceed to Checkout</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+              <button id="clearBtn" class="btn-clear" style="margin-top: 8px;">Clear Cart</button>
+            </div>
+          </div>
         </aside>
       </section>
     </main>

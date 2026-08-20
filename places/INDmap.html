@@ -8,9 +8,11 @@
   <!-- Your site styles (menus/auth) -->
   <link rel="stylesheet" href="../CSS/main.css?v=6"/>
   <!-- Page styles -->
-  <link rel="stylesheet" href="styles.css?v=6"/>
+  <link rel="stylesheet" href="styles.css?v=8"/>
 </head>
-<body data-auth="false">
+<body data-auth="false" class="lp-page">
+  <canvas id="starfield"></canvas>
+  <div class="lp-aurora modern" aria-hidden="true"></div>
 
   <!-- Fixed header — same as every other page, so this page stops being a dead end -->
   <header class="site-header">
@@ -75,7 +77,7 @@
   <div class="map-body">
     <aside class="map-sidebar">
       <div class="search-wrap">
-        <input id="state-search" type="text" placeholder="Search state or UT…" autocomplete="off"/>
+        <input id="state-search" class="input-premium" type="text" placeholder="Search state or UT…" autocomplete="off"/>
         <ul id="search-suggestions" class="suggestions" role="listbox" aria-label="State suggestions"></ul>
       </div>
 
@@ -383,6 +385,7 @@
   <script src="../JS/main.js?v=6"></script>
 
   <!-- Page JS -->
-  <script src="script.js?v=6"></script>
+  <script src="script.js?v=8"></script>
+  <script src="starfield.js?v=2"></script>
 </body>
 </html>
