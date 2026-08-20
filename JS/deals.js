@@ -1,8 +1,8 @@
 /* ========= tiny utils ========= */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-const API_HOST = `http://${location.hostname || "localhost"}:3001`;
-const API_BASE = `${API_HOST}/api`;
+const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+const API_BASE = isLocal ? `http://${location.hostname}:3001/api` : "/api";
 const fmtINR = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 const PKG = ["Basic", "Plus", "Premium"];
 
@@ -534,3 +534,4 @@ function renderLiveFeed(bundles, singles) {
     console.error(e);
   }
 })();
+
