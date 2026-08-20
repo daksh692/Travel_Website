@@ -577,6 +577,10 @@ app.use((err, req, res, next) => {
    Start server
    ========================= */
 const PORT = Number(process.env.PORT || 3001);
-app.listen(PORT, () => {
-  console.log(`API ready on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`API ready on http://localhost:${PORT}`);
+  });
+}
+
+export default app;

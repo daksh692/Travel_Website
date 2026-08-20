@@ -4,8 +4,8 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const fmtINR = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 
 // Reuse same constants as rest of app
-const API_HOST = `http://${location.hostname || "localhost"}:3001`;
-const API_BASE = `${API_HOST}/api`;
+const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+const API_BASE = isLocal ? `http://${location.hostname}:3001/api` : "/api";
 
 const SERVICE_RATE_PCT = 0.5;
 const TAX_RATE_PCT = 12;
@@ -235,3 +235,4 @@ async function fetchPointsBalance() {
 // ===== Init =====
 fetchPointsBalance();
 render();
+

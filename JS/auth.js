@@ -1,6 +1,6 @@
 // Build API base from current host (avoids localhost/127 mismatch)
-const API_HOST = `http://${location.hostname || "localhost"}:3001`;
-const API_BASE = `${API_HOST}/api`;
+const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+const API_BASE = isLocal ? `http://${location.hostname}:3001/api` : "/api";
 
 const $ = (sel) => document.querySelector(sel);
 const msg = (t, kind = "") => {
@@ -292,3 +292,4 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   setInterval(next, DURATION);
 });
+

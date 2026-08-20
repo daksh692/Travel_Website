@@ -852,3 +852,4 @@ $("#resetRates")?.addEventListener("click", () => {
   renderManual();
   requestAnimationFrame(moveUnderline);
 })();
+
