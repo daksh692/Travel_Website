@@ -352,12 +352,7 @@ body[data-auth="true"] .auth-only {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(5, 11, 22, 0.3),
-    rgba(5, 11, 22, 0.4) 40%,
-    rgba(5, 11, 22, 0.3)
-  );
+  background: linear-gradient(to bottom, rgba(5, 11, 22, 0.1) 0%, rgba(5, 11, 22, 0.8) 100%);
   z-index: 0;
 }
 
@@ -400,12 +395,10 @@ body[data-auth="true"] .auth-only {
   top: 50%;
   transform: translateY(-50%);
   padding: 46px 20px;
-  background: var(--band);
-  backdrop-filter: blur(2px);
+  background: transparent;
   display: grid;
   place-items: center;
   gap: 14px;
-  border-block: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 1;
 }
 .logo-button img {
@@ -420,7 +413,7 @@ body[data-auth="true"] .auth-only {
   background: transparent;
 }
 .hero-band:hover {
-  background: var(--band-strong);
+  /* Removed hover effect to maintain clean scrim */
 }
 .hero-band h1 {
   margin: 0;

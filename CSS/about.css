@@ -121,7 +121,7 @@
 }
 .page .stat {
   background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(12px);
+  /* backdrop-filter removed for scroll performance */
   border: 1px solid var(--line-bright);
   border-radius: 20px;
   padding: 1.2rem 1rem;
@@ -147,6 +147,11 @@
 }
 
 /* Blobs */
+.page .hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
 .page .hero-bg .blob {
   position: absolute;
   width: 50vmax;
@@ -258,7 +263,7 @@
 }
 .page .promise-card {
   background: var(--card);
-  backdrop-filter: blur(16px);
+  /* backdrop-filter removed for scroll performance */
   border: 1px solid var(--line-bright);
   border-radius: 20px;
   padding: 1.8rem;
@@ -331,7 +336,7 @@
 
 .page .feature {
   background: var(--card);
-  backdrop-filter: blur(16px);
+  /* backdrop-filter removed for scroll performance */
   border: 1px solid var(--line-bright);
   border-radius: 20px;
   padding: 1.8rem;
@@ -421,7 +426,7 @@
 }
 .page .testimonial-card {
   background: var(--card);
-  backdrop-filter: blur(16px);
+  /* backdrop-filter removed for scroll performance */
   border: 1px solid var(--line-bright);
   border-radius: 20px;
   padding: 2rem 1.6rem;
@@ -478,7 +483,7 @@
 }
 .page .policy-grid .card {
   background: var(--card);
-  backdrop-filter: blur(16px);
+  /* backdrop-filter removed for scroll performance */
   border: 1px solid var(--line-bright);
   border-radius: 20px;
   padding: 2rem 1.8rem;
@@ -600,7 +605,7 @@
   right: 1.5rem;
   bottom: 1.5rem;
   background: rgba(14, 20, 51, 0.8);
-  backdrop-filter: blur(12px);
+  /* backdrop-filter removed for scroll performance */
   transition: all 0.25s;
   z-index: 100;
 }
@@ -655,7 +660,7 @@
   position: absolute;
   top: 0; left: 0; right: 0;
   background: rgba(6, 11, 26, 0.4) !important;
-  backdrop-filter: blur(12px);
+  /* backdrop-filter removed for scroll performance */
   box-shadow: none !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
   z-index: 50;
